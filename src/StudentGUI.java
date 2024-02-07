@@ -61,6 +61,8 @@ public class StudentGUI extends JFrame {
                 }
             });
             toolBar.add(zobrazitButton);
+        } else {
+            System.exit(0); // Ukončí program, pokud uživatel zvolí jinou možnost než "Admin" nebo "Host"
         }
 
         zobrazitPredmetButton = new JButton("Zobrazit předměty");
@@ -268,9 +270,11 @@ public class StudentGUI extends JFrame {
 
             int id_student = Integer.parseInt(JOptionPane.showInputDialog("Zadejte ID studenta:"));
 
-            String query = "SELECT Student.idstudent, Student.jmeno, Student.prijmeni, Hodnoceni.idzkouska, Hodnoceni.hodnoceni " +
+            String query = "SELECT Student.idstudent, Student.jmeno, Student.prijmeni, Hodnoceni.idzkouska, Hodnoceni.hodnoceni, Predmet.nazev AS nazev_predmetu " +
                     "FROM Student " +
                     "INNER JOIN Hodnoceni ON Student.idstudent = Hodnoceni.idstudent " +
+                    "INNER JOIN Zkouska ON Hodnoceni.idzkouska = Zkouska.idzkouska " +
+                    "INNER JOIN Predmet ON Zkouska.idpredmet = Predmet.idpredmet " +
                     "WHERE Student.idstudent = ?";
 
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -295,11 +299,12 @@ public class StudentGUI extends JFrame {
 
             tableModel.addColumn("ID zkoušky");
             tableModel.addColumn("Hodnocení");
+            tableModel.addColumn("Název předmětu");
 
             if (resultSet.next()) {
                 infoLabel.setText("<html><center>ID studenta: " + id_student + "<br>Jméno: " + resultSet.getString("jmeno") + "<br>Příjmení: " + resultSet.getString("prijmeni") + "</center></html>");
                 do {
-                    Object[] rowData = {resultSet.getInt("idzkouska"), resultSet.getString("hodnoceni")};
+                    Object[] rowData = {resultSet.getInt("idzkouska"), resultSet.getString("hodnoceni"), resultSet.getString("nazev_predmetu")};
                     tableModel.addRow(rowData);
                 } while (resultSet.next());
             } else {

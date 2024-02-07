@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Sprava_univerzitniho_systemu.iml" filepath="$PROJECT_DIR$/Sprava_univerzitniho_systemu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Sprava-univerzitniho-systemu.iml" filepath="$PROJECT_DIR$/Sprava-univerzitniho-systemu.iml" />
     </modules>
   </component>
 </project>
