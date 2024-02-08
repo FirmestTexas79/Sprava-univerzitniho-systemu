@@ -9,13 +9,16 @@ import java.awt.event.MouseEvent;
 import java.sql.*;
 
 public class StudentGUI extends JFrame {
-    private enum Role { ADMIN, HOST }
-
     private JPanel panel;
     private JTable table;
     private JPanel currentPanel;
-    private Role userRole;
+    private DatabaseManager databaseManager;
+    private RoleManager.Role userRole;
     private JToolBar toolBar;
+    private JButton studentButton;
+
+    private int idStudent;
+    private JButton rozvrhButton;
 
     public StudentGUI() {
         setTitle("Správa Studentů");
@@ -27,62 +30,36 @@ public class StudentGUI extends JFrame {
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        toolBar = new JToolBar();
-        toolBar.setFloatable(false);
-
-        chooseUserRole();
+        databaseManager = new DatabaseManager();
+        userRole = RoleManager.chooseUserRole(); // Zde získáme uživatelskou roli
 
         setupUI();
     }
 
-    private void chooseUserRole() {
-        Object[] options = {"Admin", "Host"};
-        int selection = JOptionPane.showOptionDialog(null, "Vyberte roli", "Vyberte roli", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-
-        if (selection == 0) {
-            userRole = Role.ADMIN;
-        } else if (selection == 1) {
-            userRole = Role.HOST;
-        } else {
-            System.exit(0);
-        }
-    }
-
     private void setupUI() {
-        if (userRole == Role.ADMIN) {
+        if (userRole == RoleManager.Role.ADMIN) {
             setupAdminUI();
-        } else if (userRole == Role.HOST) {
+        } else if (userRole == RoleManager.Role.HOST) {
             setupHostUI();
         }
     }
 
+
     private void setupAdminUI() {
         if (prihlasitAdmina()) {
+            JToolBar toolBar = new JToolBar();
+            toolBar.setFloatable(false);
+
             JButton studentButton = new JButton("Student");
-            studentButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    zobrazOknoStudent();
-                }
-            });
+            studentButton.addActionListener(e -> zobrazOknoStudent());
             toolBar.add(studentButton);
 
             JButton predmetButton = new JButton("Předmět");
-            predmetButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    zobrazOknoPredmet();
-                }
-            });
+            predmetButton.addActionListener(e -> zobrazOknoPredmet());
             toolBar.add(predmetButton);
 
             JButton hodnoceniButton = new JButton("Hodnocení");
-            hodnoceniButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    zobrazOknoHodnoceni();
-                }
-            });
+            hodnoceniButton.addActionListener(e -> zobrazOknoHodnoceni());
             toolBar.add(hodnoceniButton);
 
             panel.add(toolBar, BorderLayout.NORTH);
@@ -94,16 +71,169 @@ public class StudentGUI extends JFrame {
         }
     }
 
+
     private void setupHostUI() {
+        // Zobrazíme dialogové okno pro zadání ID studenta
         String idStudentStr = JOptionPane.showInputDialog(null, "Zadejte ID studenta:", "Přihlášení Hosta", JOptionPane.PLAIN_MESSAGE);
         if (idStudentStr != null && !idStudentStr.isEmpty()) {
-            int idStudent = Integer.parseInt(idStudentStr);
-            zobrazitStudenty();
+            idStudent = Integer.parseInt(idStudentStr);
+
+            // Vytvoříme tlačítko pro zobrazení rozvrhu studenta
+            JButton rozvrhButton = new JButton("Zobrazit rozvrh");
+            rozvrhButton.addActionListener(e -> zobrazitRozvrh(idStudent));
+
+            // Vytvoříme tlačítko pro zobrazení informací o studentovi podle ID
+            JButton infoStudentButton = new JButton("Informace o mě");
+            infoStudentButton.addActionListener(e -> zobrazitStudentaPodleID());
+
+            // Vytvoříme panel pro tlačítka
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.add(rozvrhButton);
+            buttonPanel.add(infoStudentButton);
+
+            // Přidáme tlačítka na horní část panelu
+            panel.add(buttonPanel, BorderLayout.NORTH);
+            currentPanel = buttonPanel;
+
+            add(panel);
         } else {
             JOptionPane.showMessageDialog(null, "Neplatný vstup.", "Chyba", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
     }
+
+
+
+    private void zobrazitRozvrh(int idStudent) {
+        try {
+            Connection connection = DriverManager.getConnection(
+                    "jdbc:mysql://127.0.0.1:3306/sprava_univerzitniho_systemu",
+                    "root",
+                    "heslo");
+
+            String query = "SELECT Predmet.nazev FROM student_rozvrh " +
+                    "INNER JOIN Predmet ON student_rozvrh.idpredmet = Predmet.idpredmet " +
+                    "WHERE student_rozvrh.idstudent = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, idStudent);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            StringBuilder sbPredmety = new StringBuilder("Předměty studenta (ID ").append(idStudent).append("):\n");
+            while (resultSet.next()) {
+                sbPredmety.append(resultSet.getString("nazev")).append("\n");
+            }
+
+            JOptionPane.showMessageDialog(null, sbPredmety.toString(), "Předměty studenta", JOptionPane.INFORMATION_MESSAGE);
+
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Chyba při získávání předmětů studenta: " + e.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+    private void zobrazitStudentaPodleID() {
+        try {
+            Connection connection = DriverManager.getConnection(
+                    "jdbc:mysql://127.0.0.1:3306/sprava_univerzitniho_systemu",
+                    "root",
+                    "heslo");
+
+            String query = "SELECT * FROM Student WHERE idstudent = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, idStudent);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            // Vytvoření tabulky pro zobrazení výsledků
+            DefaultTableModel tableModel = new DefaultTableModel();
+            JTable table = new JTable(tableModel);
+
+            // Získání informací o sloupcích
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                tableModel.addColumn(metaData.getColumnName(i));
+            }
+
+            // Naplnění tabulky daty
+            while (resultSet.next()) {
+                Object[] rowData = new Object[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    rowData[i - 1] = resultSet.getObject(i);
+                }
+                tableModel.addRow(rowData);
+            }
+
+            // Vytvoření panelu pro zobrazení tabulky
+            JPanel tablePanel = new JPanel(new BorderLayout());
+            tablePanel.add(new JScrollPane(table), BorderLayout.CENTER);
+
+            // Vytvoření panelu pro výpis aktivit a průměru
+            JPanel infoPanel = new JPanel(new GridLayout(2, 1));
+
+            // Získání aktivit studenta
+            String queryAktivity = "SELECT nazev FROM aktivity WHERE idaktivity IN " +
+                    "(SELECT idaktivity FROM student_aktivity WHERE idstudent = ?)";
+            PreparedStatement preparedStatementAktivity = connection.prepareStatement(queryAktivity);
+            preparedStatementAktivity.setInt(1, idStudent);
+            ResultSet resultSetAktivity = preparedStatementAktivity.executeQuery();
+
+            StringBuilder sbAktivity = new StringBuilder("Aktivity studenta (ID ").append(idStudent).append("):\n");
+            while (resultSetAktivity.next()) {
+                sbAktivity.append(resultSetAktivity.getString("nazev")).append("\n");
+            }
+            JLabel labelAktivity = new JLabel(sbAktivity.toString());
+            infoPanel.add(labelAktivity);
+
+            // Získání průměru studenta
+            String queryPrumer = "SELECT prumer AS Prumer FROM prumerhodnoceni WHERE idstudent = ?";
+            PreparedStatement preparedStatementPrumer = connection.prepareStatement(queryPrumer);
+            preparedStatementPrumer.setInt(1, idStudent);
+            ResultSet resultSetPrumer = preparedStatementPrumer.executeQuery();
+
+            double prumer = 0;
+            if (resultSetPrumer.next()) {
+                prumer = resultSetPrumer.getDouble("Prumer");
+            }
+            JLabel labelPrumer = new JLabel("Průměrné hodnocení: " + prumer);
+            infoPanel.add(labelPrumer);
+
+            // Vytvoření hlavního panelu pro okno
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.add(tablePanel, BorderLayout.CENTER);
+            mainPanel.add(infoPanel, BorderLayout.SOUTH);
+
+            JPanel buttonPanel = new JPanel();
+
+            // Přidání tlačítka "Zobrazit rozvrh" do panelu
+            if (rozvrhButton == null) {
+                rozvrhButton = new JButton("Zobrazit rozvrh");
+                rozvrhButton.addActionListener(e -> zobrazitRozvrh(idStudent));
+            }
+            buttonPanel.add(rozvrhButton);
+
+            // Přidání tlačítka "Informace o mě" do panelu
+            if (studentButton == null) {
+                studentButton = new JButton("Informace o mě");
+                studentButton.addActionListener(e -> zobrazitStudentaPodleID());
+            }
+            buttonPanel.add(studentButton);
+
+            // Aktualizace obsahu hlavního panelu
+            panel.removeAll(); // Odstraníme veškeré současné komponenty z panelu
+            panel.add(mainPanel, BorderLayout.CENTER); // Přidáme nový panel s tabulkou a informacemi
+            panel.add(buttonPanel, BorderLayout.NORTH); // Přidáme tlačítko na horní část panelu
+            panel.revalidate(); // Aktualizujeme layout
+            panel.repaint(); // Překreslíme panel
+
+            connection.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Chyba při zobrazování studenta: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 
     private boolean prihlasitAdmina() {
         JTextField usernameField = new JTextField();
@@ -127,6 +257,8 @@ public class StudentGUI extends JFrame {
             return false;
         }
     }
+
+
     private void zobrazOknoStudent() {
         JButton zobrazitStudentyButton = new JButton("Zobrazit studenty");
         zobrazitStudentyButton.addActionListener(e -> zobrazitStudenty());
@@ -328,7 +460,6 @@ public class StudentGUI extends JFrame {
         }
     }
 
-
     private void zobrazAktivityStudenta(int idStudent) {
         try {
             Connection connection = DriverManager.getConnection(
@@ -355,10 +486,12 @@ public class StudentGUI extends JFrame {
 
             double prumer = 0;
             if (resultSetPrumer.next()) {
-                prumer = resultSetPrumer.getDouble("prumer");
+                prumer = resultSetPrumer.getDouble("Prumer");
             }
 
-            JOptionPane.showMessageDialog(null, sbAktivity.toString() + "\nPrůměrné hodnocení: " + prumer, "Aktivity a průměrné hodnocení", JOptionPane.INFORMATION_MESSAGE);
+            sbAktivity.append("\nPrůměrné hodnocení: ").append(prumer);
+
+            JOptionPane.showMessageDialog(null, sbAktivity.toString(), "Aktivity a průměrné hodnocení", JOptionPane.INFORMATION_MESSAGE);
 
             connection.close();
         } catch (SQLException e) {
@@ -366,7 +499,6 @@ public class StudentGUI extends JFrame {
             JOptionPane.showMessageDialog(null, "Chyba při získávání aktivit a průměrného hodnocení studenta: " + e.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
         }
     }
-
 
     private void zobrazTabulku(String nazevTabulky, String sqlQuery, String nazevTlacitka) {
         try {
@@ -431,9 +563,11 @@ public class StudentGUI extends JFrame {
     }
 
 
-    // Metoda pro zobrazení hodnocení
     private void zobrazitHodnoceni() {
-        zobrazTabulku("HODNOCENI", "SELECT idstudent, idzkouska, hodnoceni FROM Hodnoceni", "Zobrazit hodnocení");
+        String sqlQuery = "SELECT Hodnoceni.idstudent, Student.jmeno, Student.prijmeni, Hodnoceni.idzkouska, Hodnoceni.hodnoceni " +
+                "FROM Hodnoceni " +
+                "INNER JOIN Student ON Hodnoceni.idstudent = Student.idstudent";
+        zobrazTabulku("HODNOCENI", sqlQuery, "Zobrazit hodnocení");
     }
 
 
