@@ -80,11 +80,12 @@ public class StudentGUI extends JFrame {
 
             // Vytvoříme tlačítko pro zobrazení rozvrhu studenta
             JButton rozvrhButton = new JButton("Zobrazit rozvrh");
-            rozvrhButton.addActionListener(e -> zobrazitRozvrh(idStudent));
+            rozvrhButton.addActionListener(e -> RozvrhManager.zobrazitRozvrh(idStudent));
+
 
             // Vytvoříme tlačítko pro zobrazení informací o studentovi podle ID
             JButton infoStudentButton = new JButton("Informace o mě");
-            infoStudentButton.addActionListener(e -> zobrazitStudentaPodleID());
+            infoStudentButton.addActionListener(e -> zobrazitStudentaPodleID(idStudent)); // Předáváme idStudent jako argument
 
             // Vytvoříme panel pro tlačítka
             JPanel buttonPanel = new JPanel();
@@ -104,46 +105,14 @@ public class StudentGUI extends JFrame {
 
 
 
-    private void zobrazitRozvrh(int idStudent) {
+    private void zobrazitStudentaPodleID(int idStudent) {
         try {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/sprava_univerzitniho_systemu",
-                    "root",
-                    "heslo");
+            Connection connection = DatabaseManager.getConnection();
 
-            String query = "SELECT Predmet.nazev FROM student_rozvrh " +
-                    "INNER JOIN Predmet ON student_rozvrh.idpredmet = Predmet.idpredmet " +
-                    "WHERE student_rozvrh.idstudent = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, idStudent);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            StringBuilder sbPredmety = new StringBuilder("Předměty studenta (ID ").append(idStudent).append("):\n");
-            while (resultSet.next()) {
-                sbPredmety.append(resultSet.getString("nazev")).append("\n");
-            }
-
-            JOptionPane.showMessageDialog(null, sbPredmety.toString(), "Předměty studenta", JOptionPane.INFORMATION_MESSAGE);
-
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Chyba při získávání předmětů studenta: " + e.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-
-    private void zobrazitStudentaPodleID() {
-        try {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/sprava_univerzitniho_systemu",
-                    "root",
-                    "heslo");
-
-            String query = "SELECT * FROM Student WHERE idstudent = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, idStudent);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            String query = "{CALL ZobrazitStudentaPodleID(?)}"; // Volání uložené procedury
+            CallableStatement callableStatement = connection.prepareCall(query);
+            callableStatement.setInt(1, idStudent);
+            ResultSet resultSet = callableStatement.executeQuery();
 
             // Vytvoření tabulky pro zobrazení výsledků
             DefaultTableModel tableModel = new DefaultTableModel();
@@ -169,54 +138,23 @@ public class StudentGUI extends JFrame {
             JPanel tablePanel = new JPanel(new BorderLayout());
             tablePanel.add(new JScrollPane(table), BorderLayout.CENTER);
 
-            // Vytvoření panelu pro výpis aktivit a průměru
-            JPanel infoPanel = new JPanel(new GridLayout(2, 1));
-
-            // Získání aktivit studenta
-            String queryAktivity = "SELECT nazev FROM aktivity WHERE idaktivity IN " +
-                    "(SELECT idaktivity FROM student_aktivity WHERE idstudent = ?)";
-            PreparedStatement preparedStatementAktivity = connection.prepareStatement(queryAktivity);
-            preparedStatementAktivity.setInt(1, idStudent);
-            ResultSet resultSetAktivity = preparedStatementAktivity.executeQuery();
-
-            StringBuilder sbAktivity = new StringBuilder("Aktivity studenta (ID ").append(idStudent).append("):\n");
-            while (resultSetAktivity.next()) {
-                sbAktivity.append(resultSetAktivity.getString("nazev")).append("\n");
-            }
-            JLabel labelAktivity = new JLabel(sbAktivity.toString());
-            infoPanel.add(labelAktivity);
-
-            // Získání průměru studenta
-            String queryPrumer = "SELECT prumer AS Prumer FROM prumerhodnoceni WHERE idstudent = ?";
-            PreparedStatement preparedStatementPrumer = connection.prepareStatement(queryPrumer);
-            preparedStatementPrumer.setInt(1, idStudent);
-            ResultSet resultSetPrumer = preparedStatementPrumer.executeQuery();
-
-            double prumer = 0;
-            if (resultSetPrumer.next()) {
-                prumer = resultSetPrumer.getDouble("Prumer");
-            }
-            JLabel labelPrumer = new JLabel("Průměrné hodnocení: " + prumer);
-            infoPanel.add(labelPrumer);
-
             // Vytvoření hlavního panelu pro okno
             JPanel mainPanel = new JPanel(new BorderLayout());
             mainPanel.add(tablePanel, BorderLayout.CENTER);
-            mainPanel.add(infoPanel, BorderLayout.SOUTH);
 
             JPanel buttonPanel = new JPanel();
 
             // Přidání tlačítka "Zobrazit rozvrh" do panelu
             if (rozvrhButton == null) {
                 rozvrhButton = new JButton("Zobrazit rozvrh");
-                rozvrhButton.addActionListener(e -> zobrazitRozvrh(idStudent));
+                rozvrhButton.addActionListener(e -> RozvrhManager.zobrazitRozvrh(idStudent));
             }
             buttonPanel.add(rozvrhButton);
 
             // Přidání tlačítka "Informace o mě" do panelu
             if (studentButton == null) {
                 studentButton = new JButton("Informace o mě");
-                studentButton.addActionListener(e -> zobrazitStudentaPodleID());
+                studentButton.addActionListener(e -> zobrazitStudentaPodleID(idStudent));
             }
             buttonPanel.add(studentButton);
 
@@ -284,7 +222,6 @@ public class StudentGUI extends JFrame {
 
         zobrazOkno(studentPanel);
     }
-
 
 
     private void zobrazOknoPredmet() {
@@ -361,53 +298,31 @@ public class StudentGUI extends JFrame {
             int id_kategorie = Integer.parseInt(idKategorieField.getText());
             String kod = kodField.getText();
 
-            Connection connection = null;
-            PreparedStatement preparedStatement = null;
+            DatabaseManager manager = new DatabaseManager();
 
             try {
-                connection = DriverManager.getConnection(
-                        "jdbc:mysql://127.0.0.1:3306/sprava_univerzitniho_systemu",
-                        "root",
-                        "heslo");
-
+                Connection connection = manager.getConnection();
                 connection.setAutoCommit(false);
 
-                String insertQuery = "INSERT INTO Predmet (nazev, idkategorie, kod) VALUES (?, ?, ?)";
-                preparedStatement = connection.prepareStatement(insertQuery);
-                preparedStatement.setString(1, nazev);
-                preparedStatement.setInt(2, id_kategorie);
-                preparedStatement.setString(3, kod);
+                String procedureCall = "{CALL PridaniPredmetu(?, ?, ?)}";
+                CallableStatement callableStatement = connection.prepareCall(procedureCall);
+                callableStatement.setString(1, nazev);
+                callableStatement.setInt(2, id_kategorie);
+                callableStatement.setString(3, kod);
 
-                preparedStatement.executeUpdate();
+                callableStatement.executeUpdate();
 
                 connection.commit();
+                connection.close();
 
                 JOptionPane.showMessageDialog(null, "Předmět byl úspěšně přidán.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException ex) {
-                try {
-                    if (connection != null) {
-                        connection.rollback();
-                    }
-                } catch (SQLException rollbackEx) {
-                    rollbackEx.printStackTrace();
-                }
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Chyba při přidávání předmětu: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
-            } finally {
-                try {
-                    if (preparedStatement != null) {
-                        preparedStatement.close();
-                    }
-                    if (connection != null) {
-                        connection.setAutoCommit(true);
-                        connection.close();
-                    }
-                } catch (SQLException closeEx) {
-                    closeEx.printStackTrace();
-                }
             }
         }
     }
+
     private void zobrazitPredmety() {
         zobrazTabulku("PREDMET", "SELECT Predmet.idpredmet, Predmet.nazev AS nazev_predmetu, Kategorie.nazev AS kategorie FROM Predmet INNER JOIN Kategorie ON Predmet.idkategorie = Kategorie.idkategorie ORDER BY Predmet.idpredmet", "Zobrazit předměty");
     }
@@ -437,16 +352,12 @@ public class StudentGUI extends JFrame {
         // Kontrola uživatelova potvrzení
         if (potvrzeni != null && potvrzeni.equalsIgnoreCase("ano")) {
             try {
-                Connection connection = DriverManager.getConnection(
-                        "jdbc:mysql://127.0.0.1:3306/sprava_univerzitniho_systemu",
-                        "root",
-                        "heslo");
+                Connection connection = DatabaseManager.getConnection();
 
-                // Smazání předmětu
-                String querySmazatPredmet = "DELETE FROM Predmet WHERE idpredmet = ?";
-                PreparedStatement preparedStatementSmazatPredmet = connection.prepareStatement(querySmazatPredmet);
-                preparedStatementSmazatPredmet.setInt(1, idPredmet);
-                preparedStatementSmazatPredmet.executeUpdate();
+                // Volání uložené procedury pro odstranění předmětu
+                CallableStatement callableStatement = connection.prepareCall("{CALL OdeberPredmet(?)}");
+                callableStatement.setInt(1, idPredmet);
+                callableStatement.execute();
 
                 JOptionPane.showMessageDialog(null, "Předmět byl úspěšně smazán.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
 
@@ -460,24 +371,10 @@ public class StudentGUI extends JFrame {
         }
     }
 
+
     private void zobrazAktivityStudenta(int idStudent) {
         try {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/sprava_univerzitniho_systemu",
-                    "root",
-                    "heslo");
-
-            String queryAktivity = "SELECT nazev FROM aktivity WHERE idaktivity IN " +
-                    "(SELECT idaktivity FROM student_aktivity WHERE idstudent = ?)";
-            PreparedStatement preparedStatementAktivity = connection.prepareStatement(queryAktivity);
-            preparedStatementAktivity.setInt(1, idStudent);
-            ResultSet resultSetAktivity = preparedStatementAktivity.executeQuery();
-
-            StringBuilder sbAktivity = new StringBuilder();
-            sbAktivity.append("Aktivity studenta (ID ").append(idStudent).append("):\n");
-            while (resultSetAktivity.next()) {
-                sbAktivity.append(resultSetAktivity.getString("nazev")).append("\n");
-            }
+            Connection connection = DatabaseManager.getConnection();
 
             String queryPrumer = "SELECT prumer AS Prumer FROM prumerhodnoceni WHERE idstudent = ?";
             PreparedStatement preparedStatementPrumer = connection.prepareStatement(queryPrumer);
@@ -489,6 +386,8 @@ public class StudentGUI extends JFrame {
                 prumer = resultSetPrumer.getDouble("Prumer");
             }
 
+            // Část kódu týkající se zobrazení průměrného hodnocení
+            StringBuilder sbAktivity = new StringBuilder();
             sbAktivity.append("\nPrůměrné hodnocení: ").append(prumer);
 
             JOptionPane.showMessageDialog(null, sbAktivity.toString(), "Aktivity a průměrné hodnocení", JOptionPane.INFORMATION_MESSAGE);
@@ -502,10 +401,7 @@ public class StudentGUI extends JFrame {
 
     private void zobrazTabulku(String nazevTabulky, String sqlQuery, String nazevTlacitka) {
         try {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/sprava_univerzitniho_systemu",
-                    "root",
-                    "heslo");
+            Connection connection = DatabaseManager.getConnection();
 
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sqlQuery);
@@ -564,32 +460,29 @@ public class StudentGUI extends JFrame {
 
 
     private void zobrazitHodnoceni() {
-        String sqlQuery = "SELECT Hodnoceni.idstudent, Student.jmeno, Student.prijmeni, Hodnoceni.idzkouska, Hodnoceni.hodnoceni " +
-                "FROM Hodnoceni " +
-                "INNER JOIN Student ON Hodnoceni.idstudent = Student.idstudent";
+        String sqlQuery = "CALL ZobrazitHodnoceni()"; // Zde voláme uloženou proceduru
         zobrazTabulku("HODNOCENI", sqlQuery, "Zobrazit hodnocení");
     }
 
 
     private void pridejHodnoceni() {
         try {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/sprava_univerzitniho_systemu",
-                    "root",
-                    "heslo");
+            Connection connection = DatabaseManager.getConnection();
 
             int id_student = Integer.parseInt(JOptionPane.showInputDialog("Zadejte ID studenta:"));
             int id_zkouska = Integer.parseInt(JOptionPane.showInputDialog("Zadejte ID zkoušky:"));
             int hodnoceni = Integer.parseInt(JOptionPane.showInputDialog("Zadejte hodnocení (1-5):"));
 
-            String query = "INSERT INTO Hodnoceni (idstudent, idzkouska, hodnoceni) VALUES (?, ?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, id_student);
-            preparedStatement.setInt(2, id_zkouska);
-            preparedStatement.setInt(3, hodnoceni);
+            // Použití uložené procedury
+            String query = "{CALL PridatHodnoceni(?, ?, ?)}";
+            CallableStatement callableStatement = connection.prepareCall(query);
+            callableStatement.setInt(1, id_student);
+            callableStatement.setInt(2, id_zkouska);
+            callableStatement.setInt(3, hodnoceni);
 
-            int rowsInserted = preparedStatement.executeUpdate();
-            if (rowsInserted > 0) {
+            boolean hasResults = callableStatement.execute();
+
+            if (!hasResults) {
                 JOptionPane.showMessageDialog(null, "Hodnocení bylo úspěšně přidáno.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
             }
 
@@ -625,46 +518,33 @@ public class StudentGUI extends JFrame {
             String datumNarozeni = datumNarozeniField.getText();
 
             Connection connection = null;
-            PreparedStatement preparedStatement = null;
+            CallableStatement callableStatement = null;
 
             try {
-                connection = DriverManager.getConnection(
-                        "jdbc:mysql://127.0.0.1:3306/sprava_univerzitniho_systemu",
-                        "root",
-                        "heslo");
+                connection = DatabaseManager.getConnection();
 
-                connection.setAutoCommit(false);
+                String query = "{CALL PridaniStudenta(?, ?, ?, ?, ?)}";
+                callableStatement = connection.prepareCall(query);
+                callableStatement.setString(1, jmeno);
+                callableStatement.setString(2, prijmeni);
+                callableStatement.setString(3, adresa);
+                callableStatement.setString(4, kontakt);
+                callableStatement.setString(5, datumNarozeni);
 
-                String insertQuery = "INSERT INTO Student (jmeno, prijmeni, adresa, kontakt, datumNarozeni) VALUES (?, ?, ?, ?, ?)";
-                preparedStatement = connection.prepareStatement(insertQuery);
-                preparedStatement.setString(1, jmeno);
-                preparedStatement.setString(2, prijmeni);
-                preparedStatement.setString(3, adresa);
-                preparedStatement.setString(4, kontakt);
-                preparedStatement.setString(5, datumNarozeni);
+                boolean hasResults = callableStatement.execute();
 
-                preparedStatement.executeUpdate();
-
-                connection.commit();
-
-                JOptionPane.showMessageDialog(null, "Student byl úspěšně přidán.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
-            } catch (SQLException ex) {
-                try {
-                    if (connection != null) {
-                        connection.rollback();
-                    }
-                } catch (SQLException rollbackEx) {
-                    rollbackEx.printStackTrace();
+                if (!hasResults) {
+                    JOptionPane.showMessageDialog(null, "Student byl úspěšně přidán.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
                 }
+            } catch (SQLException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Chyba při přidávání studenta: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
             } finally {
                 try {
-                    if (preparedStatement != null) {
-                        preparedStatement.close();
+                    if (callableStatement != null) {
+                        callableStatement.close();
                     }
                     if (connection != null) {
-                        connection.setAutoCommit(true);
                         connection.close();
                     }
                 } catch (SQLException closeEx) {
@@ -674,7 +554,6 @@ public class StudentGUI extends JFrame {
         }
     }
 
-
     private void odeberStudenta(int idStudent) {
         // Vytvoření dialogového okna pro potvrzení smazání
         String potvrzeni = JOptionPane.showInputDialog(null, "Opravdu chcete smazat tohoto studenta? Pokud ano, napište 'ano' a potvrďte:", "Potvrzení smazání", JOptionPane.WARNING_MESSAGE);
@@ -682,15 +561,13 @@ public class StudentGUI extends JFrame {
         // Kontrola uživatelova potvrzení
         if (potvrzeni != null && potvrzeni.equalsIgnoreCase("ano")) {
             try {
-                Connection connection = DriverManager.getConnection(
-                        "jdbc:mysql://127.0.0.1:3306/sprava_univerzitniho_systemu",
-                        "root",
-                        "heslo");
+                Connection connection = DatabaseManager.getConnection();
 
-                String query = "DELETE FROM Student WHERE idstudent = ?";
-                PreparedStatement preparedStatement = connection.prepareStatement(query);
-                preparedStatement.setInt(1, idStudent);
-                preparedStatement.executeUpdate();
+                // Volání uložené procedury SQL
+                String callProcedure = "{CALL odeberStudenta(?)}";
+                CallableStatement callableStatement = connection.prepareCall(callProcedure);
+                callableStatement.setInt(1, idStudent);
+                callableStatement.execute();
 
                 JOptionPane.showMessageDialog(null, "Student byl úspěšně odebrán.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
 
@@ -709,6 +586,7 @@ public class StudentGUI extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                ApplicationInitializer.inicializaceAplikace();
                 StudentGUI gui = new StudentGUI();
                 gui.setVisible(true);
             }
