@@ -7,7 +7,7 @@ public class ApplicationInitializer {
         // Volání uložené procedury pro aktualizaci průměrného hodnocení pro všechny studenty
         try {
             Connection connection = DatabaseManager.getConnection();
-            CallableStatement callableStatement = connection.prepareCall("{CALL AktualizacePrumeruProVsechnyStudenty()}");
+            CallableStatement callableStatement = connection.prepareCall("{CALL AktualizacePrumeru()}");
             callableStatement.execute();
             connection.close();
             System.out.println("Průměrná hodnocení všech studentů byla aktualizována.");

@@ -324,11 +324,14 @@ public class StudentGUI extends JFrame {
     }
 
     private void zobrazitPredmety() {
-        zobrazTabulku("PREDMET", "SELECT Predmet.idpredmet, Predmet.nazev AS nazev_predmetu, Kategorie.nazev AS kategorie FROM Predmet INNER JOIN Kategorie ON Predmet.idkategorie = Kategorie.idkategorie ORDER BY Predmet.idpredmet", "Zobrazit předměty");
+        String sqlQuery = "CALL ZobrazitPredmety()";
+        zobrazTabulku("PREDMET", sqlQuery, "Zobrazit předměty");
     }
 
     private void zobrazitStudenty() {
-        zobrazTabulku("STUDENT", "SELECT * FROM STUDENT", "Zobrazit studenty");
+        String sqlQuery = "CALL ZobrazitStudenty()";
+        zobrazTabulku("STUDENT", sqlQuery, "Zobrazit studenty");
+
 
         // Přidání posluchače událostí pro kliknutí na buňku s ID studenta
         table.addMouseListener(new MouseAdapter() {
@@ -342,6 +345,7 @@ public class StudentGUI extends JFrame {
                 }
             }
         });
+
     }
 
 
@@ -372,32 +376,6 @@ public class StudentGUI extends JFrame {
     }
 
 
-    private void zobrazAktivityStudenta(int idStudent) {
-        try {
-            Connection connection = DatabaseManager.getConnection();
-
-            String queryPrumer = "SELECT prumer AS Prumer FROM prumerhodnoceni WHERE idstudent = ?";
-            PreparedStatement preparedStatementPrumer = connection.prepareStatement(queryPrumer);
-            preparedStatementPrumer.setInt(1, idStudent);
-            ResultSet resultSetPrumer = preparedStatementPrumer.executeQuery();
-
-            double prumer = 0;
-            if (resultSetPrumer.next()) {
-                prumer = resultSetPrumer.getDouble("Prumer");
-            }
-
-            // Část kódu týkající se zobrazení průměrného hodnocení
-            StringBuilder sbAktivity = new StringBuilder();
-            sbAktivity.append("\nPrůměrné hodnocení: ").append(prumer);
-
-            JOptionPane.showMessageDialog(null, sbAktivity.toString(), "Aktivity a průměrné hodnocení", JOptionPane.INFORMATION_MESSAGE);
-
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Chyba při získávání aktivit a průměrného hodnocení studenta: " + e.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
     private void zobrazTabulku(String nazevTabulky, String sqlQuery, String nazevTlacitka) {
         try {
@@ -553,6 +531,35 @@ public class StudentGUI extends JFrame {
             }
         }
     }
+
+
+    private void zobrazAktivityStudenta(int idStudent) {
+        try {
+            Connection connection = DatabaseManager.getConnection();
+
+            // Volání uložené procedury ZobrazAktivitStudenta
+            String query = "{CALL ZobrazAktivityStudenta(?)}";
+            CallableStatement callableStatement = connection.prepareCall(query);
+            callableStatement.setInt(1, idStudent);
+            ResultSet resultSet = callableStatement.executeQuery();
+
+            // Získání informací z výsledku procedury
+            StringBuilder sb = new StringBuilder();
+            while (resultSet.next()) {
+                sb.append("Aktivita: ").append(resultSet.getString("nazev")).append("\n");
+            }
+
+            // Zobrazení informací v popup okně
+            JOptionPane.showMessageDialog(null, sb.toString(), "Aktivity studenta", JOptionPane.INFORMATION_MESSAGE);
+
+            connection.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Chyba při zobrazování aktivit studenta: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
 
     private void odeberStudenta(int idStudent) {
         // Vytvoření dialogového okna pro potvrzení smazání
