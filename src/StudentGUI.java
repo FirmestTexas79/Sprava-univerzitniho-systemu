@@ -204,12 +204,15 @@ public class StudentGUI extends JFrame {
         JButton pridejStudentaButton = new JButton("Přidat studenta");
         pridejStudentaButton.addActionListener(e -> pridejStudenta());
 
+        JButton prumerButton = new JButton("Zobraz průměr");
+        prumerButton.addActionListener(e -> zobrazPrumerHodnoceniStudentu());
+
         JButton odeberStudentaButton = new JButton("Odebrat studenta");
         odeberStudentaButton.addActionListener(e -> {
             String idStudentStr = JOptionPane.showInputDialog(null, "Zadejte ID studenta k odebrání:", "Odebrat studenta", JOptionPane.PLAIN_MESSAGE);
             if (idStudentStr != null && !idStudentStr.isEmpty()) {
                 int idStudent = Integer.parseInt(idStudentStr);
-                odeberStudenta(idStudent);
+                StudentManager.odeberStudenta(idStudent);
             } else {
                 JOptionPane.showMessageDialog(null, "Neplatný vstup.", "Chyba", JOptionPane.ERROR_MESSAGE);
             }
@@ -219,6 +222,7 @@ public class StudentGUI extends JFrame {
         studentPanel.add(zobrazitStudentyButton);
         studentPanel.add(pridejStudentaButton);
         studentPanel.add(odeberStudentaButton);
+        studentPanel.add(prumerButton);
 
         zobrazOkno(studentPanel);
     }
@@ -229,18 +233,10 @@ public class StudentGUI extends JFrame {
         zobrazitPredmetyButton.addActionListener(e -> zobrazitPredmety());
 
         JButton pridejPredmetButton = new JButton("Přidej předmět");
-        pridejPredmetButton.addActionListener(e -> pridejPredmet());
+        pridejPredmetButton.addActionListener(e -> RozvrhManager.pridejPredmet());
 
         JButton zrusitPredmetButton = new JButton("Zrušit předmět");
-        zrusitPredmetButton.addActionListener(e -> {
-            String idPredmetStr = JOptionPane.showInputDialog(null, "Zadejte ID předmětu k zrušení:", "Zrušit předmět", JOptionPane.PLAIN_MESSAGE);
-            if (idPredmetStr != null && !idPredmetStr.isEmpty()) {
-                int idPredmet = Integer.parseInt(idPredmetStr);
-                zrusitPredmet(idPredmet);
-            } else {
-                JOptionPane.showMessageDialog(null, "Neplatný vstup.", "Chyba", JOptionPane.ERROR_MESSAGE);
-            }
-        });
+        zrusitPredmetButton.addActionListener(e -> RozvrhManager.zrusitPredmet());
 
         JPanel predmetPanel = new JPanel();
         predmetPanel.add(zobrazitPredmetyButton);
@@ -280,49 +276,6 @@ public class StudentGUI extends JFrame {
         panel.repaint();
     }
 
-
-    private void pridejPredmet() {
-        JTextField nazevField = new JTextField();
-        JTextField idKategorieField = new JTextField();
-        JTextField kodField = new JTextField();
-
-        Object[] message = {
-                "Název:", nazevField,
-                "ID kategorie:", idKategorieField,
-                "Kód:", kodField
-        };
-
-        int option = JOptionPane.showConfirmDialog(null, message, "Přidat předmět", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            String nazev = nazevField.getText();
-            int id_kategorie = Integer.parseInt(idKategorieField.getText());
-            String kod = kodField.getText();
-
-            DatabaseManager manager = new DatabaseManager();
-
-            try {
-                Connection connection = manager.getConnection();
-                connection.setAutoCommit(false);
-
-                String procedureCall = "{CALL PridaniPredmetu(?, ?, ?)}";
-                CallableStatement callableStatement = connection.prepareCall(procedureCall);
-                callableStatement.setString(1, nazev);
-                callableStatement.setInt(2, id_kategorie);
-                callableStatement.setString(3, kod);
-
-                callableStatement.executeUpdate();
-
-                connection.commit();
-                connection.close();
-
-                JOptionPane.showMessageDialog(null, "Předmět byl úspěšně přidán.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Chyba při přidávání předmětu: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
     private void zobrazitPredmety() {
         String sqlQuery = "CALL ZobrazitPredmety()";
         zobrazTabulku("PREDMET", sqlQuery, "Zobrazit předměty");
@@ -332,49 +285,9 @@ public class StudentGUI extends JFrame {
         String sqlQuery = "CALL ZobrazitStudenty()";
         zobrazTabulku("STUDENT", sqlQuery, "Zobrazit studenty");
 
-
         // Přidání posluchače událostí pro kliknutí na buňku s ID studenta
-        table.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = table.rowAtPoint(e.getPoint());
-                int column = table.columnAtPoint(e.getPoint());
-                if (row >= 0 && column >= 0) { // Kontrola, zda je vybraná buňka platná
-                    int idStudent = (int) table.getValueAt(row, column); // Získání hodnoty ID studenta
-                    zobrazAktivityStudenta(idStudent);
-                }
-            }
-        });
-
+        table.addMouseListener(new StudentMouseListener(table, this::zobrazAktivityStudenta));
     }
-
-
-    private void zrusitPredmet(int idPredmet) {
-        // Vytvoření dialogového okna pro potvrzení smazání
-        String potvrzeni = JOptionPane.showInputDialog(null, "Opravdu chcete smazat tento předmět? Pokud ano, napište 'ano' a potvrďte:", "Potvrzení smazání", JOptionPane.WARNING_MESSAGE);
-
-        // Kontrola uživatelova potvrzení
-        if (potvrzeni != null && potvrzeni.equalsIgnoreCase("ano")) {
-            try {
-                Connection connection = DatabaseManager.getConnection();
-
-                // Volání uložené procedury pro odstranění předmětu
-                CallableStatement callableStatement = connection.prepareCall("{CALL OdeberPredmet(?)}");
-                callableStatement.setInt(1, idPredmet);
-                callableStatement.execute();
-
-                JOptionPane.showMessageDialog(null, "Předmět byl úspěšně smazán.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
-
-                connection.close();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Chyba při mazání předmětu: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Operace byla zrušena uživatelem.", "Zrušeno", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
 
 
     private void zobrazTabulku(String nazevTabulky, String sqlQuery, String nazevTlacitka) {
@@ -536,8 +449,6 @@ public class StudentGUI extends JFrame {
     private void zobrazAktivityStudenta(int idStudent) {
         try {
             Connection connection = DatabaseManager.getConnection();
-
-            // Volání uložené procedury ZobrazAktivitStudenta
             String query = "{CALL ZobrazAktivityStudenta(?)}";
             CallableStatement callableStatement = connection.prepareCall(query);
             callableStatement.setInt(1, idStudent);
@@ -560,40 +471,40 @@ public class StudentGUI extends JFrame {
     }
 
 
+    private void zobrazPrumerHodnoceniStudentu() {
+        try {
+            Connection connection = DatabaseManager.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM PrumerHodnoceniStudentu");
 
-    private void odeberStudenta(int idStudent) {
-        // Vytvoření dialogového okna pro potvrzení smazání
-        String potvrzeni = JOptionPane.showInputDialog(null, "Opravdu chcete smazat tohoto studenta? Pokud ano, napište 'ano' a potvrďte:", "Potvrzení smazání", JOptionPane.WARNING_MESSAGE);
+            // Zobrazení výsledků v tabulce
+            DefaultTableModel tableModel = new DefaultTableModel();
+            tableModel.addColumn("ID studenta");
+            tableModel.addColumn("Průměr hodnocení");
 
-        // Kontrola uživatelova potvrzení
-        if (potvrzeni != null && potvrzeni.equalsIgnoreCase("ano")) {
-            try {
-                Connection connection = DatabaseManager.getConnection();
-
-                // Volání uložené procedury SQL
-                String callProcedure = "{CALL odeberStudenta(?)}";
-                CallableStatement callableStatement = connection.prepareCall(callProcedure);
-                callableStatement.setInt(1, idStudent);
-                callableStatement.execute();
-
-                JOptionPane.showMessageDialog(null, "Student byl úspěšně odebrán.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
-
-                connection.close();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Chyba při odebírání studenta: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
+            while (resultSet.next()) {
+                int idStudent = resultSet.getInt("idStudent");
+                double prumerHodnoceni = resultSet.getDouble("prumer");
+                tableModel.addRow(new Object[]{idStudent, prumerHodnoceni});
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Operace byla zrušena uživatelem.", "Zrušeno", JOptionPane.INFORMATION_MESSAGE);
+
+            // Zobrazení výsledků v tabulce Swing
+            JTable table = new JTable(tableModel);
+            JOptionPane.showMessageDialog(null, new JScrollPane(table), "Průměr hodnocení studentů", JOptionPane.PLAIN_MESSAGE);
+
+            connection.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Chyba při zobrazování průměru hodnocení studentů: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                ApplicationInitializer.inicializaceAplikace();
                 StudentGUI gui = new StudentGUI();
                 gui.setVisible(true);
             }
