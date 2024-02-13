@@ -80,12 +80,13 @@ public class StudentGUI extends JFrame {
 
             // Vytvoříme tlačítko pro zobrazení rozvrhu studenta
             JButton rozvrhButton = new JButton("Zobrazit rozvrh");
-            rozvrhButton.addActionListener(e -> RozvrhManager.zobrazitRozvrh(idStudent));
+            //rozvrhButton.addActionListener(e -> RozvrhManager.zobrazitRozvrh(idStudent));
+            rozvrhButton.addActionListener(e -> ziskej_nazvy_a_prumery_predmetu(idStudent));
 
 
             // Vytvoříme tlačítko pro zobrazení informací o studentovi podle ID
             JButton infoStudentButton = new JButton("Informace o mě");
-            infoStudentButton.addActionListener(e -> zobrazitStudentaPodleID(idStudent)); // Předáváme idStudent jako argument
+            infoStudentButton.addActionListener(e -> zobrazitStudentaPodleID()); // Předáváme idStudent jako argument
 
             // Vytvoříme panel pro tlačítka
             JPanel buttonPanel = new JPanel();
@@ -104,73 +105,56 @@ public class StudentGUI extends JFrame {
     }
 
 
-
-    private void zobrazitStudentaPodleID(int idStudent) {
+    private void ziskej_nazvy_a_prumery_predmetu(int idStudent) {
         try {
             Connection connection = DatabaseManager.getConnection();
-
-            String query = "{CALL ZobrazitStudentaPodleID(?)}"; // Volání uložené procedury
+            String query = "{CALL ziskej_nazvy_a_prumery_predmetu(?)}";
             CallableStatement callableStatement = connection.prepareCall(query);
             callableStatement.setInt(1, idStudent);
             ResultSet resultSet = callableStatement.executeQuery();
 
-            // Vytvoření tabulky pro zobrazení výsledků
-            DefaultTableModel tableModel = new DefaultTableModel();
-            JTable table = new JTable(tableModel);
-
-            // Získání informací o sloupcích
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                tableModel.addColumn(metaData.getColumnName(i));
-            }
-
-            // Naplnění tabulky daty
-            while (resultSet.next()) {
-                Object[] rowData = new Object[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    rowData[i - 1] = resultSet.getObject(i);
-                }
-                tableModel.addRow(rowData);
-            }
-
             // Vytvoření panelu pro zobrazení tabulky
-            JPanel tablePanel = new JPanel(new BorderLayout());
-            tablePanel.add(new JScrollPane(table), BorderLayout.CENTER);
+            JPanel dataPanel = new JPanel();
+            dataPanel.setLayout(new BorderLayout());
 
-            // Vytvoření hlavního panelu pro okno
-            JPanel mainPanel = new JPanel(new BorderLayout());
-            mainPanel.add(tablePanel, BorderLayout.CENTER);
+            // Vytvoření modelu pro tabulku
+            DefaultTableModel tableModel = new DefaultTableModel();
+            tableModel.addColumn("Název předmětu");
+            tableModel.addColumn("Průměr hodnocení");
 
-            JPanel buttonPanel = new JPanel();
-
-            // Přidání tlačítka "Zobrazit rozvrh" do panelu
-            if (rozvrhButton == null) {
-                rozvrhButton = new JButton("Zobrazit rozvrh");
-                rozvrhButton.addActionListener(e -> RozvrhManager.zobrazitRozvrh(idStudent));
+            // Naplnění tabulky daty z výsledku dotazu
+            while (resultSet.next()) {
+                String nazevPredmetu = resultSet.getString("nazev_predmetu");
+                double prumerHodnoceni = resultSet.getDouble("prumer_hodnoceni");
+                tableModel.addRow(new Object[]{nazevPredmetu, prumerHodnoceni});
             }
-            buttonPanel.add(rozvrhButton);
 
-            // Přidání tlačítka "Informace o mě" do panelu
-            if (studentButton == null) {
-                studentButton = new JButton("Informace o mě");
-                studentButton.addActionListener(e -> zobrazitStudentaPodleID(idStudent));
-            }
-            buttonPanel.add(studentButton);
+            // Vytvoření tabulky
+            JTable table = new JTable(tableModel);
+            JScrollPane scrollPane = new JScrollPane(table);
 
-            // Aktualizace obsahu hlavního panelu
-            panel.removeAll(); // Odstraníme veškeré současné komponenty z panelu
-            panel.add(mainPanel, BorderLayout.CENTER); // Přidáme nový panel s tabulkou a informacemi
-            panel.add(buttonPanel, BorderLayout.NORTH); // Přidáme tlačítko na horní část panelu
-            panel.revalidate(); // Aktualizujeme layout
-            panel.repaint(); // Překreslíme panel
+            // Přidání tabulky do panelu
+            dataPanel.add(scrollPane, BorderLayout.CENTER);
+
+            // Zobrazení v popup okně
+            JOptionPane.showMessageDialog(null, dataPanel, "Průměr hodnocení studenta ID: " + idStudent, JOptionPane.PLAIN_MESSAGE);
 
             connection.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Chyba při zobrazování studenta: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Chyba při zobrazování průměru hodnocení studenta: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+
+
+    private void zobrazitStudentaPodleID() {
+        String idStudentStr = String.valueOf(idStudent);
+        String sqlQuery = "{CALL ZobrazitStudentaPodleID(?)}";
+        zobrazTabulkuSID("Student", sqlQuery, "Zobrazit studenta", idStudent);
+    }
+
+
 
 
     private boolean prihlasitAdmina() {
@@ -202,7 +186,7 @@ public class StudentGUI extends JFrame {
         zobrazitStudentyButton.addActionListener(e -> zobrazitStudenty());
 
         JButton pridejStudentaButton = new JButton("Přidat studenta");
-        pridejStudentaButton.addActionListener(e -> pridejStudenta());
+        pridejStudentaButton.addActionListener(e -> StudentManager.pridejStudenta());
 
         JButton prumerButton = new JButton("Zobraz průměr");
         prumerButton.addActionListener(e -> zobrazPrumerHodnoceniStudentu());
@@ -259,7 +243,7 @@ public class StudentGUI extends JFrame {
         pridejHodnoceniButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pridejHodnoceni();
+                HodnoceniManager.pridejHodnoceni();
             }
         });
         JPanel hodnoceniPanel = new JPanel();
@@ -349,101 +333,61 @@ public class StudentGUI extends JFrame {
         }
     }
 
+    private void zobrazTabulkuSID(String nazevTabulky, String sqlQuery, String nazevTlacitka, int idStudent) {
+        try {
+            Connection connection = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+            preparedStatement.setInt(1, idStudent);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            // Vytvoření panelu pro zobrazení tabulky
+            JPanel dataPanel = new JPanel();
+            dataPanel.setLayout(new BorderLayout());
+
+            // Vytvoření modelu pro tabulku
+            DefaultTableModel tableModel = new DefaultTableModel();
+
+            // Získání informací o sloupcích z výsledku dotazu
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                tableModel.addColumn(metaData.getColumnLabel(i));
+            }
+
+            // Naplnění tabulky daty z výsledku dotazu
+            while (resultSet.next()) {
+                Object[] rowData = new Object[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    rowData[i - 1] = resultSet.getObject(i);
+                }
+                tableModel.addRow(rowData);
+            }
+
+            // Vytvoření tabulky
+            JTable table = new JTable(tableModel);
+            JScrollPane scrollPane = new JScrollPane(table);
+
+            // Přidání tabulky do panelu
+            dataPanel.add(scrollPane, BorderLayout.CENTER);
+
+            // Zobrazení v popup okně
+            JOptionPane.showMessageDialog(null, dataPanel, "Informace pro studenta s ID: " + idStudent, JOptionPane.PLAIN_MESSAGE);
+
+            connection.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Chyba při zobrazování tabulky: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+
 
     private void zobrazitHodnoceni() {
         String sqlQuery = "CALL ZobrazitHodnoceni()"; // Zde voláme uloženou proceduru
         zobrazTabulku("HODNOCENI", sqlQuery, "Zobrazit hodnocení");
     }
 
-
-    private void pridejHodnoceni() {
-        try {
-            Connection connection = DatabaseManager.getConnection();
-
-            int id_student = Integer.parseInt(JOptionPane.showInputDialog("Zadejte ID studenta:"));
-            int id_zkouska = Integer.parseInt(JOptionPane.showInputDialog("Zadejte ID zkoušky:"));
-            int hodnoceni = Integer.parseInt(JOptionPane.showInputDialog("Zadejte hodnocení (1-5):"));
-
-            // Použití uložené procedury
-            String query = "{CALL PridatHodnoceni(?, ?, ?)}";
-            CallableStatement callableStatement = connection.prepareCall(query);
-            callableStatement.setInt(1, id_student);
-            callableStatement.setInt(2, id_zkouska);
-            callableStatement.setInt(3, hodnoceni);
-
-            boolean hasResults = callableStatement.execute();
-
-            if (!hasResults) {
-                JOptionPane.showMessageDialog(null, "Hodnocení bylo úspěšně přidáno.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
-            }
-
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Chyba při přidávání hodnocení: " + e.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-
-    private void pridejStudenta() {
-        JTextField jmenoField = new JTextField();
-        JTextField prijmeniField = new JTextField();
-        JTextField adresaField = new JTextField();
-        JTextField kontaktField = new JTextField();
-        JTextField datumNarozeniField = new JTextField();
-
-        Object[] message = {
-                "Jméno:", jmenoField,
-                "Příjmení:", prijmeniField,
-                "Adresa:", adresaField,
-                "Kontakt:", kontaktField,
-                "Datum narození:", datumNarozeniField
-        };
-
-        int option = JOptionPane.showConfirmDialog(null, message, "Přidat studenta", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            String jmeno = jmenoField.getText();
-            String prijmeni = prijmeniField.getText();
-            String adresa = adresaField.getText();
-            String kontakt = kontaktField.getText();
-            String datumNarozeni = datumNarozeniField.getText();
-
-            Connection connection = null;
-            CallableStatement callableStatement = null;
-
-            try {
-                connection = DatabaseManager.getConnection();
-
-                String query = "{CALL PridaniStudenta(?, ?, ?, ?, ?)}";
-                callableStatement = connection.prepareCall(query);
-                callableStatement.setString(1, jmeno);
-                callableStatement.setString(2, prijmeni);
-                callableStatement.setString(3, adresa);
-                callableStatement.setString(4, kontakt);
-                callableStatement.setString(5, datumNarozeni);
-
-                boolean hasResults = callableStatement.execute();
-
-                if (!hasResults) {
-                    JOptionPane.showMessageDialog(null, "Student byl úspěšně přidán.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Chyba při přidávání studenta: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
-            } finally {
-                try {
-                    if (callableStatement != null) {
-                        callableStatement.close();
-                    }
-                    if (connection != null) {
-                        connection.close();
-                    }
-                } catch (SQLException closeEx) {
-                    closeEx.printStackTrace();
-                }
-            }
-        }
-    }
 
 
     private void zobrazAktivityStudenta(int idStudent) {

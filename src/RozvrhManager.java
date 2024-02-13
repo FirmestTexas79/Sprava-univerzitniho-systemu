@@ -41,12 +41,13 @@ public class RozvrhManager {
                 try {
                     Connection connection = DatabaseManager.getConnection();
 
-                    // Volání uložené procedury pro odstranění předmětu
-                    CallableStatement callableStatement = connection.prepareCall("{CALL OdeberPredmet(?)}");
+                    // Volání procedury pro odstranění předmětu
+                    CallableStatement callableStatement = connection.prepareCall("{CALL odebrat_predmet(?, ?)}");
                     callableStatement.setInt(1, idPredmet);
+                    callableStatement.setString(2, potvrzeni);
                     callableStatement.execute();
 
-                    JOptionPane.showMessageDialog(null, "Předmět byl úspěšně smazán.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Předmět byl úspěšně odebrán.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
 
                     connection.close();
                 } catch (SQLException ex) {
@@ -84,18 +85,22 @@ public class RozvrhManager {
                 Connection connection = manager.getConnection();
                 connection.setAutoCommit(false);
 
-                String procedureCall = "{CALL PridaniPredmetu(?, ?, ?)}";
-                CallableStatement callableStatement = connection.prepareCall(procedureCall);
-                callableStatement.setString(1, nazev);
-                callableStatement.setInt(2, id_kategorie);
-                callableStatement.setString(3, kod);
+                // Změna volání na funkci místo procedury
+                String functionCall = "{? = CALL PridaniPredmetu(?, ?, ?)}";
+                CallableStatement callableStatement = connection.prepareCall(functionCall);
+                callableStatement.registerOutParameter(1, Types.INTEGER); // Nastavení výstupního parametru
+                callableStatement.setString(2, nazev);
+                callableStatement.setInt(3, id_kategorie);
+                callableStatement.setString(4, kod);
 
                 callableStatement.executeUpdate();
+
+                int novyId = callableStatement.getInt(1); // Získání výstupního parametru s novým ID předmětu
 
                 connection.commit();
                 connection.close();
 
-                JOptionPane.showMessageDialog(null, "Předmět byl úspěšně přidán.", "Úspěch", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Předmět byl úspěšně přidán s ID: " + novyId, "Úspěch", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Chyba při přidávání předmětu: " + ex.getMessage(), "Chyba", JOptionPane.ERROR_MESSAGE);
