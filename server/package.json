@@ -15,6 +15,7 @@
   "name": "server-sprava-univerzitniho-systemu",
   "version": "0.0.0",
   "dependencies": {
+    "dotenv": "^16.4.5",
     "mysql2": "^3.9.2"
   }
 }
