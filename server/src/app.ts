@@ -1,54 +1,65 @@
-import express, {Request, Response} from 'express';
-import {createConnection} from "mysql2";
-
+import cors from "cors"
+import express, {} from "express"
+import {createConnection} from "mysql2"
+import swaggerUi from "swagger-ui-express"
+import swaggerOutput from "./swagger_output.json"
+import ip from "ip"
+import {routes} from "./routes"
+// loading environments variables from .env
 require("dotenv").config()
 
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-
+//setup for port server
+export const PORT = process.env.SERVER_PORT || 3002
+//setup for framework(express)
+const app = express()
+//setup cors (privileges)
+app.use(cors({
+	origin:"*"
+}))
+// setup body parser
+app.use(express.json())
+//setup swagger documentation with end points(api)
+app.use("/api.docs",swaggerUi.serve,swaggerUi.setup(swaggerOutput))
+// setup for database connection
 const connection = createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+	host: process.env.MYSQL_HOST,
+	user: process.env.MYSQL_USER,
+	password: process.env.MYSQL_PASSWORD,
+	database: process.env.MYSQL_DATABASE
 
 })
+
+
 
 connection.connect((error) => {
-    if (error) {
-        console.error("error connecting to database: ",error)
-        return
-    }
-    console.log("connected to database")
+	if (error) {
+		console.error("error connecting to database: ",error)
+		return
+	}
+	console.log("connected to database")
 })
 
-connection.query("SELECT * FROM student", (error,results) =>{
+/*connection.query("SELECT * FROM student", (error,results) =>{
     if (error) {
         console.error("error executing query: ",error)
         return
     }
     console.log("Data from students: ", results)
-})
+})*/
 
-connection.end((error) => {
+
+/*connection.end((error) => {
     if (error) {
         console.error("error closing connection: ",error)
         return
     }
     console.log("connection to database closed")
-})
+})*/
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello, Express with TypeScript!');
-});
-
-app.get('*', (req: Request, res: Response) => {
-    res.send('Yeeet');
-});
-
+app.use("/",routes)
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+	console.log(`Server is running on : ${ip.address()}:${PORT}`)
+})
 

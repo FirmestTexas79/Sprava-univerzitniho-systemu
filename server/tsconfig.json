@@ -3,9 +3,23 @@
     "target": "es6",
     "module": "commonjs",
     "outDir": "./dist",
+    "rootDir": "./",
+    "baseUrl": "./",
     "strict": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*.ts",
+    "src/swagger-output.json"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "references": [
+    {
+      "path": "../lib",
+      "prepend": true
+    }
+  ]
 }

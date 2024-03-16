@@ -1,0 +1,35 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "0.0.0",
+    "title": "Swagger Docs for University System Project",
+    "description": "This is the documentation for the University System Project API. It contains all the endpoints and their descriptions."
+  },
+  "servers": [
+    {
+      "url": "http://10.0.1.23:3001",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
+
