@@ -26,3 +26,5 @@ npm install
 
 # Run the client start script
 npm start &
+
+# run sh ./setup.sh

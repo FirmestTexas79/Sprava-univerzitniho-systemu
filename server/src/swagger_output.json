@@ -21,6 +21,16 @@
           }
         }
       }
+    },
+    "/users/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -32,4 +42,3 @@
     }
   }
 }
-
