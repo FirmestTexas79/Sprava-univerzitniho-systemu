@@ -4,3 +4,6 @@ export interface User {
     email: string,
     birthday?: string
 }
+export interface UserPassword extends User{
+    password: string
+}
