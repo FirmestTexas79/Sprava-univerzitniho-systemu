@@ -7,10 +7,12 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
   },
   "include": [
-    "src/*/.ts",
+    "src/**/*.ts",
     "src/swagger-output.json"
   ],
   "exclude": [

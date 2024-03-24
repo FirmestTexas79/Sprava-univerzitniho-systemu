@@ -26,7 +26,7 @@ export async function postUser(request: Request, response: Response) {
 		response.status(400).json({message: "missing required info"})
 	}
 	try {
-		const salt = bcrypt.getSaltSync(12)
+		const salt = bcrypt.genSaltSync(12)
 		const hashedPassword = await bcrypt.hash(password, salt)
 		// TODO implement mysqldatabase
 		console.log("User added succesfully: ", hashedPassword)
