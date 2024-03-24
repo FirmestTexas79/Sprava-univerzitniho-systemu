@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "strict": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/swagger-output.json"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "rootDirs": ["./src" , "../lib/src"],
+}

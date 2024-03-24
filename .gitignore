@@ -1,29 +1,37 @@
-### IntelliJ IDEA ###
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+.husky
+.idea
+.vscode
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
+# swagger output
+server/src/swagger_output.json
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# dependencies
+**/node_modules
+/.pnp
+.pnp.js
 
-### VS Code ###
-.vscode/
+# testing
+/coverage
 
-### Mac OS ###
-.DS_Store
+# production
+**/build
+**/dist
+/gen
+
+# misc
+.DS_store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn.error.log*
+
+# lock files
+package-lock.json
+yarn.lock
+
+
