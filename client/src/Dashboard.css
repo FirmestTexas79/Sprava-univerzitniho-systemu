@@ -1,0 +1,29 @@
+.dashboard-container {
+    font-family: Arial, sans-serif;
+}
+
+.dashboard-header, .dashboard-footer {
+    padding: 20px;
+    text-align: center;
+}
+
+.dashboard-main {
+    padding: 20px;
+}
+
+.dashboard-summary, .dashboard-controls {
+    margin-bottom: 20px;
+}
+
+.dashboard-controls button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.dashboard-controls button:hover {
+    background-color: #0056b3;
+}
