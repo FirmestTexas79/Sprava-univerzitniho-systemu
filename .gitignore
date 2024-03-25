@@ -3,7 +3,7 @@
 .vscode
 
 # swagger output
-server/src/swagger_output.json
+# server/src/swagger_output.json
 
 # dependencies
 **/node_modules
@@ -20,7 +20,7 @@ server/src/swagger_output.json
 
 # misc
 .DS_store
-.env
+# .env
 .env.local
 .env.development.local
 .env.test.local
