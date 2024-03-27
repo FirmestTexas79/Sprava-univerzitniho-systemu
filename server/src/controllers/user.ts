@@ -1,38 +1,59 @@
-import {connection} from "../config/database"
 import {Request, Response} from "express"
-import {UserPassword} from "../../../lib/src/lib"
+import {UserPassword} from "../../../lib/src/utils"
 import bcrypt from "bcrypt"
+import {MySQLDatabaseOperator} from "../services/database/operators/mysql/MySQLDatabaseOperator"
+import {User} from "../models/User"
+import {ResponseBody} from "../../../lib/src/ResponseBody"
 
-export function getUsers(request: Request, response: Response) {
-	// #swagger.tags = ['user']
-	connection.query("SELECT * FROM users", (error, results) => {
-		if (error) {
-			console.error("error executing query: ", error)
-			response.status(500).json({message: "error executing query"})
-		}
-		console.log(results)
-		response.status(200).json(results)
-	})
+/**
+ * GET /users
+ * @param request Request
+ * @param response Response
+ * Vypise Users
+ */
+export async function getUsers(request: Request, response: Response) {
+	const res: ResponseBody<User[]> = {message: "Data from users", code: 200}
+	//  #swagger.tags = ['User']
+	//  #swagger.description = 'Endpoint to get all users'
+	//  #swagger.responses[200] = {
+	//    description: 'Data from users',
+	//  }
+	//  #swagger.responses[500] = {
+	//    description: 'Error executing query'
+	//  }
+
+	const count = request.query.count as string | undefined
+	const intCount = count ? parseInt(count):undefined
+
+
+	// execute the query to get all users
+	const operator = new MySQLDatabaseOperator(User)
+	const results = await operator.readAll({count:intCount})
+	res.data = results.map((user)=> user.omitNullValues().omitProp("password"as keyof User))
+	// send the users as a response
+	//    #swagger.responses[200]
+	response.status(res.code).json(res)
 }
 
 export async function postUser(request: Request, response: Response) {
-	if (!request.body) {
-		console.error("Missing parameters")
-		response.status(400).json({message: "missing required info"})
+
+}
+
+export async function deleteUser(request: Request, response: Response) {
+	const res: ResponseBody = {message: "User deleted successfully", code: 200}
+	// requesting id for idUser
+	const idUser = request.params.id
+	// Operating database
+	const operator = new MySQLDatabaseOperator(User)
+	const results = await operator.readById(idUser)
+
+	// check if user exists
+	if (!results) {
+		res.message = "No user found"
+		res.code = 500
+		response.status(res.code).json(res)
+		return
 	}
-	const {password, name, email}: UserPassword = request.body
-	if (!password || !email || !name) {
-		console.error("Missing parameters")
-		response.status(400).json({message: "missing required info"})
-	}
-	try {
-		const salt = bcrypt.genSaltSync(12)
-		const hashedPassword = await bcrypt.hash(password, salt)
-		// TODO implement mysqldatabase
-		console.log("User added succesfully: ", hashedPassword)
-		response.status(201).json({message: "Succesfully sent"})
-	} catch (error) {
-		console.error("error: ", error)
-		response.status(500).json({message: "error hashing password"})
-	}
+	await operator.softDelete(idUser)
+	response.status(res.code).json(res)
 }

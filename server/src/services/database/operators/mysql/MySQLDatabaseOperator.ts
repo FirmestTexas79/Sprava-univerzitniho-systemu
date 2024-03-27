@@ -1,8 +1,9 @@
-import { DatabaseOperator, OperatorOptions } from "../DatabaseOperator"
+import {DatabaseOperator, OPERATOR_OPTION_COUNT, OperatorOptions, QueryOperatorOptions} from "../DatabaseOperator"
 import { TableEntity, TableEntityConstructor } from "../../../../models/TableEntity"
 import { ResultSetHeader } from "mysql2"
 import { DatabaseRowVisibility } from "../../../../../../lib/src/DatabaseRowVisibility"
 import { pool } from "../../../../config/database"
+import "reflect-metadata"
 
 /**
  * MySQLDatabaseOperator
@@ -27,16 +28,11 @@ export class MySQLDatabaseOperator<T extends TableEntity> extends DatabaseOperat
 		if (!this.constructorFn) return
 
 		const sql = `INSERT INTO ${this.tableName}
-                 SET ?`
+                     SET ?`
 
-		try {
-			const [rows] = await this.pool.query<ResultSetHeader>(sql, data)
-			console.log("Record added successfully", JSON.stringify(rows))
-			return rows
-		} catch (error) {
-			console.error("Error executing execute:", error)
-			throw error
-		}
+		const [rows] = await this.pool.query<ResultSetHeader>(sql, data)
+		console.log("Record added successfully", JSON.stringify(rows))
+		return rows
 	}
 
 	/**
@@ -47,29 +43,32 @@ export class MySQLDatabaseOperator<T extends TableEntity> extends DatabaseOperat
 	async readById(id: string, options?: OperatorOptions): Promise<T | undefined> {
 		if (!this.constructorFn) return
 
+		const visibility: string = options?.ignoreVisibility ? "" : `AND visibility = '${DatabaseRowVisibility.ACTIVE}'`
 		const sql = `SELECT *
-                 FROM ${this.tableName}
-                 WHERE id = ?`
+                     FROM ${this.tableName}
+                     WHERE id = ? ${visibility}`
 
-		try {
-			// @ts-ignore
-			const [rows] = await this.pool.query<T[]>(sql, [id])
-			console.log("Record retrieved successfully", rows)
 
-			if (rows.length === 0) {
-				console.warn("No record found")
-				return
-			} else if (rows.length > 1) {
-				console.warn("More than one record found")
-				return
-			} else if (options?.ignoreVisibility === true || rows[0].visibility === DatabaseRowVisibility.ACTIVE) {
-				console.log("11", rows[0])
-				return new this.constructorFn(rows[0])
-			}
-		} catch (error) {
-			console.error("Error executing execute:", error)
-			throw error
+		// @ts-ignore
+		const [rows] = await this.pool.query<T[]>(sql, [id])
+		console.log("Record retrieved successfully", JSON.stringify(rows))
+
+		if (rows.length === 0) {
+			console.warn("No record found")
+			return
 		}
+		if (rows.length > 1) {
+			console.warn("More than one record found")
+			return
+		}
+
+		const entity = new this.constructorFn(rows[0])
+
+		// get related props using @BindEntity
+		await this.referencedProps(entity, MySQLDatabaseOperator, options)
+
+
+		return entity
 	}
 
 	/**
@@ -78,63 +77,64 @@ export class MySQLDatabaseOperator<T extends TableEntity> extends DatabaseOperat
 	 * @param value The value to search for
 	 * @param options Options for the operation
 	 */
-	async readByKey(key: keyof T, value: string, options?: OperatorOptions): Promise<T[]> {
+	async readByKey(key: keyof T, value: string, options?: QueryOperatorOptions): Promise<T[]> {
 		if (!this.constructorFn) return []
 
+		// visibility check
+		const visibility: string = options?.ignoreVisibility ? "" : `AND visibility = '${DatabaseRowVisibility.ACTIVE}'`
+		// count check
+		const count = options?.count ?? OPERATOR_OPTION_COUNT
 		const field = key.toString()
 		const results: T[] = []
 
 		const sql = `SELECT *
-                 FROM ${this.tableName}
-                 WHERE ${field} = ?`
+                     FROM ${this.tableName}
+                     WHERE ${field} = ? ${visibility} ${options?.count ? "LIMIT " + count : ""}`
 
-		try {
-			// @ts-ignore
-			const [rows] = await this.pool.query<T[]>(sql, [value])
-			console.log("Records retrieved successfully", rows)
 
-			const entities = rows.filter((element: T) => options?.ignoreVisibility === true || element.visibility === DatabaseRowVisibility.ACTIVE)
+		// @ts-ignore
+		const [rows] = await this.pool.query<T[]>(sql, [value])
+		console.log("Records retrieved successfully", JSON.stringify(rows))
 
-			for (const element of entities) {
-				if (!this.constructorFn) break
-				const entity = new this.constructorFn(element)
-				results.push(entity)
-			}
-			return results
-		} catch (error) {
-			console.error("Error executing execute:", error)
-			throw error
+		for (const element of rows) {
+			if (!this.constructorFn) break
+			const entity = new this.constructorFn(element)
+			await this.referencedProps(entity, MySQLDatabaseOperator, options)
+			results.push(entity)
 		}
+		return results
 	}
 
 	/**
 	 * Read all records from the database
 	 * @param options Options for the operation
 	 */
-	async readAll(options?: OperatorOptions): Promise<T[]> {
+	async readAll(options?: QueryOperatorOptions): Promise<T[]> {
 		if (!this.constructorFn) return []
 
+		// visibility check
+		const visibility: string = options?.ignoreVisibility ? "" : `WHERE visibility = '${DatabaseRowVisibility.ACTIVE}'`
+
+		// count check
+		const count: number = options?.count ?? OPERATOR_OPTION_COUNT
 		const results: T[] = []
 
 		const sql = `SELECT *
-                 FROM ${this.tableName}`
+                     FROM ${this.tableName} ${visibility} ${options?.count ? "LIMIT " + count : ""}`
 
-		try {
-			// @ts-ignore
-			const [rows] = await this.pool.query<T[]>(sql)
-			console.log("Records retrieved successfully", rows)
 
-			for (const element of rows) {
-				if (!this.constructorFn) break
-				const entity = new this.constructorFn(element)
-				if (options?.ignoreVisibility === true || entity.visibility === DatabaseRowVisibility.ACTIVE)
-					results.push(entity)
-			}
-			return results
-		} catch (error) {
-			console.error("Error executing execute:", error)
-			throw error
+		// @ts-ignore
+		const [rows] = await this.pool.query<T[]>(sql)
+		console.log("Records retrieved successfully", JSON.stringify(rows))
+
+		for (const element of rows) {
+			if (!this.constructorFn) break
+			const entity = new this.constructorFn(element)
+			await this.referencedProps(entity, MySQLDatabaseOperator, options)
+			results.push(entity)
 		}
+		return results
+
 	}
 
 	/**
@@ -145,38 +145,33 @@ export class MySQLDatabaseOperator<T extends TableEntity> extends DatabaseOperat
 		if (!this.constructorFn) return
 
 		const sql = `UPDATE ${this.tableName}
-                 SET ?
-                 WHERE id = ?`
+                     SET ?
+                     WHERE id = ?`
 
-		try {
-			const [rows] = await this.pool.query<ResultSetHeader>(sql, [data, data.id])
-			console.log("Record updated successfully", JSON.stringify(rows))
-			return rows
-		} catch (error) {
-			console.error("Error executing execute:", error)
-			throw error
-		}
+
+		const [rows] = await this.pool.query<ResultSetHeader>(sql, [data, data.id])
+		console.log("Record updated successfully", JSON.stringify(rows))
+		return rows
+
 	}
 
 	/**
 	 * Merge a record in the database
-	 * @param data The data to be merged
+	 * @param id The id of the record to be merged
+	 * @param key The key to merge
+	 * @param value The value to merge
 	 */
-	async merge(data: T): Promise<ResultSetHeader | undefined> {
+	async merge<K extends keyof T>(id: string, key: K, value: T[K]): Promise<ResultSetHeader | undefined> {
 		if (!this.constructorFn) return
 
-		const sql = `INSERT INTO ${this.tableName}
-                 SET ?
-                 ON DUPLICATE KEY UPDATE ?`
+		const sql = `UPDATE ${this.tableName}
+                     SET ${key as string} = ?
+                     WHERE id = ?`
 
-		try {
-			const [rows] = await this.pool.query<ResultSetHeader>(sql, [data, data])
-			console.log("Record merged successfully", JSON.stringify(rows))
-			return rows
-		} catch (error) {
-			console.error("Error executing execute:", error)
-			throw error
-		}
+
+		const [rows] = await this.pool.query<ResultSetHeader>(sql, [value, id])
+		console.log("Record merged successfully", JSON.stringify(rows))
+		return rows
 	}
 
 	/**
@@ -187,17 +182,13 @@ export class MySQLDatabaseOperator<T extends TableEntity> extends DatabaseOperat
 		if (!this.constructorFn) return
 
 		const sql = `DELETE
-                 FROM ${this.tableName}
-                 WHERE id = ?`
+                     FROM ${this.tableName}
+                     WHERE id = ?`
 
-		try {
-			const [rows] = await this.pool.query<ResultSetHeader>(sql, [id])
-			console.log("Record deleted successfully", JSON.stringify(rows))
-			return rows
-		} catch (error) {
-			console.error("Error executing query:", error)
-			throw error
-		}
+
+		const [rows] = await this.pool.query<ResultSetHeader>(sql, [id])
+		console.log("Record deleted successfully", JSON.stringify(rows))
+		return rows
 	}
 
 	/**
@@ -205,18 +196,6 @@ export class MySQLDatabaseOperator<T extends TableEntity> extends DatabaseOperat
 	 * @param id The id of the record to be soft deleted
 	 */
 	async softDelete(id: string): Promise<ResultSetHeader | undefined> {
-		if (!this.constructorFn) return
-
-		const sql = `UPDATE ${this.tableName}
-                 SET visibility = ` + DatabaseRowVisibility.DELETED + " WHERE id = ?"
-
-		try {
-			const [rows] = await this.pool.query<ResultSetHeader>(sql, [id])
-			console.log("Record soft deleted successfully", JSON.stringify(rows))
-			return rows
-		} catch (error) {
-			console.error("Error executing query:", error)
-			throw error
-		}
+		return this.merge(id, "visibility", DatabaseRowVisibility.DELETED)
 	}
 }

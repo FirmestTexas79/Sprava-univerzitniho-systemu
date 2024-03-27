@@ -19,6 +19,13 @@ CREATE TABLE users
     role        CHAR(12)                    NULL,
     password    CHAR(60)                    NOT NULL
 );
-INSERT INTO users (id, email, password, role, firstname,lastname)
-values (UUID(), "pepa@uhk.cz", "$2a$12$BGdrBjMNbwp0uZ.jYyOVbOuqzLCFrgs7Tc9B1la0IghIYuyecU3Cu","ADMIN",
-        "pepa","cervinka");
+-- Insert sample users into the table
+INSERT INTO users (id, firstname, lastname, email, phone, birthday, password, role, titleAfter)
+VALUES (UUID(), 'Jan', 'Syn', 'jannovy1@gmail.com', '123456789', '1990-12-12',
+        '$2a$12$ZYvSLB2zCe.kz6XzLK12tORVbgldZdEquKWh5DdwbKbfiwRjUN1la', 'TEACHER', 'Ing.'),
+       (UUID(), 'Petr', 'Novak', 'petrnovak21@gmail.com', '987654321', '1995-01-01',
+        '$2a$12$qom2EcKz1wuDeBr6aNH.6ORr.ohl.7F/IeTkzf70r9Cj1IJZa6lV2', 'STUDENT', null),
+       (UUID(), 'Karel', 'Vomacka', 'karel.vomacka@gmail.com', '987654321', '1995-01-01',
+        '$2a$12$7sENo8u297FCxIqWxdllqOW/LxpP2d9gR6K0uKrQlXrqgD3UaR6kO', 'ADMIN', null);
+-- values (UUID(), "pepa@uhk.cz", "$2a$12$BGdrBjMNbwp0uZ.jYyOVbOuqzLCFrgs7Tc9B1la0IghIYuyecU3Cu","ADMIN",
+--         "pepa","cervinka");

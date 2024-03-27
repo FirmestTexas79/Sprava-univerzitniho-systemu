@@ -53,9 +53,11 @@ export abstract class DatabaseOperator<T extends TableEntity, R extends NonNulla
 
     /**
      * Merge a record in the database
-     * @param data The data to be merged
+     * @param id The id of the record to be merged
+     * @param key The key to merge
+     * @param value The value to merge
      */
-    abstract merge(data: T): Promise<R | undefined>
+    abstract merge<K extends keyof T>(id: string, key: keyof T, value: T[K]): Promise<R | undefined>
 
     /**
      * Delete a record from the database
@@ -68,6 +70,28 @@ export abstract class DatabaseOperator<T extends TableEntity, R extends NonNulla
      * @param id The id of the record to be soft deleted
      */
     abstract softDelete(id: string): Promise<R | undefined>
+
+    protected async referencedProps<K extends TableEntity>(
+        entity: T,
+        operatorConstructor: new (constructor?: TableEntityConstructor<K>) => DatabaseOperator<K, R>,
+        options?: OperatorOptions
+    ) {
+        // Check for properties decorated with BindEntity and fetch related entities
+        for (const prop of Object.keys(entity)) {
+            const constructorData = Reflect.getMetadata("bind:entity", entity, prop)
+            if (constructorData && this.constructorFn) {
+                // Create a new operator for the related entity
+                const relatedOperator = new operatorConstructor(constructorData)
+                // @ts-ignore
+                const relatedEntity = await relatedOperator.readById(entity[prop as keyof T], options)
+                if (relatedEntity) {
+                    // Assign related entity to the property
+                    // @ts-ignore
+                    entity[prop as keyof T] = relatedEntity
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -78,4 +102,21 @@ export interface OperatorOptions {
      * Ignore the visibility of the record
      */
     ignoreVisibility?: boolean
+
 }
+
+/**
+ * Options for the query operator
+ */
+export interface QueryOperatorOptions extends OperatorOptions {
+    /**
+     * The number of records to return
+     * @default 100
+     * @minimum 1
+     * @maximum 1000
+     * @TJS-type Integer
+     */
+    count?: number
+}
+
+export const OPERATOR_OPTION_COUNT = 100
