@@ -17,7 +17,7 @@ const VyberPredmetu = () => {
                 <Link to="/dashboard">Domů</Link> {/* Změna z a href na Link to */}
                 <Link to="/Rozvrh">Rozvrh</Link> {/* Přidán odkaz na Rozvrh */}
                 <Link to="/vyber-predmetu">Výběr předmětů</Link> {/* Předpokládá se, že toto je funkce dostupná studentům */}
-                <Link to="/osobni-udaje-ucitele">Osobní údaje</Link> {/* Předpokládá se, že toto vede na stránku s osobními údaji studenta */}
+                <Link to="/osobni-udaje">Osobní údaje</Link> {/* Předpokládá se, že toto vede na stránku s osobními údaji studenta */}
             </nav>
             <h2>Výběr Předmětu</h2>
             <ul>
