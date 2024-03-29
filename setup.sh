@@ -27,4 +27,7 @@ npm install
 # Run the client start script
 npm start &
 
+# Install react-router-dom in client
+npm install react-router-dom
+
 # run sh ./setup.sh

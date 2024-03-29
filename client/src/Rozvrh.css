@@ -1,0 +1,26 @@
+.rozvrh-container {
+    margin: auto;
+    padding: 20px;
+    max-width: 800px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  th {
+    background-color: darkblue;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  

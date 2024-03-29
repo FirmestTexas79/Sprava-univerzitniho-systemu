@@ -3,10 +3,11 @@
     display: flex;
     flex-direction:column ;
     margin: auto;
-    margin-top: 200px ;
+    margin-top: 150px ;
     background: #fff;
     padding-bottom: 30px;
     color: darkblue;
+    border: 5px solid lightgrey;
 }
 .header
 {
@@ -83,6 +84,7 @@ cursor: pointer;
     display: flex;
     gap: 30px;
     margin: 60px auto;
+    
 
 }
 .submit
@@ -98,7 +100,9 @@ cursor: pointer;
     font-size: 19px;
     font-weight: 700;
     cursor: pointer;
+    
 }
+
 .submit-container :hover
 {
     color:darkblue

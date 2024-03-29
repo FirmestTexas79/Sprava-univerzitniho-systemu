@@ -27,3 +27,37 @@
 .dashboard-controls button:hover {
     background-color: #0056b3;
 }
+.navbar {
+    background-color: #333; /* Tmavé pozadí */
+    overflow: hidden; /* Skryje přebytečný obsah */
+    display: flex; /* Použije flexbox pro rozmístění položek */
+    justify-content: space-between; /* Rozprostře položky na obě strany */
+    padding: 14px 20px; /* Trochu paddingu */
+  }
+  
+  .navbar a {
+    float: left; /* Zarovná odkazy doleva */
+    color: white; /* Bílý text */
+    text-align: center; /* Centruje text */
+    padding: 12px; /* Trochu paddingu */
+    text-decoration: none; /* Žádné podtržení u odkazů */
+    font-size: 17px; /* Velikost fontu */
+  }
+  
+  .navbar a:hover {
+    background-color: #ddd; /* Změní barvu na šedou při najetí myši */
+    color: black; /* Změní text na černý při najetí myši */
+  }
+  button {
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #f44336; /* Červená barva pro tlačítko odhlášení */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #c62828;
+}
