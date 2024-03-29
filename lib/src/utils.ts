@@ -12,7 +12,7 @@ export interface User {
 }
 
 export interface UserPassword extends User {
-	password: string
+	password?: string
 }
 
 /**

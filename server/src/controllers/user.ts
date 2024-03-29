@@ -1,6 +1,4 @@
 import {Request, Response} from "express"
-import {UserPassword} from "../../../lib/src/utils"
-import bcrypt from "bcrypt"
 import {MySQLDatabaseOperator} from "../services/database/operators/mysql/MySQLDatabaseOperator"
 import {User} from "../models/User"
 import {ResponseBody} from "../../../lib/src/ResponseBody"
@@ -35,8 +33,48 @@ export async function getUsers(request: Request, response: Response) {
 	response.status(res.code).json(res)
 }
 
-export async function postUser(request: Request, response: Response) {
+// export async function postUser(request: Request, response: Response) {
+//
+// }
 
+export async function getUserById(request: Request, response: Response) {
+	const res: ResponseBody<User> = {message: "Successfully found user", code: 200}
+
+	const idUser = request.params.id
+
+	const operator = new MySQLDatabaseOperator(User)
+
+	const results = await operator.readById(idUser)
+
+	// check if user exists
+	if (!results) {
+		res.message = "No user found"
+		res.code = 500
+		response.status(res.code).json(res)
+		return
+	}
+	res.data = results.omitNullValues().omitProp("password" as keyof User)
+	response.status(res.code).json(res)
+}
+
+export async function putUser(request: Request, response: Response) {
+	const res: ResponseBody = {message: "Succesfully changed record", code: 200}
+
+	const idUser = request.params.id
+
+	const operator = new MySQLDatabaseOperator(User)
+
+	const results = await operator.readById(idUser)
+
+	// check if user exists
+	if (!results) {
+		res.message = "No user found"
+		res.code = 500
+		response.status(res.code).json(res)
+		return
+	}
+	await operator.update(results)
+	response.status(res.code).json(res)
 }
 
 export async function deleteUser(request: Request, response: Response) {

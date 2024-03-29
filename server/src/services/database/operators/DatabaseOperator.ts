@@ -37,7 +37,7 @@ export abstract class DatabaseOperator<T extends TableEntity, R extends NonNulla
      * @param value The value to search for
      * @param options Options for the operation
      */
-    abstract readByKey(key: keyof T, value: string, options?: OperatorOptions): Promise<T[]>
+    abstract readByKey<K extends keyof T>(key: keyof T, value: T[K], options?: QueryOperatorOptions): Promise<T[]>
 
     /**
      * Read all records from the database

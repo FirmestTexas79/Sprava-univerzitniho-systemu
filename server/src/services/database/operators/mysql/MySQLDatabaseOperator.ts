@@ -77,7 +77,7 @@ export class MySQLDatabaseOperator<T extends TableEntity> extends DatabaseOperat
 	 * @param value The value to search for
 	 * @param options Options for the operation
 	 */
-	async readByKey(key: keyof T, value: string, options?: QueryOperatorOptions): Promise<T[]> {
+	async readByKey<K extends keyof T>(key: keyof T, value: T[K], options?: QueryOperatorOptions): Promise<T[]> {
 		if (!this.constructorFn) return []
 
 		// visibility check
