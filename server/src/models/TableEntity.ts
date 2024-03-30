@@ -59,6 +59,7 @@ export abstract class TableEntity implements RowDataPacket, TableEntityInterface
 export enum TableEnum {
 	USERS = "users",
 	AUTH_TOKENS = "auth_tokens",
+	ACTIVITIES = "activities"
 }
 
 export interface TableEntityConstructor<T extends TableEntity> {
