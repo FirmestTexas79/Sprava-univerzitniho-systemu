@@ -1,6 +1,6 @@
-import {UserPassword as UserInterface} from "../../../lib/src/utils"
 import {TableEntity, TableEnum} from "./TableEntity"
 import {Table} from "../services/database/operators/Table"
+import {UserPassword as UserInterface} from "../../../lib/src/models/user/UserPassword"
 
 
 @Table(TableEnum.USERS)

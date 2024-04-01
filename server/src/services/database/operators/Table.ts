@@ -19,7 +19,7 @@ import { TableEnum } from "../../../models/TableEntity"
  * ```
  */
 export function Table(tableName: TableEnum) {
-    return function(target: any) {
-        target.tableName = tableName
-    }
+	return function(target: any) {
+		target.tableName = tableName
+	}
 }

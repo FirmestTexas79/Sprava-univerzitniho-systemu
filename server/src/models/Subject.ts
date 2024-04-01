@@ -1,5 +1,5 @@
 import {TableEntity, TableEnum} from "./TableEntity"
-import {Subject as SubjectInterface} from "../../../lib/src/Subject"
+import {Subject as SubjectInterface} from "../../../lib/src/models/Subject"
 import {Table} from "../services/database/operators/Table"
 
 @Table(TableEnum.SUBJECTS)

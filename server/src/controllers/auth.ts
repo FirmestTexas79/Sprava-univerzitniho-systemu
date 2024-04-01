@@ -1,5 +1,5 @@
 import {Request, Response} from "express"
-import {ResponseBody} from "../../../lib/src/ResponseBody"
+import {ResponseBody} from "../../../lib/src/persistance/ResponseBody"
 import {MySQLDatabaseOperator} from "../services/database/operators/mysql/MySQLDatabaseOperator"
 import {User} from "../models/User"
 import bcrypt from "bcrypt"

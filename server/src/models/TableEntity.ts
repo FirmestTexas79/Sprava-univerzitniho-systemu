@@ -1,6 +1,6 @@
 import {RowDataPacket} from "mysql2"
-import {TableEntity as TableEntityInterface} from "../../../lib/src/TableEntity"
-import {omitNull} from "../../../lib/src/utils"
+import {TableEntity as TableEntityInterface} from "../../../lib/src/models/TableEntity"
+import {omitNull} from "../../../lib/src/utils/omitNull"
 
 /**
  * TableEntity is the base class for all data models.

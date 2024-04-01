@@ -10,7 +10,7 @@ type RegistrationState = {
 
 // Třída Registration rozšiřující React.Component
 // Specifikujeme prázdné props a typ pro stav
-class Registration extends React.Component<{}, RegistrationState> {
+class RegistrationPage extends React.Component<{}, RegistrationState> {
   state: RegistrationState = {
     name: '',
     email: '',
@@ -67,4 +67,4 @@ class Registration extends React.Component<{}, RegistrationState> {
   }
 }
 
-export default Registration;
+export default RegistrationPage;

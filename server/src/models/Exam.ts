@@ -1,5 +1,5 @@
 import {TableEntity, TableEnum} from "./TableEntity"
-import {Exam as ExamInterface, ExamType} from "../../../lib/src/Exam"
+import {Exam as ExamInterface, ExamType} from "../../../lib/src/models/Exam"
 import {Table} from "../services/database/operators/Table"
 
 @Table(TableEnum.EXAMS)

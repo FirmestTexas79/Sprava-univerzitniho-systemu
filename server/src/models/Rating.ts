@@ -1,5 +1,5 @@
 import {TableEntity, TableEnum} from "./TableEntity"
-import {Rating as RatingInterface} from "../../../lib/src/Rating"
+import {Rating as RatingInterface} from "../../../lib/src/models/Rating"
 import {Table} from "../services/database/operators/Table"
 
 @Table(TableEnum.RATINGS)

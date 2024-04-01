@@ -1,5 +1,5 @@
 import {TableEntity, TableEnum} from "./TableEntity"
-import {Activity as ActivityInterface} from "../../../lib/src/Activity"
+import {Activity as ActivityInterface} from "../../../lib/src/models/Activity"
 import {Table} from "../services/database/operators/Table"
 
 @Table(TableEnum.ACTIVITIES)

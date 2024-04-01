@@ -1,7 +1,7 @@
 import {DatabaseOperator, OPERATOR_OPTION_COUNT, OperatorOptions, QueryOperatorOptions} from "../DatabaseOperator"
 import { TableEntity, TableEntityConstructor } from "../../../../models/TableEntity"
 import { ResultSetHeader } from "mysql2"
-import { DatabaseRowVisibility } from "../../../../../../lib/src/DatabaseRowVisibility"
+import { DatabaseRowVisibility } from "../../../../../../lib/src/persistance/DatabaseRowVisibility"
 import { pool } from "../../../../config/database"
 import "reflect-metadata"
 

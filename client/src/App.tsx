@@ -1,47 +1,42 @@
-import React from 'react';
-import './App.css';
-import Login from './Login';
-import Dashboard from './Dashboard';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ResetPassword from './ResetPassword';
-import Registration from './Registration';
-import Rozvrh from './Rozvrh';
-import VyberPredmetu from './VyberPredmetu';
-import OsobniUdaje from './OsobniUdaje';
-import UcitelDashboard from './UcitelDashboard';
-import PlanHodin from './Plan hodin';
-import SpravaKurzu from './SpravaKurzu';
-import ZaznamZnamek from './ZaznamZnamek';
-import VyukoveMaterialy from './VyukovyMaterialy';
-import OsobniUdajeUcitele from './OsobniUdajeUcitele';
+import "./styles/App.css"
+import LoginPage from "./pages/LoginPage"
+import DashboardPage from "./pages/DashboardPage"
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom"
+import ResetPasswordPage from "./pages/ResetPasswordPage"
+import RegistrationPage from "./pages/RegistrationPage"
+import SchedulePage from "./pages/SchedulePage"
+import SelectSubjectPage from "./pages/SelectSubjectPage"
+import UserPage from "./pages/UserPage"
+import TeacherDashboardPage from "./pages/TeacherDashboardPage"
+import SubjectPlanPage from "./pages/SubjectPlanPage"
+import CourseAdministrationPage from "./pages/CourseAdministrationPage"
+import RatingsPage from "./pages/RatingsPage"
+import TeachingMaterialsPage from "./pages/TeachingMaterialsPage"
+import TeacherUserPage from "./pages/TeacherUserPage"
 
-function App() {
-  return (
-    <Router>
-      <div className="App">
-        <header className="App-header">
-          <Routes>
-            
-            <Route path="/" element={<Login/>} />
-            <Route path="/dashboard" element={<Dashboard/>} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/registration" element={<Registration />} />
-            <Route path="/rozvrh" element={<Rozvrh />} />
-            <Route path="/vyber-predmetu" element={<VyberPredmetu />} />
-            <Route path="/osobni-udaje" element={<OsobniUdaje />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/ucitel-dashboard" element={<UcitelDashboard />} />
-            <Route path="/plan-hodin" element={<PlanHodin />} />
-            <Route path="/sprava-kurzu" element={<SpravaKurzu />} />
-            <Route path="/zaznam-znamek" element={<ZaznamZnamek />} />
-            <Route path="/vyukove-materialy" element={<VyukoveMaterialy />} />
-            <Route path="/osobni-udaje-ucitele" element={<OsobniUdajeUcitele />} />
-            
-          </Routes>
-        </header>
-      </div>
-    </Router>
-  );
+export default function App() {
+	return (
+		<Router>
+			<div className="App">
+				<header className="App-header">
+					<Routes>
+						<Route path="/" element={<LoginPage/>}/>
+						<Route path="/dashboard" element={<DashboardPage/>}/>
+						<Route path="/reset-password" element={<ResetPasswordPage/>}/>
+						<Route path="/registration" element={<RegistrationPage/>}/>
+						<Route path="/rozvrh" element={<SchedulePage/>}/>
+						<Route path="/vyber-predmetu" element={<SelectSubjectPage/>}/>
+						<Route path="/osobni-udaje" element={<UserPage/>}/>
+						<Route path="/login" element={<LoginPage/>}/>
+						<Route path="/ucitel-dashboard" element={<TeacherDashboardPage/>}/>
+						<Route path="/plan-hodin" element={<SubjectPlanPage/>}/>
+						<Route path="/sprava-kurzu" element={<CourseAdministrationPage/>}/>
+						<Route path="/zaznam-znamek" element={<RatingsPage/>}/>
+						<Route path="/vyukove-materialy" element={<TeachingMaterialsPage/>}/>
+						<Route path="/osobni-udaje-ucitele" element={<TeacherUserPage/>}/>
+					</Routes>
+				</header>
+			</div>
+		</Router>
+	)
 }
-
-export default App;

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import './VyberPredmetu.css'; // Import stylů
+import '../styles/VyberPredmetu.css'; // Import stylů
 import { Link } from 'react-router-dom';
 
-const VyberPredmetu = () => {
+const SelectSubjectPage = () => {
     // Předpokládejme, že máte nějaký seznam předmětů
     const predmety = ["Matematika", "Fyzika", "Chemie", "Biologie", "Informatika"];
     const [vybranePredmety, setVybranePredmety] = useState<string[]>([]);
@@ -15,7 +15,7 @@ const VyberPredmetu = () => {
         <div className="vyber-predmetu-container">
             <nav className="navbar">
                 <Link to="/dashboard">Domů</Link> {/* Změna z a href na Link to */}
-                <Link to="/Rozvrh">Rozvrh</Link> {/* Přidán odkaz na Rozvrh */}
+                <Link to="/SchedulePage">SchedulePage</Link> {/* Přidán odkaz na SchedulePage */}
                 <Link to="/vyber-predmetu">Výběr předmětů</Link> {/* Předpokládá se, že toto je funkce dostupná studentům */}
                 <Link to="/osobni-udaje">Osobní údaje</Link> {/* Předpokládá se, že toto vede na stránku s osobními údaji studenta */}
             </nav>
@@ -41,4 +41,4 @@ const VyberPredmetu = () => {
     );
 };
 
-export default VyberPredmetu;
+export default SelectSubjectPage;

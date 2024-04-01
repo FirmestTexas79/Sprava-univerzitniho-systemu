@@ -1,7 +1,7 @@
 import {Request, Response} from "express"
 import {MySQLDatabaseOperator} from "../services/database/operators/mysql/MySQLDatabaseOperator"
 import {User} from "../models/User"
-import {ResponseBody} from "../../../lib/src/ResponseBody"
+import {ResponseBody} from "../../../lib/src/persistance/ResponseBody"
 
 /**
  * GET /users

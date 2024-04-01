@@ -1,5 +1,5 @@
 import {TableEntity, TableEnum} from "./TableEntity"
-import {Room as RoomInterface, RoomType} from "../../../lib/src/Room"
+import {Room as RoomInterface, RoomType} from "../../../lib/src/models/Room"
 import {Table} from "../services/database/operators/Table"
 
 @Table(TableEnum.ROOMS)

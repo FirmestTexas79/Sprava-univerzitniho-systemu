@@ -1,6 +1,6 @@
 import {Request, Response} from "express"
 import {MySQLDatabaseOperator} from "../services/database/operators/mysql/MySQLDatabaseOperator"
-import {ResponseBody} from "../../../lib/src/ResponseBody"
+import {ResponseBody} from "../../../lib/src/persistance/ResponseBody"
 import {Room} from "../models/Room"
 
 /**
