@@ -7,7 +7,7 @@ export interface User extends TableEntity {
 	titleBefore?: string,
 	email?: string,
 	phone?: string,
-	birthday?: string,
+	birthday?: Date,
 	image?: Blob,
 	role?: string
 }

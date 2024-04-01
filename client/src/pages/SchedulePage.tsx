@@ -39,26 +39,26 @@ export default function SchedulePage() {
 			<h2>Můj SchedulePage</h2>
 			<table>
 				<thead>
-				<tr>
-					<th>Čas</th>
-					<th>Pondělí</th>
-					<th>Úterý</th>
-					<th>Středa</th>
-					<th>Čtvrtek</th>
-					<th>Pátek</th>
-				</tr>
+					<tr>
+						<th>Čas</th>
+						<th>Pondělí</th>
+						<th>Úterý</th>
+						<th>Středa</th>
+						<th>Čtvrtek</th>
+						<th>Pátek</th>
+					</tr>
 				</thead>
 				<tbody>
-				{rozvrhData.map((hodina, index) => (
-					<tr key={index}>
-						<td>{hodina.cas}</td>
-						<td>{hodina.pondeli}</td>
-						<td>{hodina.utery}</td>
-						<td>{hodina.streda}</td>
-						<td>{hodina.ctvrtek}</td>
-						<td>{hodina.patek}</td>
-					</tr>
-				))}
+					{rozvrhData.map((hodina, index) => (
+						<tr key={index}>
+							<td>{hodina.cas}</td>
+							<td>{hodina.pondeli}</td>
+							<td>{hodina.utery}</td>
+							<td>{hodina.streda}</td>
+							<td>{hodina.ctvrtek}</td>
+							<td>{hodina.patek}</td>
+						</tr>
+					))}
 				</tbody>
 			</table>
 		</div>

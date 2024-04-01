@@ -24,22 +24,22 @@ export default function SubjectPlanPage() {
 			<h2>Plán Hodin</h2>
 			<table>
 				<thead>
-				<tr>
-					<th>Čas</th>
-					<th>Předmět</th>
-					<th>Třída</th>
-				</tr>
+					<tr>
+						<th>Čas</th>
+						<th>Předmět</th>
+						<th>Třída</th>
+					</tr>
 				</thead>
 				<tbody>
-				{hodiny.map((hodina, index) => (
-					<tr key={index}>
-						<td>{hodina.cas}</td>
-						<td>{hodina.predmet}</td>
-						<td>{hodina.trida}</td>
-					</tr>
-				))}
+					{hodiny.map((hodina, index) => (
+						<tr key={index}>
+							<td>{hodina.cas}</td>
+							<td>{hodina.predmet}</td>
+							<td>{hodina.trida}</td>
+						</tr>
+					))}
 				</tbody>
 			</table>
 		</div>
 	)
-};
+}
