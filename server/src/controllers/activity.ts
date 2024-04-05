@@ -2,6 +2,7 @@ import {Request, Response} from "express"
 import {MySQLDatabaseOperator} from "../services/database/operators/mysql/MySQLDatabaseOperator"
 import {ResponseBody} from "../../../lib/src/persistance/ResponseBody"
 import {Activity} from "../models/Activity"
+import {PostActivityBodySchema} from "../../../lib/src/schemas/activity/PostActivityBodySchema"
 
 /**
  * GET /activities
@@ -24,15 +25,14 @@ export async function getActivities(request: Request, response: Response) {
 	response.status(res.code).json(res)
 }
 
-export async function postActivity(request: Request, response: Response) {
+export async function postActivity(request: Request<any,any,PostActivityBodySchema>, response: Response) {
 	const res: ResponseBody = {message: "Succesfully changed record", code: 200}
 
-	const requestBody = request.body as Activity
+	const requestBody = request.body
 
 	const operator = new MySQLDatabaseOperator(Activity)
 
 	await operator.create(new Activity(requestBody))
-
 
 	response.status(res.code).json(res)
 }

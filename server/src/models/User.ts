@@ -5,7 +5,7 @@ import {UserPassword as UserInterface} from "../../../lib/src/models/user/UserPa
 
 @Table(TableEnum.USERS)
 export class User extends TableEntity implements UserInterface{
-	birthday?: string
+	birthday?: Date
 	email?: string
 	firstname?: string
 	image?: Blob
