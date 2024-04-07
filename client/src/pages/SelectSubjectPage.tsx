@@ -1,44 +1,50 @@
-import React, { useState } from "react"
-import "../styles/VyberPredmetu.css" // Import stylů
-import { Link } from "react-router-dom"
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/VyberPredmetu.css"; // Import stylů
 
 const SelectSubjectPage = () => {
-	// Předpokládejme, že máte nějaký seznam předmětů
-	const predmety = ["Matematika", "Fyzika", "Chemie", "Biologie", "Informatika"]
-	const [vybranePredmety, setVybranePredmety] = useState<string[]>([])
+    const predmety = ["Matematika", "Fyzika", "Chemie", "Biologie", "Informatika"];
+    const [vybranePredmety, setVybranePredmety] = useState<string[]>([]);
+    const navigate = useNavigate();
 
-	const handleVyberPredmetu = (predmet: string) => {
-		setVybranePredmety(prev => [...prev, predmet])
-	}
+    const handleVyberPredmetu = (predmet: string) => {
+        setVybranePredmety(prev => [...prev, predmet]);
+    };
 
-	return (
-		<div className="vyber-predmetu-container">
-			<nav className="navbar">
-				<Link to="/dashboard">Domů</Link> {/* Změna z a href na Link to */}
-				<Link to="/SchedulePage">SchedulePage</Link> {/* Přidán odkaz na SchedulePage */}
-				<Link to="/vyber-predmetu">Výběr předmětů</Link> {/* Předpokládá se, že toto je funkce dostupná studentům */}
-				<Link to="/osobni-udaje">Osobní údaje</Link> {/* Předpokládá se, že toto vede na stránku s osobními údaji studenta */}
-			</nav>
-			<h2>Výběr Předmětu</h2>
-			<ul>
-				{predmety.map(predmet => (
-					<li key={predmet}>
-						{predmet} <button onClick={() => handleVyberPredmetu(predmet)}>Vybrat</button>
-					</li>
-				))}
-			</ul>
-			{vybranePredmety.length > 0 && (
-				<div>
-					<h3>Vybrané předměty:</h3>
-					<ul>
-						{vybranePredmety.map(predmet => (
-							<li key={predmet}>{predmet}</li>
-						))}
-					</ul>
-				</div>
-			)}
-		</div>
-	)
-}
+    // Přidání nové funkce pro navigaci na formulář pro přidání místnosti
+    const handleAddRoom = () => {
+        navigate("/add-room"); // Předpokládáme, že existuje cesta pro přidání místnosti
+    };
 
-export default SelectSubjectPage
+    return (
+        <div className="vyber-predmetu-container">
+            <nav className="navbar">
+                <Link to="/dashboard">Domů</Link>
+                <Link to="/vyber-predmetu">Výběr předmětů</Link>
+                <Link to="/osobni-udaje">Osobní údaje</Link>
+            </nav>
+            <h2>Výběr Předmětu</h2>
+            <ul>
+                {predmety.map(predmet => (
+                    <li key={predmet}>
+                        {predmet} <button onClick={() => handleVyberPredmetu(predmet)}>Vybrat</button>
+                    </li>
+                ))}
+            </ul>
+            {vybranePredmety.length > 0 && (
+                <div>
+                    <h3>Vybrané předměty:</h3>
+                    <ul>
+                        {vybranePredmety.map(predmet => (
+                            <li key={predmet}>{predmet}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+            
+            <button onClick={handleAddRoom} className="add-room-btn">Přidat Místnost</button>
+        </div>
+    );
+};
+
+export default SelectSubjectPage;

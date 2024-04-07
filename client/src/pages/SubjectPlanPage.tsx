@@ -19,7 +19,8 @@ export default function SubjectPlanPage() {
 				<Link to="/sprava-kurzu">Správa kurzu</Link>
 				<Link to="/zaznam-znamek">Záznam známek</Link>
 				<Link to="/vyukove-materialy">Výukové materiály</Link>
-				<Link to="/osobni-udaje">Osobní údaje</Link> {/* Předpokládám sdílenou funkcionalitu s studenty */}
+				<Link to="/osobni-udaje">Osobní údaje</Link>
+				<Link to="/add-exam">Zkoušky</Link>
 			</nav>
 			<h2>Plán Hodin</h2>
 			<table>
