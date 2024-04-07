@@ -2,6 +2,7 @@ import {Request, Response} from "express"
 import {MySQLDatabaseOperator} from "../services/database/operators/mysql/MySQLDatabaseOperator"
 import {ResponseBody} from "../../../lib/src/persistance/ResponseBody"
 import {Subject} from "../models/Subject"
+import {PostSubjectBodySchema} from "../../../lib/src/schemas/subject/PostSubjectBodySchema"
 
 /**
  * GET /subjects
@@ -24,7 +25,7 @@ export async function getSubjects(request: Request, response: Response) {
 	response.status(res.code).json(res)
 }
 
-export async function postSubject(request: Request, response: Response) {
+export async function postSubject(request: Request<any,any,PostSubjectBodySchema>, response: Response) {
 	const res: ResponseBody = {message: "Succesfully changed record", code: 200}
 
 	const requestBody = request.body as Subject
