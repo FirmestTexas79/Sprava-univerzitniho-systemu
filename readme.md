@@ -1,5 +1,5 @@
 ## setup
-prvni nainstalovat v package.jason (nejvys) "project:init" 
+prvni nainstalovat npm install v package.jason (nejvys) "project:init" 
 pak v terminalu napsat "run ./setup.sh"(linux) nebo ./setub.bat pak záleží jestli máš powershell nebo linux
 nastavení dbs user:root heslo:Heslo port (asi 3006)
 pak dbs pridani tabulek (database>db>init.sql>execute>schema>connection>select schema mysql>vybrat všechno (ctrl+A a pak execute)
