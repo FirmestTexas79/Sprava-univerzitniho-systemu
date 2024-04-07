@@ -1,6 +1,7 @@
 import React from "react"
 import "../styles/PlanHodin.css" // Import stylů
 import {Link} from "react-router-dom"
+import {Navbar} from "../components/Navbar.tsx"
 
 export default function SubjectPlanPage() {
 	// Předpokládáme, že data pro plán hodin by mohla být načítána z API nebo podobného zdroje
@@ -12,16 +13,7 @@ export default function SubjectPlanPage() {
 
 	return (
 		<div className="plan-hodin-container">
-			<nav className="navbar">
-				{/* Příklad odkazů specifických pro učitele */}
-				<Link to="/ucitel-dashboard">Domů</Link>
-				<Link to="/plan-hodin">Plán hodin</Link>
-				<Link to="/sprava-kurzu">Správa kurzu</Link>
-				<Link to="/zaznam-znamek">Záznam známek</Link>
-				<Link to="/vyukove-materialy">Výukové materiály</Link>
-				<Link to="/osobni-udaje">Osobní údaje</Link>
-				<Link to="/add-exam">Zkoušky</Link>
-			</nav>
+			<Navbar/>
 			<h2>Plán Hodin</h2>
 			<table>
 				<thead>

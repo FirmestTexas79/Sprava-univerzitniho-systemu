@@ -18,24 +18,23 @@ export default function App() {
 	return (
 		<Router>
 			<div className="App">
-				<header className="App-header">
-					<Routes>
-						<Route path="/" element={<LoginPage/>}/>
-						<Route path="/dashboard" element={<DashboardPage/>}/>
-						<Route path="/reset-password" element={<ResetPasswordPage/>}/>
-						<Route path="/registration" element={<RegistrationPage/>}/>
-						<Route path="/rozvrh" element={<SchedulePage/>}/>
-						<Route path="/vyber-predmetu" element={<SelectSubjectPage/>}/>
-						<Route path="/osobni-udaje" element={<UserPage/>}/>
-						<Route path="/login" element={<LoginPage/>}/>
-						<Route path="/ucitel-dashboard" element={<TeacherDashboardPage/>}/>
-						<Route path="/plan-hodin" element={<SubjectPlanPage/>}/>
-						<Route path="/sprava-kurzu" element={<CourseAdministrationPage/>}/>
-						<Route path="/zaznam-znamek" element={<RatingsPage/>}/>
-						<Route path="/vyukove-materialy" element={<TeachingMaterialsPage/>}/>
-						<Route path="/osobni-udaje-ucitele" element={<TeacherUserPage/>}/>
-					</Routes>
-				</header>
+				<header className="App-header"></header>
+				<Routes>
+					<Route path="/" element={<LoginPage/>}/>
+					<Route path="/dashboard" element={<DashboardPage/>}/>
+					<Route path="/reset-password" element={<ResetPasswordPage/>}/>
+					<Route path="/registration" element={<RegistrationPage/>}/>
+					<Route path="/rozvrh" element={<SchedulePage/>}/>
+					<Route path="/vyber-predmetu" element={<SelectSubjectPage/>}/>
+					<Route path="/osobni-udaje" element={<UserPage/>}/>
+					<Route path="/login" element={<LoginPage/>}/>
+					{/*<Route path="/ucitel-dashboard" element={<TeacherDashboardPage/>}/>*/}
+					<Route path="/plan-hodin" element={<SubjectPlanPage/>}/>
+					<Route path="/sprava-kurzu" element={<CourseAdministrationPage/>}/>
+					<Route path="/zaznam-znamek" element={<RatingsPage/>}/>
+					<Route path="/vyukove-materialy" element={<TeachingMaterialsPage/>}/>
+					{/*<Route path="/osobni-udaje-ucitele" element={<TeacherUserPage/>}/>*/}
+				</Routes>
 			</div>
 		</Router>
 	)

@@ -11,7 +11,7 @@ import {PostActivityBodySchema} from "../../../lib/src/schemas/activity/PostActi
  * Vypise Activitys
  */
 export async function getActivities(request: Request, response: Response) {
-	const res: ResponseBody<Activity[]> = {message: "Data from activities", code: 200}
+	/*Vždycky stejný*/ const res: ResponseBody<Activity[]> = {message: "Data from activities", code: 200}
 	const count = request.query.count as string | undefined
 	const intCount = count ? parseInt(count):undefined
 
@@ -22,7 +22,7 @@ export async function getActivities(request: Request, response: Response) {
 	res.data = results.map((activity)=> activity.omitNullValues())
 
 
-	response.status(res.code).json(res)
+	/*Vždycky stejný*/ response.status(res.code).json(res)
 }
 
 export async function postActivity(request: Request<any,any,PostActivityBodySchema>, response: Response) {

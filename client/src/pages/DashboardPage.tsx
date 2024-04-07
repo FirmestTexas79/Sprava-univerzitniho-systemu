@@ -1,28 +1,32 @@
-import React from "react"
+import React, {useState} from "react"
 import "../styles/Dashboard.css"
 import {Link, useNavigate} from "react-router-dom"
+import {Button} from "@mui/material"
+import SendIcon from "@mui/icons-material/Send"
+import {Simulate} from "react-dom/test-utils"
+import {getListOfUsers} from "../services/getListOfUsers.ts"
+import {Navbar} from "../components/Navbar.tsx"
+import {UserRole} from "../../../lib/src/models/user/UserRole.ts"
+import {CheckBox} from "../components/inputs/CheckBox.tsx"
+import {User} from "../../../lib/src/models/user/User.ts"
 
 export default function DashboardPage() {
+
+	const [users, setUsers] = useState<User[]>([])
 	const navigate = useNavigate()
 
 	const handleLogout = () => {
 		// Zde byste měli vymazat všechny relevatní informace o uživateli
 		// například z localStorage/sessionStorage nebo kontextu
-		sessionStorage.removeItem("isAdmin") // Příklad odstranění uživatelského stavu
+		//sessionStorage.removeItem("isAdmin") // Příklad odstranění uživatelského stavu
 		navigate("/login") // Přesměrování uživatele na login stránku
 	}
 
 	return (
 		<div className="dashboard-container">
-			<nav className="navbar">
-				<Link to="/dashboard">Domů</Link> {/* Změna z a href na Link to */}
-				<Link to="/SchedulePage">SchedulePage</Link> {/* Přidán odkaz na SchedulePage */}
-				<Link to="/vyber-predmetu">Výběr
-					předmětů</Link> {/* Předpokládá se, že toto je funkce dostupná studentům */}
-				<Link to="/osobni-udaje">Osobní
-					údaje</Link> {/* Předpokládá se, že toto vede na stránku s osobními údaji studenta */}
-			</nav>
+			<Navbar role={UserRole.STUDENT}/>
 			<button onClick={handleLogout}>Odhlásit se</button>
+			<CheckBox onPress={() => console.log("Veverka")} value={false}/>
 			<header className="dashboard-header">
 				<h1>Vítejte ve studentském rozhraní!</h1>
 			</header>
@@ -32,6 +36,14 @@ export default function DashboardPage() {
 					<h2>SchedulePage</h2>
 					<p>Zde si můžete prohlédnout svůj aktuální školní rozvrh.</p>
 					<button>Prohlédnout rozvrh</button>
+					<Button onClick={async () => {
+						const data = await getListOfUsers(8)
+						if (data){
+							setUsers(data)
+						}
+					}} variant="contained" endIcon={<SendIcon />}>
+						Send
+					</Button>
 					{/* Tlačítko může vést na stránku s rozvrhem */}
 				</section>
 				<section className="dashboard-courses">
@@ -46,6 +58,15 @@ export default function DashboardPage() {
 					<button>Aktualizovat údaje</button>
 					{/* Tlačítko pro aktualizaci osobních údajů */}
 				</section>
+
+				{users.map((value)=>(
+					<div key={value.id}>
+						{`${value.titleBefore || ""} ${value.firstname} ${value.lastname} ${value.titleAfter || ""}`}
+					</div>
+				))
+
+				}
+
 			</main>
 			<footer className="dashboard-footer">
 				<p>© {new Date().getFullYear()} Vaše Škola</p>
