@@ -2,6 +2,7 @@ import {Request, Response} from "express"
 import {MySQLDatabaseOperator} from "../services/database/operators/mysql/MySQLDatabaseOperator"
 import {ResponseBody} from "../../../lib/src/persistance/ResponseBody"
 import {Rating} from "../models/Rating"
+import {PostRatingBodySchema} from "../../../lib/src/schemas/rating/PostRatingBodySchema"
 
 /**
  * GET /ratings
@@ -24,7 +25,7 @@ export async function getRatings(request: Request, response: Response) {
 	response.status(res.code).json(res)
 }
 
-export async function postRating(request: Request, response: Response) {
+export async function postRating(request: Request<any,any,PostRatingBodySchema>, response: Response) {
 	const res: ResponseBody = {message: "Succesfully changed record", code: 200}
 
 	const requestBody = request.body as Rating
