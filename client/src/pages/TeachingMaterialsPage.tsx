@@ -1,6 +1,8 @@
-import { useState } from "react"
+import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import "../styles/VyukovyMaterialy.css" // Předpokládá se, že máte definované styly
+import "../styles/VyukoveMaterialy.css"
+import { Navbar } from "../components/Navbar.tsx"
+import { UserRole } from "../../../lib/src/models/user/UserRole.ts"
 
 export default function TeachingMaterialsPage() {
 	const [materials, setMaterials] = useState([
@@ -11,37 +13,33 @@ export default function TeachingMaterialsPage() {
 
 	const navigate = useNavigate()
 
-	// Funkce pro navigaci na stránku pro přidání nového materiálu
 	const handleAddMaterial = () => {
-		navigate("/add-material") // Změníme na správnou cestu v rámci vaší aplikace
+		navigate("/add-material")
 	}
 
 	return (
 		<div className="vyukove-materialy-container">
-			<nav className="navbar">
-				{/* Příklad odkazů specifických pro učitele */}
-				<Link to="/TeacherDashboardPage">Domů</Link>
-				<Link to="/plan-hodin">Plán hodin</Link>
-				<Link to="/sprava-kurzu">Správa kurzu</Link>
-				<Link to="/zaznam-znamek">Záznam známek</Link>
-				<Link to="/vyukove-materialy">Výukové materiály</Link>
-				<Link to="/osobni-udaje-ucitele">Osobní
-					údaje</Link>
-				<Link to="/add-exam">Zkoušky</Link>	
-			</nav>
-			<h2>Výukové Materiály</h2>
-			{/* Tlačítko pro přidání nového výukového materiálu */}
-			<button onClick={handleAddMaterial} className="add-material-btn">
-                Přidat Materiál
-			</button>
-			<div className="materialy-list">
-				{materials.map((material, index) => (
-					<div key={index} className="material">
-						<h3>{material.nazev}</h3>
-						<p>{material.soubor}</p>
-						{/* Zde by mohlo být tlačítko nebo odkaz na stažení materiálu */}
-					</div>
-				))}
+			<Navbar role={UserRole.TEACHER} />
+			<div className="tabulka-cela">
+				<header className="teachingMaterials-header">
+					<h2>Výukové Materiály</h2>
+					<button onClick={handleAddMaterial} className="add-material-btn">
+					Přidat Materiál
+					</button>
+				</header>
+				<div className="materialy-list">
+					{materials.map((material, index) => (
+						<div key={index} className="material">
+							<div className="material-nazev">
+								<h3>{material.nazev}</h3>
+							</div>
+							<div className="material-soubor">
+								<p>{material.soubor}</p>
+							</div>
+							{/* Zde mohou být tlačítka nebo odkazy na stažení materiálu */}
+						</div>
+					))}
+				</div>
 			</div>
 		</div>
 	)

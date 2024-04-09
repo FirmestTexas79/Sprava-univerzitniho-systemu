@@ -1,4 +1,5 @@
 import {TableEntity} from "../TableEntity"
+import {UserRole} from "./UserRole"
 
 export interface User extends TableEntity {
 	firstname?: string,
@@ -9,5 +10,5 @@ export interface User extends TableEntity {
 	phone?: string,
 	birthday?: Date,
 	image?: Blob,
-	role?: string
+	role?: UserRole
 }

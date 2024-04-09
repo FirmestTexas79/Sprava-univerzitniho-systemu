@@ -2,14 +2,11 @@ import React, {useState} from "react"
 import "../styles/OsobniUdaje.css" // Import stylů
 import {Link} from "react-router-dom"
 import {User} from "../../../lib/src/models/user/User"
+import {useAuth} from "../hooks/useAuth.tsx"
 
 export default function UserPage() {
-	const [user, setUser] = useState<User>({})
+	const {user} = useAuth()
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const {name, value} = e.target
-		setUser(prevState => ({...prevState, [name]: value}))
-	}
 
 
 	return (
@@ -23,25 +20,21 @@ export default function UserPage() {
 					údaje</Link> {/* Předpokládá se, že toto vede na stránku s osobními údaji studenta */}
 			</nav>
 			<h2>Osobní údaje</h2>
-			<form>
-				<label>
-					Jméno:
-					<input type="text" name="firstname" value={user.firstname} onChange={handleChange}/>
-				</label>
-				<label>
-					Příjmení:
-					<input type="text" name="lastname" value={user.lastname} onChange={handleChange}/>
-				</label>
-				<label>
-					E-mail:
-					<input type="email" name="email" value={user.email} onChange={handleChange}/>
-				</label>
-				<label>
-					Telefon:
-					<input type="text" name="phone" value={user.phone} onChange={handleChange}/>
-				</label>
-				<button type="button" onClick={() => alert("Údaje byly aktualizovány.")}>Uložit změny</button>
-			</form>
+			<div>
+				{user?.firstname}
+			</div>
+			<div>
+				{user?.lastname}
+			</div>
+			<div>
+				{user?.email}
+			</div>
+			<div>
+				{user?.phone}
+			</div>
+			<div>
+				{user?.titleBefore}
+			</div>
 		</div>
 	)
 }
