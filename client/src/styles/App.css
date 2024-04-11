@@ -6,7 +6,7 @@
     align-items: center; /* Zarovnání obsahu svisle na střed */
     align-self: center;
     width: 100vw; /* Šířka základní velikosti 90% šířky viewportu */
-    max-width: 1500px; /* Maximální šířka 1500px pro lepší čitelnost na větších obrazovkách */
+    min-width: 1500px; /* Maximální šířka 1500px pro lepší čitelnost na větších obrazovkách */
 }
 
 
@@ -57,14 +57,3 @@
 }
 
 
-
-
-/* Keyframes pro animaci otáčení */
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg); /* Začátek otáčení od 0 stupňů */
-    }
-    to {
-        transform: rotate(360deg); /* Konec otáčení na 360 stupňů */
-    }
-}

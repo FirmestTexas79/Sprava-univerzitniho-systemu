@@ -1,23 +1,22 @@
 import React, { useState } from "react"
 import "../styles/Dashboard.css"
-import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@mui/material"
 import SendIcon from "@mui/icons-material/Send"
 import { getListOfUsers } from "../services/user/getListOfUsers.ts"
-import { Navbar } from "../components/navigation/Navbar.tsx"
-import { UserRole } from "../../../lib/src/models/user/UserRole.ts"
 import { CheckBox } from "../components/inputs/CheckBox.tsx"
 import { User } from "../../../lib/src/models/user/User.ts"
-import {useAuth} from "../hooks/useAuth.tsx"
+
+
 
 export default function DashboardPage() {
-	const {user, logout} = useAuth()
 	const [users, setUsers] = useState<User[]>([])
+
+
+
 
 
 	return (
 		<div className="dashboard-container">
-			<button onClick={logout}>Odhlásit se</button>
 			<CheckBox onPress={() => console.log("Veverka")} value={false} />
 			<header className="dashboard-header">
 				<h1>Vítejte ve studentském rozhraní!</h1>

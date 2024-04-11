@@ -46,15 +46,4 @@
     font-weight: bold; /* Dodá tlačítku větší vizuální váhu */
 }
 
-.add-exam-form button:hover {
-    background-color: #0056b3;
-}
 
-.navbar a, .navbar a:visited {
-    color: darkblue; /* Zajistí, že odkazy budou v souladu s celkovým barevným schématem */
-    text-decoration: none; /* Odebere podtržení odkazů */
-}
-
-.navbar a:hover {
-    text-decoration: underline; /* Přidá vizuální zpětnou vazbu při najetí myší na odkaz */
-}

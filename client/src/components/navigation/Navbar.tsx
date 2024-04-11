@@ -1,47 +1,127 @@
-import {Link, useNavigate} from "react-router-dom"
-import React from "react"
-import { UserRole } from "../../../../lib/src/models/user/UserRole.ts"
-import {useAuth} from "../../hooks/useAuth.tsx"
-import {NavbarButton} from "./NavbarButton.tsx"
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AppBar, Toolbar, Button, Typography, Menu, MenuItem, IconButton } from "@mui/material";
+import { AccountCircle } from "@mui/icons-material";
+import { UserRole } from "../../../../lib/src/models/user/UserRole.ts";
+import { useAuth } from "../../hooks/useAuth.tsx";
 
 type NavbarProps = {
 	role?: UserRole;
 };
 
 export function Navbar({ role = UserRole.STUDENT }: NavbarProps) {
-	const {logout} = useAuth()
-	const navigate = useNavigate()
+	const { logout } = useAuth();
+	const navigate = useNavigate();
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+	const handleNavigation = (path: string) => {
+		navigate(path);
+	};
+
+	const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleMenuClose = () => {
+		setAnchorEl(null);
+	};
+
+	const handleLogout = () => {
+		logout();
+		handleNavigation("/login");
+		handleMenuClose();
+	};
+
 	return (
-		<nav className="navbar">
-			{role === UserRole.TEACHER ? (
-				<>
-					<Link to="/dashboard">Domů</Link>
-					<Link to="/plan-hodin">Plán hodin</Link>
-					<Link to="/sprava-kurzu">Správa kurzu</Link>
-					<Link to="/zaznam-znamek">Záznam známek</Link>
-					<Link to="/vyukove-materialy">Výukové materiály</Link>
-					<Link to="/osobni-udaje">Osobní údaje</Link>
-					<Link to="/add-exam">Zkoušky</Link>
-				</>
-			) : role === UserRole.ADMIN ? (
-				<>
-					<Link to="/dashboard">Domů</Link>
-					<Link to="/sprava-uzivatelu">Správa uživatelů</Link>
-					<Link to="/nastaveni">Nastavení</Link>
-				</>
-			) : (
-				<>
-					<Link to="/dashboard">Domů</Link>
-					<Link to="/SchedulePage">SchedulePage</Link>
-					<Link to="/vyber-predmetu">Výběr předmětů</Link>
-					<Link to="/plan-hodin">Plán hodin</Link>
-					<Link to="/osobni-udaje">Osobní údaje</Link>
-				</>
-			)}
-			<NavbarButton onClick={() => {
-				logout()
-				navigate("login")
-			}} title={"Odhlásit"}/>
-		</nav>
-	)
+		<AppBar position="static">
+			<Toolbar>
+				<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+					My App
+				</Typography>
+				{role === UserRole.TEACHER && (
+					<>
+						<Button color="inherit" onClick={() => handleNavigation("/dashboard")}>
+							Domů
+						</Button>
+						<Button color="inherit" onClick={() => handleNavigation("/plan-hodin")}>
+							Plán hodin
+						</Button>
+						<Button color="inherit" onClick={() => handleNavigation("/sprava-kurzu")}>
+							Správa kurzu
+						</Button>
+						<Button color="inherit" onClick={() => handleNavigation("/zaznam-znamek")}>
+							Záznam známek
+						</Button>
+						<Button color="inherit" onClick={() => handleNavigation("/vyukove-materialy")}>
+							Výukové materiály
+						</Button>
+						<Button color="inherit" onClick={() => handleNavigation("/osobni-udaje")}>
+							Osobní údaje
+						</Button>
+						<Button color="inherit" onClick={() => handleNavigation("/add-exam")}>
+							Zkoušky
+						</Button>
+					</>
+				)}
+				{role === UserRole.ADMIN && (
+					<>
+						<Button color="inherit" onClick={() => handleNavigation("/dashboard")}>
+							Domů
+						</Button>
+						<Button color="inherit" onClick={() => handleNavigation("/sprava-uzivatelu")}>
+							Správa uživatelů
+						</Button>
+						<Button color="inherit" onClick={() => handleNavigation("/nastaveni")}>
+							Nastavení
+						</Button>
+					</>
+				)}
+				{role !== UserRole.TEACHER && role !== UserRole.ADMIN && (
+					<>
+						<Button color="inherit" onClick={() => handleNavigation("/dashboard")}>
+							Domů
+						</Button>
+						<Button color="inherit" onClick={() => handleNavigation("/vyber-predmetu")}>
+							Výběr předmětů
+						</Button>
+						<Button color="inherit" onClick={() => handleNavigation("/plan-hodin")}>
+							Plán hodin
+						</Button>
+						<Button color="inherit" onClick={() => handleNavigation("/osobni-udaje")}>
+							Osobní údaje
+						</Button>
+					</>
+				)}
+				<IconButton
+					size="large"
+					edge="end"
+					color="inherit"
+					aria-label="user-menu"
+					aria-controls="menu-appbar"
+					aria-haspopup="true"
+					onClick={handleMenuOpen}
+				>
+					<AccountCircle />
+				</IconButton>
+				<Menu
+					id="menu-appbar"
+					anchorEl={anchorEl}
+					anchorOrigin={{
+						vertical: "top",
+						horizontal: "right",
+					}}
+					keepMounted
+					transformOrigin={{
+						vertical: "top",
+						horizontal: "right",
+					}}
+					open={Boolean(anchorEl)}
+					onClose={handleMenuClose}
+				>
+					<MenuItem onClick={() => handleNavigation("/osobni-udaje")}>Personal Data</MenuItem>
+					<MenuItem onClick={handleLogout}>Logout</MenuItem>
+				</Menu>
+			</Toolbar>
+		</AppBar>
+	);
 }
