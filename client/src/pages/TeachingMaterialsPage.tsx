@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import "../styles/VyukoveMaterialy.css"
-import { Navbar } from "../components/Navbar.tsx"
+import { Navbar } from "../components/navigation/Navbar.tsx"
 import { UserRole } from "../../../lib/src/models/user/UserRole.ts"
 
 export default function TeachingMaterialsPage() {
@@ -19,7 +19,6 @@ export default function TeachingMaterialsPage() {
 
 	return (
 		<div className="vyukove-materialy-container">
-			<Navbar role={UserRole.TEACHER} />
 			<div className="tabulka-cela">
 				<header className="teachingMaterials-header">
 					<h2>Výukové Materiály</h2>

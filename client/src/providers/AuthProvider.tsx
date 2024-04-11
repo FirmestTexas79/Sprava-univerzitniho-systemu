@@ -31,7 +31,6 @@ export function AuthProvider({children}:AuthProviderProps){
 		console.log("Vypadni a už se nevracej")
 		setUser(null)
 		localStorage.removeItem("user")
-		navigate("login")
 	}
 
 	useEffect(() => {

@@ -6,7 +6,6 @@ import {MenuItem, Select} from "@mui/material"
 import {User} from "../../../lib/src/models/user/User.ts"
 import {getListOfUsers} from "../services/user/getListOfUsers.ts"
 import {UserRole} from "../../../lib/src/models/user/UserRole.ts"
-import {postSubjectSchema} from "../../../lib/src/schemas/subject/PostSubjectBodySchema.ts"
 import {postSubject} from "../services/subject/postSubject.ts"
 
 export default function CourseAdministrationPage() {
@@ -16,10 +15,10 @@ export default function CourseAdministrationPage() {
 	const [teachers, setTeachers] = useState<User[]>([])
 
 	const [subject, setSubject] = useState<Subject>()
-	const [subjects, setSubjects] = useState<Subject[]>()
+	const [subjects, setSubjects] = useState<Subject[]>([])
 
 	useEffect(() => {
-		getSubjects().then(setSubjects)
+		getSubjects().then((value) => value && setSubjects(value))
 		getListOfUsers()
 			.then((value) => value && setTeachers(value
 				.filter((user) => user.role === UserRole.TEACHER)))
@@ -28,20 +27,16 @@ export default function CourseAdministrationPage() {
 
 	async function onSubmit() {
 		try {
-			const data = await postSubject(postSubjectSchema.parse(subject).body)
-			data === 200 && setSubject({})
-		} catch (error) {
-			// If validation fails, set the errors
+			if(!subject){ return }
+			const data = await postSubject(subject)
+			if(data === 200) {
+				setSubjects([...subjects, subject])
+				setSubject({})}
+
+
+		} catch (error){
 			// @ts-ignore
-			if (error instanceof Error && error.errors && error.errors.length > 0) {
-				const validationErrors: Partial<Record<keyof any, string>> = {}
-				// @ts-ignore
-				error.errors.forEach((err: { path: any[]; message: any }) => {
-					const key = err.path[0]
-					validationErrors[key] = err.message
-				})
-				setMesseges(validationErrors)
-			}
+			setMesseges(error)
 		}
 	}
 
@@ -58,9 +53,11 @@ export default function CourseAdministrationPage() {
 			<input type="text" placeholder="Zkratka" value={subject?.short}
 				   onChange={e => onChange("short", e.target.value)}/>
 			<input type="number" placeholder="Kredity" value={subject?.credits}
-				   onChange={e => onChange("credits", e.target.value)}/>
+				   onChange={e => onChange("credits", parseInt(e.target.value))}/>
 			<input type="text" placeholder="Kategorie" value={subject?.category}
 				   onChange={e => onChange("category", e.target.value)}/>
+			<input type="text" placeholder="Katedra" value={subject?.department}
+				   onChange={e => onChange("department", e.target.value)}/>
 			<textarea placeholder="Popis" value={subject?.description}
 					  onChange={e => onChange("description", e.target.value)}/>
 

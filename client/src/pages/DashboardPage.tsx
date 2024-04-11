@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@mui/material"
 import SendIcon from "@mui/icons-material/Send"
 import { getListOfUsers } from "../services/user/getListOfUsers.ts"
-import { Navbar } from "../components/Navbar.tsx"
+import { Navbar } from "../components/navigation/Navbar.tsx"
 import { UserRole } from "../../../lib/src/models/user/UserRole.ts"
 import { CheckBox } from "../components/inputs/CheckBox.tsx"
 import { User } from "../../../lib/src/models/user/User.ts"
@@ -17,7 +17,6 @@ export default function DashboardPage() {
 
 	return (
 		<div className="dashboard-container">
-			<Navbar role={user?.role} />
 			<button onClick={logout}>Odhlásit se</button>
 			<CheckBox onPress={() => console.log("Veverka")} value={false} />
 			<header className="dashboard-header">

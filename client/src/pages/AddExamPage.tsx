@@ -25,14 +25,6 @@ export default function AddExamPage() {
 
 	return (
 		<div className="add-exam-page">
-			<nav className="navbar">
-				<Link to="/ucitel-dashboard">Domů</Link>
-				<Link to="/plan-hodin">Plán hodin</Link>
-				<Link to="/sprava-kurzu">Správa kurzu</Link>
-				<Link to="/zaznam-znamek">Záznam známek</Link>
-				<Link to="/vyukove-materialy">Výukové materiály</Link>
-				<Link to="/osobni-udaje-ucitele">Osobní údaje</Link>
-			</nav>
 			<h2>Přidat Novou Zkoušku</h2>
 			<form onSubmit={handleSubmit} className="add-exam-form">
 				<label>

@@ -1,38 +1,70 @@
+/* CSS pro kontejner App */
 .App {
-    text-align: center;
+    text-align: center; /* Zarovnání textu na střed */
+    display: flex;
+    justify-content: center; /* Zarovnání obsahu vodorovně na střed */
+    align-items: center; /* Zarovnání obsahu svisle na střed */
+    align-self: center;
+    width: 100vw; /* Šířka základní velikosti 90% šířky viewportu */
+    max-width: 1500px; /* Maximální šířka 1500px pro lepší čitelnost na větších obrazovkách */
 }
 
+
+/* CSS pro logo App */
 .App-logo {
-    height: 40vmin;
-    pointer-events: none;
+    height: 40vmin; /* Nastavení výšky vzhledem k velikosti viewportu */
+    pointer-events: none; /* Zakázání událostí ukazatele */
 }
 
+/* Media query pro snížený pohyb */
 @media (prefers-reduced-motion: no-preference) {
     .App-logo {
-        animation: App-logo-spin infinite 20s linear;
+        animation: App-logo-spin infinite 20s linear; /* Použití animace otáčení */
     }
 }
 
+
+
+/* CSS pro záhlaví App */
 .App-header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+    background-color: #282c34; /* Nastavení barvy pozadí */
+    max-height: 10vh; /* Nastavení minimální výšky vzhledem k výšce viewportu */
+    display: flex; /* Použití flexboxu */
+    flex-direction: row; /* Rozmístění potomků vedle sebe */
+    align-items: center; /* Zarovnání položek na střed */
+    justify-content: space-between; /* Zarovnání obsahu do rovnoměrného rozložení */
+    font-size: calc(10px + 2vmin); /* Výpočet velikosti písma vzhledem k viewportu */
+    color: white; /* Nastavení barvy textu */
+    width: 100vw;
+    position: fixed; /* Nastavení polohy na fixní */
+    top: 0; /* Zarovnání na horní okraj stránky */
+    z-index: 9999; /* Zajištění, aby bylo nad ostatními prvky */
+    padding: 10px 20px; /* Odsazení pro lepší čitelnost */
+    box-sizing: border-box; /* Zahrnutí paddingu do celkové šířky prvku */
 }
 
+/* CSS pro odkaz App */
 .App-link {
-    color: #61dafb;
+    color: #61dafb; /* Nastavení barvy odkazu */
 }
 
+.App-header img {
+    max-width: 100%; /* Přizpůsobení maximální šířky obrázku */
+    height: auto; /* Automatické zachování poměru stran */
+    margin-block: 10vh;
+    margin-left: 3vw;
+    width: 80px; /* Šířka obrázku jako 10% šířky viewportu */
+}
+
+
+
+
+/* Keyframes pro animaci otáčení */
 @keyframes App-logo-spin {
     from {
-        transform: rotate(0deg);
+        transform: rotate(0deg); /* Začátek otáčení od 0 stupňů */
     }
     to {
-        transform: rotate(360deg);
+        transform: rotate(360deg); /* Konec otáčení na 360 stupňů */
     }
 }

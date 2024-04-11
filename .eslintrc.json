@@ -8,8 +8,7 @@
 	],
 	"extends": [
 		"eslint:recommended",
-		"plugin:@typescript-eslint/recommended",
-		"plugin:react/recommended"
+		"plugin:@typescript-eslint/recommended"
 	],
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
@@ -20,8 +19,7 @@
 		}
 	},
 	"plugins": [
-		"@typescript-eslint",
-		"react"
+		"@typescript-eslint"
 	],
 	"rules": {
 		"indent": [
@@ -40,12 +38,10 @@
 			"warn",
 			"never"
 		],
-		"react/jsx-uses-react": "warn",
-		"react/jsx-uses-vars": "warn",
+
 		"@typescript-eslint/no-var-requires": "off",
 		"@typescript-eslint/no-explicit-any": "off",
 		"@typescript-eslint/ban-ts-comment": "off",
-		"react/react-in-jsx-scope": "off",
 		"no-mixed-spaces-and-tabs": "off",
 		"@typescript-eslint/no-unused-vars": "off"
 	}

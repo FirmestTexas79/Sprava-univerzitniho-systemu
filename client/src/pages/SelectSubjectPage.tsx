@@ -18,11 +18,6 @@ const SelectSubjectPage = () => {
 
 	return (
 		<div className="vyber-predmetu-container">
-			<nav className="navbar">
-				<Link to="/dashboard">Domů</Link>
-				<Link to="/vyber-predmetu">Výběr předmětů</Link>
-				<Link to="/osobni-udaje">Osobní údaje</Link>
-			</nav>
 			<h2>Výběr Předmětu</h2>
 			<ul>
 				{predmety.map(predmet => (

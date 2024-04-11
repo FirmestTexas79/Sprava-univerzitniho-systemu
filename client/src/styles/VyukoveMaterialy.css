@@ -1,11 +1,22 @@
 .vyukove-materialy-container {
-    max-width: 800px;
-    margin: auto;
+    font-family: Arial, sans-serif;
+    width: 80vw;
+}
+
+.tabulka-cela{
     padding: 20px;
     background-color: #f5f5f5;
     border-radius: 8px;
     color: darkblue;
-    
+    margin-top: 15px;
+}
+
+.navbar {
+    background-color: #333;
+    overflow: hidden;
+    display: flex; /* položky budou vedle sebe */
+    justify-content: space-between; /* zarovnání položek na okraje */
+    padding: 1px;
 }
 
 .vyukove-materialy-container h2 {

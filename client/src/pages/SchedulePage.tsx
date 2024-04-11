@@ -28,14 +28,6 @@ const rozvrhData: Hodina[] = [
 export default function SchedulePage() {
 	return (
 		<div className="rozvrh-container">
-			<nav className="navbar">
-				<Link to="/dashboard">Domů</Link> {/* Změna z a href na Link to */}
-				<Link to="/SchedulePage">SchedulePage</Link> {/* Přidán odkaz na SchedulePage */}
-				<Link to="/vyber-predmetu">Výběr
-					předmětů</Link> {/* Předpokládá se, že toto je funkce dostupná studentům */}
-				<Link to="/osobni-udaje">Osobní
-					údaje</Link> {/* Předpokládá se, že toto vede na stránku s osobními údaji studenta */}
-			</nav>
 			<h2>Můj SchedulePage</h2>
 			<table>
 				<thead>

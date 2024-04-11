@@ -1,20 +1,31 @@
+/* Define styles for dashboard container */
 .dashboard-container {
     font-family: Arial, sans-serif;
+    width: 90vw;
+    margin-top: 1vh; /* Odsazení obsahu o výšku záhlaví */
+    padding-top: 10vh; /* Odsazení obsahu o výšku záhlaví */
+    position: relative; /* Nastavení relativní polohy pro správné umístění obsahu pod záhlavím */
+    z-index: 1; /* Zajištění, aby byl pod záhlavím */
 }
 
-.dashboard-header, .dashboard-footer {
-    padding: 20px;
-    text-align: center;
+/* Define styles for dashboard header */
+.dashboard-header {
+    padding: 1px;
 }
 
+/* Define styles for dashboard footer and main */
+.dashboard-footer,
 .dashboard-main {
     padding: 20px;
 }
 
-.dashboard-summary, .dashboard-controls {
+/* Define styles for dashboard summary and controls */
+.dashboard-summary,
+.dashboard-controls {
     margin-bottom: 20px;
 }
 
+/* Define styles for buttons within dashboard controls */
 .dashboard-controls button {
     background-color: #007bff;
     color: white;
@@ -24,40 +35,75 @@
     cursor: pointer;
 }
 
+/* Define hover effect for buttons within dashboard controls */
 .dashboard-controls button:hover {
     background-color: #0056b3;
 }
+
+/* Define styles for navbar */
 .navbar {
-    background-color: #333; /* Tmavé pozadí */
-    overflow: hidden; /* Skryje přebytečný obsah */
-    display: flex; /* Použije flexbox pro rozmístění položek */
-    justify-content: space-between; /* Rozprostře položky na obě strany */
-    padding: 14px 20px; /* Trochu paddingu */
-  }
-  
-  .navbar a {
-    float: left; /* Zarovná odkazy doleva */
-    color: white; /* Bílý text */
-    text-align: center; /* Centruje text */
-    padding: 12px; /* Trochu paddingu */
-    text-decoration: none; /* Žádné podtržení u odkazů */
-    font-size: 17px; /* Velikost fontu */
-  }
-  
-  .navbar a:hover {
-    background-color: #ddd; /* Změní barvu na šedou při najetí myši */
-    color: black; /* Změní text na černý při najetí myši */
-  }
-  button {
+    background-color: #333;
+    overflow: hidden;
+    display: flex; /* položky budou vedle sebe */
+    justify-content: space-between; /* zarovnání položek na okraje */
+    padding: 10px;
+}
+
+/* CSS pro odkazy v navigační liště */
+.navbar a {
+    color: white;
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+/* Hover efekt pro odkazy v navigační liště */
+.navbar a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+/* Define styles for generic buttons */
+button {
     padding: 10px;
     margin-top: 20px;
-    background-color: #f44336; /* Červená barva pro tlačítko odhlášení */
+    background-color: #f44336;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
 
+/* Define hover effect for generic buttons */
 button:hover {
     background-color: #c62828;
 }
+
+.dashboard-section {
+    border: 1px solid #ccc; /* ohraničení */
+    border-radius: 5px; /* zaoblené rohy */
+    padding: 10px; /* vnitřní odsazení */
+    margin-bottom: 20px; /* mezera mezi bloky */
+}
+
+/* Media query for screens with max width of 768px */
+/*@media screen and (min-width: 768px) {
+    !* Adjust navbar for smaller screens *!
+    .navbar {
+
+        flex-direction: column;
+        align-items: center;
+    }
+    !* Adjust links within navbar for smaller screens *!
+    .navbar a {
+        float: none;
+        margin-bottom: 10px;
+    }
+
+    !* Adjust width of buttons within dashboard controls and generic buttons for smaller screens *!
+    .dashboard-controls button,
+    button {
+        width: 100%;
+    }*/
+

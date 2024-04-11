@@ -18,9 +18,6 @@ export default function RatingsPage() {
 
 	return (
 		<div className="zaznam-znamek-container">
-			<nav className="navbar">
-				{/* Zde by mohly být další odkazy */}
-			</nav>
 			<h2>Záznam Známek</h2>
 			{/* Tlačítko pro přidání nového předmětu */}
 			<button onClick={handleAddSubject} className="add-subject-btn">

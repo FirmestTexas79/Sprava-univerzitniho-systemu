@@ -1,16 +1,13 @@
-import {PostSubjectBodySchema} from "../../../../lib/src/schemas/subject/PostSubjectBodySchema.ts"
 import axios from "axios"
 import {SERVER_URL} from "../../../../lib/src/persistance/utils.ts"
 import {RoutePath} from "../../../../lib/src/persistance/RoutePath.ts"
+import {Subject} from "../../../../lib/src/models/Subject.ts"
 
-export async function postSubject(subject:PostSubjectBodySchema){
+export async function postSubject(subject:Subject){
+	console.log("post subject")
 
-	try {
-		const response = await axios.post(SERVER_URL + RoutePath.SUBJECTS, subject)
-		return response.status
-	} catch (e) {
-		console.error(e)
-		// @ts-ignore
-		return e?.code
-	}
+	const response = await axios.post(SERVER_URL + RoutePath.SUBJECTS, {...subject})
+	console.log(response)
+	return response.status
+
 }

@@ -1,7 +1,7 @@
 import React from "react"
 import "../styles/PlanHodin.css" // Import stylů
 import {Link} from "react-router-dom"
-import {Navbar} from "../components/Navbar.tsx"
+import {Navbar} from "../components/navigation/Navbar.tsx"
 
 export default function SubjectPlanPage() {
 	// Předpokládáme, že data pro plán hodin by mohla být načítána z API nebo podobného zdroje
@@ -13,7 +13,6 @@ export default function SubjectPlanPage() {
 
 	return (
 		<div className="plan-hodin-container">
-			<Navbar/>
 			<h2>Plán Hodin</h2>
 			<table>
 				<thead>

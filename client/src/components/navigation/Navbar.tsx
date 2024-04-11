@@ -1,12 +1,16 @@
-import { Link } from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 import React from "react"
-import { UserRole } from "../../../lib/src/models/user/UserRole.ts"
+import { UserRole } from "../../../../lib/src/models/user/UserRole.ts"
+import {useAuth} from "../../hooks/useAuth.tsx"
+import {NavbarButton} from "./NavbarButton.tsx"
 
 type NavbarProps = {
 	role?: UserRole;
 };
 
 export function Navbar({ role = UserRole.STUDENT }: NavbarProps) {
+	const {logout} = useAuth()
+	const navigate = useNavigate()
 	return (
 		<nav className="navbar">
 			{role === UserRole.TEACHER ? (
@@ -34,6 +38,10 @@ export function Navbar({ role = UserRole.STUDENT }: NavbarProps) {
 					<Link to="/osobni-udaje">Osobní údaje</Link>
 				</>
 			)}
+			<NavbarButton onClick={() => {
+				logout()
+				navigate("login")
+			}} title={"Odhlásit"}/>
 		</nav>
 	)
 }
