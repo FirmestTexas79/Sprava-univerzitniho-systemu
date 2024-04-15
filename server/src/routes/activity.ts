@@ -1,7 +1,7 @@
 import {Router} from "express"
 import {deleteActivity, getActivityById, getActivities, postActivity, putActivity} from "../controllers/activity"
 import {validate} from "../middlewares/validate"
-import {postActivitySchema} from "../../../lib/src/schemas/activity/PostActivityBodySchema"
+import {postActivitySchema} from "../../../lib/src/schemas/activity/ActivityDto"
 
 
 export const activityRouter = Router()

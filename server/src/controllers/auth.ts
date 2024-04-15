@@ -125,7 +125,7 @@ export async function postForgotPassword(request: Request, response: Response) {
 
 	const at = await authOperator.readByKey("user", user.id)
 
-	if (at[0].token) {
+	if (at.length >=1) {
 		res.message = "email has already been sent"
 		res.code = 200
 		response.status(res.code).json(res)

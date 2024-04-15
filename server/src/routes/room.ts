@@ -1,7 +1,7 @@
 import {Router} from "express"
 import {deleteRoom, getRoomById, getRooms, postRoom, putRoom} from "../controllers/room"
 import {validate} from "../middlewares/validate"
-import {postRoomSchema} from "../../../lib/src/schemas/room/PostRoomBodySchema"
+import {postRoomSchema} from "../../../lib/src/schemas/room/RoomDto"
 
 
 export const roomRouter = Router()

@@ -2,7 +2,7 @@ import {Request, Response} from "express"
 import {MySQLDatabaseOperator} from "../services/database/operators/mysql/MySQLDatabaseOperator"
 import {ResponseBody} from "../../../lib/src/persistance/ResponseBody"
 import {Exam} from "../models/Exam"
-import {PostExamBodySchema} from "../../../lib/src/schemas/exam/PostExamBodySchema"
+import {ExamDto} from "../../../lib/src/schemas/exam/ExamDto"
 
 /**
  * GET /exams
@@ -25,7 +25,7 @@ export async function getExams(request: Request, response: Response) {
 	response.status(res.code).json(res)
 }
 
-export async function postExam(request: Request<any,any,PostExamBodySchema>, response: Response) {
+export async function postExam(request: Request<any,any,ExamDto>, response: Response) {
 	const res: ResponseBody = {message: "Succesfully changed record", code: 200}
 
 	const requestBody = request.body as Exam

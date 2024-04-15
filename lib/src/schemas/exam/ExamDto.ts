@@ -1,7 +1,7 @@
 import {z} from "zod"
 import {ExamType} from "../../models/Exam"
 
-export type PostExamBodySchema = z.infer<typeof postExamSchema>["body"]
+export type ExamDto = z.infer<typeof postExamSchema>["body"]
 
 export const postExamSchema = z.object({
 	body:z.object({

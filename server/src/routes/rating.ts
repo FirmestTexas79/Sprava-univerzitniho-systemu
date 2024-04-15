@@ -1,7 +1,7 @@
 import {Router} from "express"
 import {deleteRating, getRatingById, getRatings, postRating, putRating} from "../controllers/rating"
 import {validate} from "../middlewares/validate"
-import {postRatingSchema} from "../../../lib/src/schemas/rating/PostRatingBodySchema"
+import {postRatingSchema} from "../../../lib/src/schemas/rating/RatingDto"
 
 
 export const ratingRouter = Router()

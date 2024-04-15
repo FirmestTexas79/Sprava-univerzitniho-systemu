@@ -2,7 +2,7 @@ import {Request, Response} from "express"
 import {MySQLDatabaseOperator} from "../services/database/operators/mysql/MySQLDatabaseOperator"
 import {ResponseBody} from "../../../lib/src/persistance/ResponseBody"
 import {Activity} from "../models/Activity"
-import {PostActivityBodySchema} from "../../../lib/src/schemas/activity/PostActivityBodySchema"
+import {ActivityDto} from "../../../lib/src/schemas/activity/ActivityDto"
 
 /**
  * GET /activities
@@ -25,7 +25,7 @@ export async function getActivities(request: Request, response: Response) {
 	/*Vždycky stejný*/ response.status(res.code).json(res)
 }
 
-export async function postActivity(request: Request<any,any,PostActivityBodySchema>, response: Response) {
+export async function postActivity(request: Request<any,any,ActivityDto>, response: Response) {
 	const res: ResponseBody = {message: "Succesfully changed record", code: 200}
 
 	const requestBody = request.body

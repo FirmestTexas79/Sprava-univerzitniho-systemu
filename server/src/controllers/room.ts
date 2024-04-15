@@ -2,7 +2,7 @@ import {Request, Response} from "express"
 import {MySQLDatabaseOperator} from "../services/database/operators/mysql/MySQLDatabaseOperator"
 import {ResponseBody} from "../../../lib/src/persistance/ResponseBody"
 import {Room} from "../models/Room"
-import {PostRoomBodySchema} from "../../../lib/src/schemas/room/PostRoomBodySchema"
+import {RoomDto} from "../../../lib/src/schemas/room/RoomDto"
 
 /**
  * GET /rooms
@@ -25,7 +25,7 @@ export async function getRooms(request: Request, response: Response) {
 	response.status(res.code).json(res)
 }
 
-export async function postRoom(request: Request<any,any,PostRoomBodySchema>, response: Response) {
+export async function postRoom(request: Request<any,any,RoomDto>, response: Response) {
 	const res: ResponseBody = {message: "Succesfully changed record", code: 200}
 
 	const requestBody = request.body as Room

@@ -1,6 +1,6 @@
 import {z} from "zod"
 
-export type PostSubjectBodySchema = z.infer<typeof postSubjectSchema>["body"]
+export type SubjectDto = z.infer<typeof postSubjectSchema>["body"]
 
 export const postSubjectSchema = z.object({
 	body:z.object({

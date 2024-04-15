@@ -1,7 +1,7 @@
 import {z} from "zod"
 import {RoomType} from "../../models/Room"
 
-export type PostRoomBodySchema = z.infer<typeof postRoomSchema>["body"]
+export type RoomDto = z.infer<typeof postRoomSchema>["body"]
 
 export const postRoomSchema = z.object({
 	body:z.object({

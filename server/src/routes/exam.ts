@@ -1,7 +1,7 @@
 import {Router} from "express"
 import {deleteExam, getExamById, getExams, postExam, putExam} from "../controllers/exam"
 import {validate} from "../middlewares/validate"
-import {postExamSchema} from "../../../lib/src/schemas/exam/PostExamBodySchema"
+import {postExamSchema} from "../../../lib/src/schemas/exam/ExamDto"
 
 
 export const examRouter = Router()

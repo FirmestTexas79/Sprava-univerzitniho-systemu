@@ -1,6 +1,6 @@
 import {z} from "zod"
 
-export type PostRatingBodySchema = z.infer<typeof postRatingSchema>["body"]
+export type RatingDto = z.infer<typeof postRatingSchema>["body"]
 
 export const postRatingSchema = z.object({
 	body:z.object({
