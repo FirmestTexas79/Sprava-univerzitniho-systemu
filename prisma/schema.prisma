@@ -28,8 +28,8 @@ model User {
   credits     Int?
   email       String    @unique
   phone       String?
-  birthday    DateTime?
-  sex         Int?
+  birthdate   DateTime
+  sex         Sex
   image       Bytes?
   role        UserRoles @default(STUDENT)
   password    String
@@ -47,9 +47,15 @@ model User {
 }
 
 enum UserRoles {
-  STUDENT
-  TEACHER
-  ADMIN
+  STUDENT @map("STUDENT")
+  TEACHER @map("TEACHER")
+  ADMIN   @map("ADMIN")
+}
+
+enum Sex {
+  MALE   @map("MALE")
+  FEMALE @map("FEMALE")
+  OTHER  @map("OTHER")
 }
 
 // AuthToken Model
@@ -128,9 +134,9 @@ model Exam {
 }
 
 enum ExamTypes {
-  EXAM
-  PRESENTATION
-  PROJECT
+  EXAM         @map("EXAM")
+  PRESENTATION @map("PRESENTATION")
+  PROJECT      @map("PROJECT")
 }
 
 model Room {
@@ -150,12 +156,12 @@ model Room {
 }
 
 enum RoomTypes {
-  COMPUTERS
-  LABORATORY
-  LECTURE
-  SEMINAR
-  OFFICE
-  OTHER
+  COMPUTERS  @map("COMPUTERS")
+  LABORATORY @map("LABORATORY")
+  LECTURE    @map("LECTURE")
+  SEMINAR    @map("SEMINAR")
+  OFFICE     @map("OFFICE")
+  OTHER      @map("OTHER")
 }
 
 // Rating Model
