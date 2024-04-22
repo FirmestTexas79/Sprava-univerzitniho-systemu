@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  dev-db:
+    image: mysql:latest
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  test-db:
+    image: mysql:latest
+    restart: always
+    env_file:
+      - ./.env.test
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql

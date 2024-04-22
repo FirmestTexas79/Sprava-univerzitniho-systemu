@@ -1,0 +1,202 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// schema.prisma
+
+// User Model
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  firstname   String
+  lastname    String
+  titleAfter  String?
+  titleBefore String?
+  credits     Int?
+  email       String    @unique
+  phone       String?
+  birthday    DateTime?
+  sex         Int?
+  image       Bytes?
+  role        UserRoles @default(STUDENT)
+  password    String
+  exams       Exam[]
+
+  guarantorId String?
+  guarantor   Subject[] @relation("Guarantor")
+
+  ratings Rating[]
+
+  studentSchedule StudentSchedule[] @relation("Student")
+  teacherSchedule StudentSchedule[] @relation("Teacher")
+
+  @@map("users")
+}
+
+enum UserRoles {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+// AuthToken Model
+model AuthToken {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email String @unique
+  token String @unique
+
+  expiresAt DateTime
+
+  @@map("auth_tokens")
+}
+
+// Activity Model
+model Activity {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String
+  description String?
+
+  @@map("activities")
+}
+
+// Subject Model
+model Subject {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name       String
+  shortName  String
+  department String
+  credits    Int
+
+  guarantorId     String
+  guarantor       User              @relation("Guarantor", fields: [guarantorId], references: [id])
+  description     String?
+  category        String
+  exams           Exam[]
+  StudentSchedule StudentSchedule[]
+
+  @@map("subjects")
+}
+
+// Exam Model
+model Exam {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name  String
+  type  ExamTypes
+  start DateTime
+  end   DateTime
+  score Int?
+
+  teacherId String
+  teacher   User   @relation(fields: [teacherId], references: [id])
+
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  capacity Int
+
+  roomId      String?
+  room        Room?    @relation(fields: [roomId], references: [id])
+  description String?
+  ratings     Rating[]
+
+  @@map("exams")
+}
+
+enum ExamTypes {
+  EXAM
+  PRESENTATION
+  PROJECT
+}
+
+model Room {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name            String
+  floor           Int
+  type            RoomTypes
+  description     String?
+  capacity        Int
+  Exam            Exam[]
+  StudentSchedule StudentSchedule[]
+
+  @@map("rooms")
+}
+
+enum RoomTypes {
+  COMPUTERS
+  LABORATORY
+  LECTURE
+  SEMINAR
+  OFFICE
+  OTHER
+}
+
+// Rating Model
+model Rating {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  date DateTime @default(now())
+
+  studentId String
+  student   User   @relation(fields: [studentId], references: [id])
+
+  examId String
+  exam   Exam   @relation(fields: [examId], references: [id])
+
+  rating Int
+
+  @@map("ratings")
+}
+
+// Student Schedule Model
+model StudentSchedule {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studentId String
+  student   User   @relation("Student", fields: [studentId], references: [id])
+
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  teacherId String
+  teacher   User   @relation("Teacher", fields: [teacherId], references: [id])
+
+  roomId String?
+  room   Room?   @relation(fields: [roomId], references: [id])
+
+  startTime DateTime?
+  endTime   DateTime?
+
+  @@map("student_schedules")
+}
