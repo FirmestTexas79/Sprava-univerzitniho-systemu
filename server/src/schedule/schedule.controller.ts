@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { ResponseData } from "../utils/response-data";
-import { StudentSchedule } from "@prisma/client";
+import { Schedule } from "@prisma/client";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
 import { ScheduleService } from "./schedule.service";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -12,12 +12,12 @@ import { CreateScheduleDto, UpdateScheduleDto } from "./dto";
 @ApiBearerAuth()
 @UseGuards(JwtGuard)
 @Controller("schedule")
-export class ScheduleController implements RestController<StudentSchedule, CreateScheduleDto, UpdateScheduleDto> {
+export class ScheduleController implements RestController<Schedule, CreateScheduleDto, UpdateScheduleDto> {
   constructor(private scheduleService: ScheduleService) {
   }
 
   @Post()
-  async create(@Body() dto: object): Promise<ResponseData<StudentSchedule>> {
+  async create(@Body() dto: CreateScheduleDto): Promise<ResponseData<Schedule>> {
     return this.scheduleService.create(dto);
   }
 
@@ -27,12 +27,12 @@ export class ScheduleController implements RestController<StudentSchedule, Creat
   }
 
   @Get()
-  async findAll(@Query() query: ListAllEntitiesQuery<StudentSchedule>): Promise<ResponseData<StudentSchedule[]>> {
+  async findAll(@Query() query: ListAllEntitiesQuery<Schedule>): Promise<ResponseData<Schedule[]>> {
     return this.scheduleService.findAll(query);
   }
 
   @Get(":id")
-  async findOne(@Param("id") id: string): Promise<ResponseData<StudentSchedule>> {
+  async findOne(@Param("id") id: string): Promise<ResponseData<Schedule>> {
     return this.scheduleService.findOne(id);
   }
 
@@ -42,7 +42,7 @@ export class ScheduleController implements RestController<StudentSchedule, Creat
   }
 
   @Put(":id")
-  async update(@Param("id") id: string, @Body() dto: object): Promise<ResponseData<StudentSchedule>> {
+  async update(@Param("id") id: string, @Body() dto: UpdateScheduleDto): Promise<ResponseData<Schedule>> {
     return this.scheduleService.update(id, dto);
   }
 }

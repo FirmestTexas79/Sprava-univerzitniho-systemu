@@ -16,7 +16,7 @@ export class SubjectController implements RestController<Subject, CreateSubjectD
   constructor(private subjectService: SubjectService) {}
 
   @Post()
-  async create(@Body() dto: object): Promise<ResponseData<Subject>> {
+  async create(@Body() dto: CreateSubjectDto): Promise<ResponseData<Subject>> {
     return this.subjectService.create(dto);
   }
 
@@ -41,7 +41,7 @@ export class SubjectController implements RestController<Subject, CreateSubjectD
   }
 
   @Put(":id")
-  async update(@Param("id") id: string, @Body() dto: object): Promise<ResponseData<Subject>> {
+  async update(@Param("id") id: string, @Body() dto: UpdateSubjectDto): Promise<ResponseData<Subject>> {
     return this.subjectService.update(id, dto);
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { AuthDto, ChangePasswordAuthDto, LoginAuthDto, RegisterAuthDto, ResetPasswordAuthDto } from "./dto";
-import bcrypt from "bcrypt";
+import * as argon from "argon2";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
@@ -21,8 +21,7 @@ export class AuthService {
     private tokens: AuthTokenService,
     private emailService: EmailService,
     private logger: Logger = new Logger(AuthService.name),
-  ) {
-  }
+  ) {}
 
   /**
    * Log in a user
@@ -49,7 +48,7 @@ export class AuthService {
     }
 
     // Verify the password
-    const valid = await bcrypt.compare(user.password, dto.password);
+    const valid = await argon.verify(user.password, dto.password);
 
     // If the password is invalid, throw an error
     if (!valid) {
@@ -85,8 +84,7 @@ export class AuthService {
     const password = generateRandomPassword(8, 1, 1, 1, 0);
 
     // Hash the password
-    const salt = bcrypt.genSaltSync(12);
-    const hash = await bcrypt.hash(password, salt);
+    const hash = await argon.hash(password);
 
     try {
       // Create a new user
@@ -198,7 +196,7 @@ export class AuthService {
       return response;
     }
 
-    const valid = await bcrypt.compare(user.password, dto.oldPassword);
+    const valid = await argon.verify(user.password, dto.oldPassword);
 
     if (!valid) {
       response.error = "Forbidden";
@@ -221,8 +219,7 @@ export class AuthService {
       return response;
     }
 
-    const salt = bcrypt.genSaltSync(12);
-    const hash = await bcrypt.hash(dto.newPassword, salt);
+    const hash = await argon.hash(dto.newPassword);
 
     await this.prisma.user.update({
       where: {
@@ -279,7 +276,7 @@ export class AuthService {
       return response;
     }
 
-    const valid = await bcrypt.compare(user.password, dto.newPassword);
+    const valid = await argon.verify(user.password, dto.newPassword);
 
     if (valid) {
       response.error = "Forbidden";
@@ -288,8 +285,7 @@ export class AuthService {
       return response;
     }
 
-    const salt = bcrypt.genSaltSync(12);
-    const hash = await bcrypt.hash(dto.newPassword, salt);
+    const hash = await argon.hash(dto.newPassword);
 
     await this.prisma.user.update({
       where: {

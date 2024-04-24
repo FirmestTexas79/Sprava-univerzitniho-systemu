@@ -16,7 +16,7 @@ export class RatingController implements RestController<Rating, CreateRatingDto,
   constructor(private ratingService: RatingService) {}
 
   @Post()
-  async create(@Body() dto: object): Promise<ResponseData<Rating>> {
+  async create(@Body() dto: CreateRatingDto): Promise<ResponseData<Rating>> {
     return this.ratingService.create(dto);
   }
 
@@ -41,7 +41,7 @@ export class RatingController implements RestController<Rating, CreateRatingDto,
   }
 
   @Put(":id")
-  async update(@Param("id") id: string, @Body() dto: object): Promise<ResponseData<Rating>> {
+  async update(@Param("id") id: string, @Body() dto: UpdateRatingDto): Promise<ResponseData<Rating>> {
     return this.ratingService.update(id, dto);
   }
 }

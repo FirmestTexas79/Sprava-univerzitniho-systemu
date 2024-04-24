@@ -5,7 +5,7 @@ import { ResponseData } from "../utils/response-data";
 import { PrismaService } from "../prisma/prisma.service";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
 import { SortType } from "../utils/sort-type.enum";
-import bcrypt from "bcrypt";
+import * as argon from "argon2";
 import { generateRandomPassword } from "../utils/utils";
 import { RestService } from "../utils/rest.service";
 
@@ -36,7 +36,7 @@ export class UserService implements RestService<User, CreateUserDto, UpdateUserD
   async create(dto: CreateUserDto): Promise<ResponseData<User>> {
     const password = generateRandomPassword(8, 1, 1, 1, 0);
 
-    const hash = await bcrypt.hash(password, 10);
+    const hash = await argon.hash(password);
 
     const userData = await this.prismaService.user.create({
       data: {

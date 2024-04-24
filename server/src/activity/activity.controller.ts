@@ -16,7 +16,7 @@ export class ActivityController implements RestController<Activity, CreateActivi
   constructor(private activityService: ActivityService) {}
 
   @Post()
-  async create(@Body() dto: object): Promise<ResponseData<Activity>> {
+  async create(@Body() dto: CreateActivityDto): Promise<ResponseData<Activity>> {
     return this.activityService.create(dto);
   }
 
@@ -41,7 +41,7 @@ export class ActivityController implements RestController<Activity, CreateActivi
   }
 
   @Put(":id")
-  async update(@Param("id") id: string, @Body() dto: object): Promise<ResponseData<Activity>> {
+  async update(@Param("id") id: string, @Body() dto: UpdateActivityDto): Promise<ResponseData<Activity>> {
     return this.activityService.update(id, dto);
   }
 }

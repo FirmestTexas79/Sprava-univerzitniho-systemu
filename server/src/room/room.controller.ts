@@ -16,7 +16,7 @@ export class RoomController implements RestController<Room, CreateRoomDto, Updat
   constructor(private roomService: RoomService) {}
 
   @Post()
-  async create(@Body() dto: object): Promise<ResponseData<Room>> {
+  async create(@Body() dto: CreateRoomDto): Promise<ResponseData<Room>> {
     return this.roomService.create(dto);
   }
 
@@ -41,7 +41,7 @@ export class RoomController implements RestController<Room, CreateRoomDto, Updat
   }
 
   @Put(":id")
-  async update(@Param("id") id: string, @Body() dto: object): Promise<ResponseData<Room>> {
+  async update(@Param("id") id: string, @Body() dto: UpdateRoomDto): Promise<ResponseData<Room>> {
     return this.roomService.update(id, dto);
   }
 }

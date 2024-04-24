@@ -22,7 +22,7 @@ export class PrismaService extends PrismaClient {
       this.rating.deleteMany(),
       this.exam.deleteMany(),
       this.subject.deleteMany(),
-      this.studentSchedule.deleteMany(),
+      this.schedule.deleteMany(),
       this.authToken.deleteMany(),
     ]);
   }

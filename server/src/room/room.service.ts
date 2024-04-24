@@ -8,7 +8,7 @@ import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
 import { SortType } from "../utils/sort-type.enum";
 
 @Injectable()
-export class RoomService  implements RestService<Room, CreateRoomDto, UpdateRoomDto> {
+export class RoomService implements RestService<Room, CreateRoomDto, UpdateRoomDto> {
   constructor(
     private prismaService: PrismaService,
     private logger: Logger = new Logger(RoomService.name),
@@ -19,7 +19,11 @@ export class RoomService  implements RestService<Room, CreateRoomDto, UpdateRoom
     const response = { statusCode: 201, message: "Room created" } as ResponseData<Room>;
     const data = await this.prismaService.room.create({
       data: {
-        ...dto,
+        name: dto.name,
+        description: dto.description,
+        floor: dto.floor,
+        capacity: dto.capacity,
+        type: dto.type,
       },
     });
 

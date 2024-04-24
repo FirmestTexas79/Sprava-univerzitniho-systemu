@@ -17,7 +17,7 @@ export class ExamController implements RestController<Exam, CreateExamDto, Updat
   }
 
   @Post()
-  async create(@Body() dto: object): Promise<ResponseData<Exam>> {
+  async create(@Body() dto: CreateExamDto): Promise<ResponseData<Exam>> {
     return this.examService.create(dto);
   }
 
@@ -42,7 +42,7 @@ export class ExamController implements RestController<Exam, CreateExamDto, Updat
   }
 
   @Put(":id")
-  async update(@Param("id") id: string, @Body() dto: object): Promise<ResponseData<Exam>> {
+  async update(@Param("id") id: string, @Body() dto: UpdateExamDto): Promise<ResponseData<Exam>> {
     return this.examService.update(id, dto);
   }
 }

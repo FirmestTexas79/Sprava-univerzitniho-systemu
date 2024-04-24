@@ -12,7 +12,8 @@ export class ActivityService implements RestService<Activity, CreateActivityDto,
   constructor(
     private prismaService: PrismaService,
     private logger: Logger = new Logger(ActivityService.name),
-  ) {}
+  ) {
+  }
 
   async create(dto: CreateActivityDto): Promise<ResponseData<Activity>> {
     const response = { statusCode: 201, message: "Activity created" } as ResponseData<Activity>;
