@@ -17,9 +17,10 @@ datasource db {
 
 // User Model
 model User {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  visibility Visibility? @default(VISIBLE)
 
   firstname   String
   lastname    String
@@ -40,8 +41,8 @@ model User {
 
   ratings Rating[]
 
-  studentSchedule StudentSchedule[] @relation("Student")
-  teacherSchedule StudentSchedule[] @relation("Teacher")
+  studentSchedule Schedule[] @relation("Student")
+  teacherSchedule Schedule[] @relation("Teacher")
 
   @@map("users")
 }
@@ -56,6 +57,11 @@ enum Sex {
   MALE   @map("MALE")
   FEMALE @map("FEMALE")
   OTHER  @map("OTHER")
+}
+
+enum Visibility {
+  HIDDEN  @map("HIDDEN")
+  VISIBLE @map("VISIBLE")
 }
 
 // AuthToken Model
@@ -74,9 +80,10 @@ model AuthToken {
 
 // Activity Model
 model Activity {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  visibility Visibility? @default(VISIBLE)
 
   name        String
   description String?
@@ -86,30 +93,32 @@ model Activity {
 
 // Subject Model
 model Subject {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  visibility Visibility? @default(VISIBLE)
 
   name       String
   shortName  String
   department String
   credits    Int
 
-  guarantorId     String
-  guarantor       User              @relation("Guarantor", fields: [guarantorId], references: [id])
-  description     String?
-  category        String
-  exams           Exam[]
-  StudentSchedule StudentSchedule[]
+  guarantorId String
+  guarantor   User       @relation("Guarantor", fields: [guarantorId], references: [id])
+  description String?
+  category    String
+  exams       Exam[]
+  Schedule    Schedule[]
 
   @@map("subjects")
 }
 
 // Exam Model
 model Exam {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  visibility Visibility? @default(VISIBLE)
 
   name  String
   type  ExamTypes
@@ -140,17 +149,18 @@ enum ExamTypes {
 }
 
 model Room {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  visibility Visibility? @default(VISIBLE)
 
-  name            String
-  floor           Int
-  type            RoomTypes
-  description     String?
-  capacity        Int
-  Exam            Exam[]
-  StudentSchedule StudentSchedule[]
+  name        String
+  floor       Int
+  type        RoomTypes
+  description String?
+  capacity    Int
+  Exam        Exam[]
+  Schedule    Schedule[]
 
   @@map("rooms")
 }
@@ -166,9 +176,10 @@ enum RoomTypes {
 
 // Rating Model
 model Rating {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  visibility Visibility? @default(VISIBLE)
 
   date DateTime @default(now())
 
@@ -184,10 +195,11 @@ model Rating {
 }
 
 // Student Schedule Model
-model StudentSchedule {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Schedule {
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  visibility Visibility? @default(VISIBLE)
 
   studentId String
   student   User   @relation("Student", fields: [studentId], references: [id])

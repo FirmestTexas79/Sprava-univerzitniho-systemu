@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { User } from "@prisma/client";
+import { User, Visibility } from "@prisma/client";
 import { CreateUserDto, UpdateUserDto } from "./dto";
 import { ResponseData } from "../utils/response-data";
 import { PrismaService } from "../prisma/prisma.service";
@@ -7,14 +7,14 @@ import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
 import { SortType } from "../utils/sort-type.enum";
 import bcrypt from "bcrypt";
 import { generateRandomPassword } from "../utils/utils";
+import { RestService } from "../utils/rest.service";
 
 @Injectable()
-export class UserService {
+export class UserService implements RestService<User, CreateUserDto, UpdateUserDto> {
   constructor(
     private prismaService: PrismaService,
     private logger: Logger = new Logger(UserService.name),
-  ) {
-  }
+  ) {}
 
   /**
    * Get the user
@@ -34,7 +34,6 @@ export class UserService {
   }
 
   async create(dto: CreateUserDto): Promise<ResponseData<User>> {
-
     const password = generateRandomPassword(8, 1, 1, 1, 0);
 
     const hash = await bcrypt.hash(password, 10);
@@ -122,7 +121,7 @@ export class UserService {
     };
   }
 
-  async delete(id: string): Promise<ResponseData<User>> {
+  async delete(id: string): Promise<ResponseData> {
     const userData = await this.prismaService.user.delete({
       where: { id },
     });
@@ -131,7 +130,19 @@ export class UserService {
     return {
       statusCode: 200,
       message: "User deleted",
-      data: userData,
+    };
+  }
+
+  async softDelete(id: string): Promise<ResponseData> {
+    const userData = await this.prismaService.user.update({
+      where: { id },
+      data: { visibility: Visibility.HIDDEN },
+    });
+    delete userData.password;
+    this.logger.log(userData);
+    return {
+      statusCode: 200,
+      message: "User soft deleted",
     };
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Put, Query, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "@prisma/client";
 import { UpdateUserDto } from "./dto";
@@ -20,7 +20,7 @@ export class UserController {
     return this.userService.getMe(user);
   }
 
-  @Patch(":id")
+  @Put(":id")
   async update(@Param("id") id: string, @Body() dto: UpdateUserDto): Promise<ResponseData<User>> {
     return this.userService.update(id, dto);
   }
@@ -38,5 +38,10 @@ export class UserController {
   @Get(":id")
   async findOne(@Param("id") id: string): Promise<ResponseData<User>> {
     return this.userService.findOne(id);
+  }
+
+  @Delete("soft/:id")
+  async softDelete(@Param("id") id: string): Promise<ResponseData<User>> {
+    return this.userService.softDelete(id);
   }
 }

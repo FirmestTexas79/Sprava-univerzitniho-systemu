@@ -7,10 +7,9 @@ import { ResponseData } from "./response-data";
 export interface RestService<T, C = object, U = object> {
   /**
    * Create the entity
-   * @param creatorId Creator id
    * @param dto Entity data
    */
-  create(creatorId: string, dto: C): Promise<ResponseData<T>>;
+  create(dto: C): Promise<ResponseData<T>>;
 
   /**
    * Update the entity
@@ -23,7 +22,13 @@ export interface RestService<T, C = object, U = object> {
    * Delete the entity
    * @param id Entity id
    */
-  delete(id: string): Promise<ResponseData<T>>;
+  delete(id: string): Promise<ResponseData>;
+
+  /**
+   * Soft delete the entity
+   * @param id Entity id
+   */
+  softDelete(id: string): Promise<ResponseData>;
 
   /**
    * Merge the entity
