@@ -1,49 +1,53 @@
-import {createContext, ReactNode, useEffect, useState} from "react"
-import {User} from "../../../lib/src/models/user/User.ts"
-import {useNavigate} from "react-router-dom"
-import {valueOf} from "axios"
+import { createContext, ReactNode, useEffect, useState } from "react";
+import { UserApi } from "../services/UserApi.ts";
+import { User } from "@prisma/client";
 
 
 type AuthContextType = {
-	user:User | null
-	login:(userData:User) => void
-	logout:() => void
+  user: User | null
+  login: (token: string) => void
+  token: string | null
+  logout: () => void
 }
 
 type AuthProviderProps = {
-	children:ReactNode
+  children: ReactNode
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined)
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({children}:AuthProviderProps){
-	const [user, setUser] = useState<User | null>(null)
-	const navigate = useNavigate()
+export function AuthProvider({ children }: AuthProviderProps) {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-	const login = (userData:User) => {
-		console.log(userData)
-		if(userData.id)
-			localStorage.setItem("user", userData.id)
-		setUser(userData)
-	}
+  const login = (token: string) => {
+    setToken(token);
+  };
 
-	const logout = () => {
-		console.log("Vypadni a už se nevracej")
-		setUser(null)
-		localStorage.removeItem("user")
-	}
+  const logout = () => {
+    setUser(null);
+  };
 
-	useEffect(() => {
-		if(!user){
-			navigate("login")
-		}
-	}, [user])
+  useEffect(() => {
+    if (!token) return;
 
-	return (
-		<AuthContext.Provider value={{user,login,logout}}>{
-			children
-		}</AuthContext.Provider>
-	)
+    console.log("token", token);
+    const api = new UserApi(token);
+    api.getMe().then((data) => {
+      if (!data.data) return;
+
+      data.data.birthdate = new Date(data.data.birthdate);
+      console.log(data.data);
+      setUser(data.data);
+    });
+
+  }, [token]);
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, token }}>{
+      children
+    }</AuthContext.Provider>
+  );
 
 
 }

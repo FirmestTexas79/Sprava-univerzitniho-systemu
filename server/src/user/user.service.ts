@@ -1,13 +1,13 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { User, Visibility } from "@prisma/client";
 import { CreateUserDto, UpdateUserDto } from "./dto";
-import { ResponseData } from "../utils/response-data";
 import { PrismaService } from "../prisma/prisma.service";
-import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
-import { SortType } from "../utils/sort-type.enum";
 import * as argon from "argon2";
 import { generateRandomPassword } from "../utils/utils";
 import { RestService } from "../utils/rest.service";
+import { ResponseData } from "../utils/response-data";
+import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
+import { SortType } from "../utils/sort-type.enum";
 
 @Injectable()
 export class UserService implements RestService<User, CreateUserDto, UpdateUserDto> {

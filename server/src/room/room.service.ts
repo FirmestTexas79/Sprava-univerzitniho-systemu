@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { RestService } from "../utils/rest.service";
 import { Room, Visibility } from "@prisma/client";
-import { CreateRoomDto, UpdateRoomDto } from "../room/dto";
+import { CreateRoomDto, UpdateRoomDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { ResponseData } from "../utils/response-data";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";

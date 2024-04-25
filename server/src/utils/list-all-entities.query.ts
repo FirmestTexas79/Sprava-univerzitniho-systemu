@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
-import { SortType } from "./sort-type.enum";
 import { Type } from "class-transformer";
+import { SortType } from "./sort-type.enum";
 
 /**
  * List all entities query

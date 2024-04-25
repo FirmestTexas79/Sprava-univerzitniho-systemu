@@ -8,9 +8,9 @@ import { v4 as uuid } from "uuid";
 import { AuthTokenService } from "../auth-token/auth-token.service";
 import { EmailService } from "../email/email.service";
 import { PrismaService } from "../prisma/prisma.service";
+import { generateRandomPassword } from "../utils/utils";
 import { ResponseData } from "../utils/response-data";
 import { UserToken } from "../utils/user-token";
-import { generateRandomPassword } from "../utils/utils";
 
 @Injectable()
 export class AuthService {

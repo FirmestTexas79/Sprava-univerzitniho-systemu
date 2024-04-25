@@ -18,6 +18,7 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtGuard)
   @Post("/logout")
   async logout() {
     return this.authService.logout();

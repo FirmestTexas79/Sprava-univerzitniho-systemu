@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { RestService } from "../utils/rest.service";
 import { Subject, Visibility } from "@prisma/client";
-import { CreateSubjectDto, UpdateSubjectDto } from "../subject/dto";
+import { CreateSubjectDto, UpdateSubjectDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { ResponseData } from "../utils/response-data";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";

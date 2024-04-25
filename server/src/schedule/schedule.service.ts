@@ -1,11 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { RestService } from "../utils/rest.service";
 import { Schedule, Visibility } from "@prisma/client";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateScheduleDto, UpdateScheduleDto } from "./dto";
 import { ResponseData } from "../utils/response-data";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
-import { PrismaService } from "../prisma/prisma.service";
 import { SortType } from "../utils/sort-type.enum";
-import { CreateScheduleDto, UpdateScheduleDto } from "./dto";
 
 @Injectable()
 export class ScheduleService implements RestService<Schedule, CreateScheduleDto, UpdateScheduleDto> {

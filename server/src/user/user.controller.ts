@@ -4,14 +4,14 @@ import { User } from "@prisma/client";
 import { UpdateUserDto } from "./dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtGuard } from "../auth/guard";
-import { ResponseData } from "../utils/response-data";
 import { GetUser } from "../auth/decorator";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
+import { ResponseData } from "../utils/response-data";
 
-@ApiTags("Users")
+@ApiTags("User")
 @ApiBearerAuth()
 @UseGuards(JwtGuard)
-@Controller("users")
+@Controller("user")
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -25,8 +25,8 @@ export class UserController {
     return this.userService.update(id, dto);
   }
 
-  @Delete("id")
-  async delete(@Param("id") id: string): Promise<ResponseData<User>> {
+  @Delete(":id")
+  async delete(@Param("id") id: string): Promise<ResponseData> {
     return this.userService.delete(id);
   }
 
@@ -41,7 +41,7 @@ export class UserController {
   }
 
   @Delete("soft/:id")
-  async softDelete(@Param("id") id: string): Promise<ResponseData<User>> {
+  async softDelete(@Param("id") id: string): Promise<ResponseData> {
     return this.userService.softDelete(id);
   }
 }

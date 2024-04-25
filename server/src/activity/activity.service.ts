@@ -3,9 +3,9 @@ import { RestService } from "../utils/rest.service";
 import { Activity, Visibility } from "@prisma/client";
 import { CreateActivityDto, UpdateActivityDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
-import { ResponseData } from "../utils/response-data";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
 import { SortType } from "../utils/sort-type.enum";
+import { ResponseData } from "../utils/response-data";
 
 @Injectable()
 export class ActivityService implements RestService<Activity, CreateActivityDto, UpdateActivityDto> {
