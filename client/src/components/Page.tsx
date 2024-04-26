@@ -4,17 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { Navbar } from "./navigation/Navbar.tsx";
 
 type PageProps = {
-  children: ReactNode
-  navbar?: boolean
+  children: ReactNode,
+  navbar?: boolean,
+  ignoreAuth?: boolean
 }
 
 
-export function Page({ children, navbar = true }: PageProps) {
+export function Page({ children, navbar = true, ignoreAuth }: PageProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) return;
+    if (ignoreAuth || user) return;
     navigate("/login");
   }, []);
 

@@ -58,7 +58,14 @@ export default function LoginPage() {
         value={loginForm.password}
         onChange={(value) => setLoginForm({ ...loginForm, password: value })}
       />
-      <Button onClick={handleSubmit}>Přihlásit</Button>
+      <Button
+        disabled={!loginForm.email || !loginForm.password}
+        variant="contained"
+        fullWidth
+        onClick={handleSubmit}
+      >Přihlásit
+      </Button>
+      <Button onClick={() => navigate("/forgot-password")}>Zapomenuté heslo</Button>
     </Page>
   );
 }

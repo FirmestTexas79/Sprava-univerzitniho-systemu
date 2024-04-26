@@ -10,9 +10,10 @@ interface TextInputProps extends InputProps<string> {
   label?: string;
   placeholder?: string;
   type?: "tel" | "email" | "password" | "text";
+  required?: boolean;
 }
 
-export function TextInput({ value, onChange, type, helperText, error, label, placeholder }: TextInputProps) {
+export function TextInput({ value, onChange, type, helperText, error, label, placeholder,required }: TextInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -24,6 +25,7 @@ export function TextInput({ value, onChange, type, helperText, error, label, pla
   return (
     <>
       <OutlinedInput
+        required={required}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         type={showPassword ? "text" : type}

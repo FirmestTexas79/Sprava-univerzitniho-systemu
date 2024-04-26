@@ -37,13 +37,11 @@ const resetPasswordFormData = z.object({
   newPassword: z.string().min(8, "Password must be at least 8 characters long")
     .regex(/[a-z]/, "Password must contain at least 1 lowercase letter")
     .regex(/[A-Z]/, "Password must contain at least 1 uppercase letter")
-    .regex(/[0-9]/, "Password must contain at least 1 number")
-    .regex(/[^a-zA-Z0-9]/, "Password can contain special characters"),
+    .regex(/[0-9]/, "Password must contain at least 1 number"),
   confirmPassword: z.string().min(8, "Password must be at least 8 characters long")
     .regex(/[a-z]/, "Password must contain at least 1 lowercase letter")
     .regex(/[A-Z]/, "Password must contain at least 1 uppercase letter")
-    .regex(/[0-9]/, "Password must contain at least 1 number")
-    .regex(/[^a-zA-Z0-9]/, "Password can contain special characters"),
+    .regex(/[0-9]/, "Password must contain at least 1 number"),
   token: z.string(),
 });
 
@@ -102,6 +100,7 @@ export class AuthApi {
    * Get user info
    */
   async forgotPassword(form: AuthForm) {
+    this.validate(authFormData, form);
     const { data } = await axios.post<any, {
       data: ResponseData
     }>(RoutePath.AUTH + "forgot-password", form, this.config);
@@ -113,6 +112,7 @@ export class AuthApi {
    * @param form
    */
   async resetPassword(form: ResetPasswordForm) {
+    this.validate(resetPasswordFormData, form);
     const { data } = await axios.post<any, {
       data: ResponseData
     }>(RoutePath.AUTH + "reset-password", form, this.config);
@@ -124,6 +124,7 @@ export class AuthApi {
    * @param form
    */
   async changePassword(form: ChangePasswordForm) {
+    this.validate(changePasswordFormData, form);
     const { data } = await axios.post<any, {
       data: ResponseData
     }>(RoutePath.AUTH + "change-password", form, this.config);
@@ -135,7 +136,7 @@ export class AuthApi {
    * @param schema
    * @param form
    */
-  protected validate<T extends ZodRawShape>(schema: ZodObject<T>, form: LoginForm) {
+  protected validate<T extends ZodRawShape>(schema: ZodObject<T>, form: object) {
     try {
       schema.parse(form);
     } catch (e: any) {

@@ -168,7 +168,7 @@ export class AuthService {
 
     await this.tokens.createToken(user.email, token, expiresAt);
 
-    const link = `${origin}/auth/reset-password/${token}`;
+    const link = `${origin}/reset-password/${token}`;
 
     await this.sendPasswordReset(user.email, link);
 

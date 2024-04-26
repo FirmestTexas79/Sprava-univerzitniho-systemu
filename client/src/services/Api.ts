@@ -77,7 +77,7 @@ export abstract class Api<T = object, U = object> {
    * @param schema
    * @param form
    */
-  protected validate<T extends ZodRawShape>(schema: z.ZodObject<T>, form: T) {
+  protected validate<T extends ZodRawShape>(schema: z.ZodObject<T>, form: object) {
     try {
       schema.parse(form);
     } catch (e: any) {

@@ -3,6 +3,7 @@ import DashboardPage from "../pages/DashboardPage.tsx";
 import UserPage from "../pages/UserPage.tsx";
 import LoginPage from "../pages/LoginPage.tsx";
 import ResetPasswordPage from "../pages/ResetPasswordPage.tsx";
+import { ForgotPasswordPage } from "../pages/ForgotPasswordPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -21,12 +22,12 @@ const router = createBrowserRouter([
     path: "/login",
     element: <LoginPage />,
   },
-  /*{
+  {
     path: "/forgot-password",
     element: <ForgotPasswordPage />,
-  },*/
+  },
   {
-    path: "/reset-password",
+    path: "/reset-password/:token",
     element: <ResetPasswordPage />,
   },
 ]);
