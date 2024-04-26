@@ -2,9 +2,9 @@ import { RoutePath } from "../../../lib/src/persistance/RoutePath.ts";
 import axios from "../api/axios.ts";
 import { ResponseData } from "../../../lib/src/persistance/response-data.ts";
 import { UserToken } from "../../../lib/src/persistance/user-token.ts";
-import { Api } from "./Api.ts";
-import { z } from "zod";
+import { z, ZodObject, ZodRawShape } from "zod";
 import { Sex, UserRoles } from "@prisma/client";
+import { AxiosRequestConfig } from "axios";
 
 const authFormData = z.object({
   email: z.string().email(),
@@ -57,10 +57,13 @@ const changePasswordFormData = z.object({
 
 export type ChangePasswordForm = z.infer<typeof changePasswordFormData>;
 
-export class AuthApi extends Api {
+export class AuthApi {
+  protected config: AxiosRequestConfig = {};
+  protected path: RoutePath;
 
   constructor(token: string | null = null) {
-    super(token, RoutePath.AUTH);
+    this.config = { headers: { Authorization: `Bearer ${token}` } };
+    this.path = RoutePath.AUTH;
   }
 
 
@@ -69,7 +72,10 @@ export class AuthApi extends Api {
    * @param form
    */
   async login(form: LoginForm) {
-    const { data } = await axios.post<any, { data: ResponseData<UserToken> }>(RoutePath.AUTH_LOGIN, form, this.config);
+    this.validate(loginFormData, form);
+    const { data } = await axios.post<any, {
+      data: ResponseData<UserToken>
+    }>(RoutePath.AUTH + "login", form, this.config);
     return data;
   }
 
@@ -80,7 +86,7 @@ export class AuthApi extends Api {
   async register(form: RegisterForm) {
     const { data } = await axios.post<any, {
       data: ResponseData<UserToken>
-    }>(RoutePath.AUTH_REGISTER, form, this.config);
+    }>(RoutePath.AUTH + "register", form, this.config);
     return data;
   }
 
@@ -88,7 +94,7 @@ export class AuthApi extends Api {
    * Logout
    */
   async logout() {
-    const { data } = await axios.post<any, { data: ResponseData }>(RoutePath.AUTH_LOGOUT, null, this.config);
+    const { data } = await axios.post<any, { data: ResponseData }>(RoutePath.AUTH + "logout", null, this.config);
     return data;
   }
 
@@ -96,7 +102,9 @@ export class AuthApi extends Api {
    * Get user info
    */
   async forgotPassword(form: AuthForm) {
-    const { data } = await axios.post<any, { data: ResponseData }>(RoutePath.AUTH_FORGOT_PASSWORD, form, this.config);
+    const { data } = await axios.post<any, {
+      data: ResponseData
+    }>(RoutePath.AUTH + "forgot-password", form, this.config);
     return data;
   }
 
@@ -105,7 +113,9 @@ export class AuthApi extends Api {
    * @param form
    */
   async resetPassword(form: ResetPasswordForm) {
-    const { data } = await axios.post<any, { data: ResponseData }>(RoutePath.AUTH_RESET_PASSWORD, form, this.config);
+    const { data } = await axios.post<any, {
+      data: ResponseData
+    }>(RoutePath.AUTH + "reset-password", form, this.config);
     return data;
   }
 
@@ -114,8 +124,23 @@ export class AuthApi extends Api {
    * @param form
    */
   async changePassword(form: ChangePasswordForm) {
-    const { data } = await axios.post<any, { data: ResponseData }>(RoutePath.AUTH_CHANGE_PASSWORD, form, this.config);
+    const { data } = await axios.post<any, {
+      data: ResponseData
+    }>(RoutePath.AUTH + "change-password", form, this.config);
     return data;
+  }
+
+  /**
+   * Validate form
+   * @param schema
+   * @param form
+   */
+  protected validate<T extends ZodRawShape>(schema: ZodObject<T>, form: LoginForm) {
+    try {
+      schema.parse(form);
+    } catch (e: any) {
+      throw e.errors;
+    }
   }
 }
 

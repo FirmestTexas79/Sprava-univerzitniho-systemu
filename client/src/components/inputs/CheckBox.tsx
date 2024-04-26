@@ -1,12 +1,14 @@
-import React from "react"
-import {Checkbox} from "@mui/material"
+import { Checkbox } from "@mui/material";
+import { InputProps } from "./InputProps.ts";
 
-type CheckBoxProps = {
-	onPress:() => void
-	value?:boolean
+interface CheckBoxProps extends InputProps<boolean> {
+  onPress: () => void;
 }
 
 
-export function CheckBox({onPress, value}:CheckBoxProps){
-	return (<Checkbox onClick={onPress} value={value}/>)
+export function CheckBox({ onPress, value, onChange }: CheckBoxProps) {
+  return (<Checkbox onClick={() => {
+    onPress();
+    onChange(!value);
+  }} value={value} />);
 }

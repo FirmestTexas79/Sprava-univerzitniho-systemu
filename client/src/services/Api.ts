@@ -3,6 +3,7 @@ import axios from "../api/axios.ts";
 import { ResponseData } from "../../../lib/src/persistance/response-data.ts";
 import { ListAllEntitiesQuery } from "../../../server/src/utils/list-all-entities.query.ts";
 import { RoutePath } from "../../../lib/src/persistance/RoutePath.ts";
+import { z, ZodRawShape } from "zod";
 
 export abstract class Api<T = object, U = object> {
   protected config: AxiosRequestConfig = {};
@@ -69,5 +70,18 @@ export abstract class Api<T = object, U = object> {
   async softDelete(id: string) {
     const { data } = await axios.delete<any, { data: ResponseData }>(this.path + "soft/" + id, this.config);
     return data;
+  }
+
+  /**
+   * Validate form
+   * @param schema
+   * @param form
+   */
+  protected validate<T extends ZodRawShape>(schema: z.ZodObject<T>, form: T) {
+    try {
+      schema.parse(form);
+    } catch (e: any) {
+      throw e.errors;
+    }
   }
 }

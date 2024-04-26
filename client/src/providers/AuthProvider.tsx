@@ -1,12 +1,13 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { UserApi } from "../services/UserApi.ts";
 import { User } from "@prisma/client";
+import { UserToken } from "../../../lib/src/persistance/user-token.ts";
 
 
 type AuthContextType = {
   user: User | null
-  login: (token: string) => void
-  token: string | null
+  login: (token: UserToken) => void
+  token: UserToken | null
   logout: () => void
 }
 
@@ -18,9 +19,9 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<UserToken | null>(null);
 
-  const login = (token: string) => {
+  const login = (token: UserToken) => {
     setToken(token);
   };
 
@@ -30,9 +31,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     if (!token) return;
-
-    console.log("token", token);
-    const api = new UserApi(token);
+    const api = new UserApi(token.token);
     api.getMe().then((data) => {
       if (!data.data) return;
 

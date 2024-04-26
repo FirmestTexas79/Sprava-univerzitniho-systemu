@@ -1,5 +1,4 @@
 import React, {useState} from "react"
-import "../styles/ResetPassword.css"
 
 export default function ResetPasswordPage() {
 	const [email, setEmail] = useState("")

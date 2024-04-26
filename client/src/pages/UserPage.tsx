@@ -1,4 +1,3 @@
-import React from "react";
 import { useAuth } from "../hooks/useAuth.tsx";
 import { Box, Container, Typography } from "@mui/material";
 
