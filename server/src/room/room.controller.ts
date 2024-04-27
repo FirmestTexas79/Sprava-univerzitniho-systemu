@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Res, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtGuard } from "../auth/guard";
 import { RestController } from "../utils/rest.controller";
@@ -51,7 +51,7 @@ export class RoomController implements RestController<Room, CreateRoomDto, Updat
     res.status(response.statusCode).json(response);
   }
 
-  @Put(":id")
+  @Patch(":id")
   async update(@Param("id") id: string, @Body() dto: UpdateRoomDto, @Res() res: Response) {
     const response = await this.roomService.update(id, dto);
 

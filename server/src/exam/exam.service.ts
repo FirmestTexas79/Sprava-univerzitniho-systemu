@@ -43,16 +43,12 @@ export class ExamService implements RestService<Exam, CreateExamDto, UpdateExamD
 
   async findAll(query: ListAllEntitiesQuery<Exam>): Promise<ResponseData<Exam[]>> {
     const response = { statusCode: 200, message: "Found" } as ResponseData<Exam[]>;
-    const queryOffset = query.offset || ((query.page || 1) - 1) * query.limit;
-    const queryLimit = query.limit || 100;
     const querySortBy = query.sortBy || ("startTime" as keyof Exam);
     const querySortOrder = query.sortOrder || SortType.ASC;
     const queryFilterBy = query.filterBy;
     const queryFilterValue = query.filterValue;
 
     const data = await this.prismaService.exam.findMany({
-      skip: queryOffset,
-      take: queryLimit,
       orderBy: {
         [querySortBy]: querySortOrder,
       },

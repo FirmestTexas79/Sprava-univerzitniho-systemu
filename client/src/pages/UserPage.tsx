@@ -11,17 +11,7 @@ import { AxiosError } from "axios";
 import { DateInput } from "../components/inputs/DateInput.tsx";
 import { SelectInput } from "../components/inputs/SelectInput.tsx";
 import { NumberInput } from "../components/inputs/NumberInput.tsx";
-
-const SEX_OPTIONS = [{
-  label: "Muž",
-  value: "MALE",
-}, {
-  label: "Žena",
-  value: "FEMALE",
-}, {
-  label: "Jiné",
-  value: "OTHER",
-}];
+import { SEX_OPTIONS, USER_ROLES_OPTIONS } from "../services/utils.ts";
 
 export default function UserPage() {
   const { id } = useParams();
@@ -155,6 +145,20 @@ export default function UserPage() {
           helperText={errors?.get("phone")}
           value={currentUser?.phone}
           label="Telefon" />
+        <SelectInput
+          options={SEX_OPTIONS}
+          onChange={(value) => onChange("sex", value)}
+          error={errors?.has("sex")}
+          helperText={errors?.get("sex")}
+          value={currentUser?.sex}
+          label="Pohlaví" />
+        <SelectInput
+          options={USER_ROLES_OPTIONS}
+          onChange={(value) => onChange("role", value)}
+          error={errors?.has("role")}
+          helperText={errors?.get("role")}
+          value={currentUser?.role}
+          label="Role" />
         {currentUser?.role === UserRoles.STUDENT && (
           <>
             <NumberInput
@@ -172,13 +176,6 @@ export default function UserPage() {
               label="Obor" />
           </>
         )}
-        <SelectInput
-          options={SEX_OPTIONS}
-          onChange={(value) => onChange("sex", value)}
-          error={errors?.has("sex")}
-          helperText={errors?.get("sex")}
-          value={currentUser?.sex}
-          label="Pohlaví" />
         <Button
           variant="contained"
           fullWidth

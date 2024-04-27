@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Res, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtGuard } from "../auth/guard";
 import { RestController } from "../utils/rest.controller";
@@ -51,7 +51,7 @@ export class ExamController implements RestController<Exam, CreateExamDto, Updat
     res.status(response.statusCode).json(response);
   }
 
-  @Put(":id")
+  @Patch(":id")
   async update(@Param("id") id: string, @Body() dto: UpdateExamDto, @Res() res: Response) {
     const response = await this.examService.update(id, dto);
 

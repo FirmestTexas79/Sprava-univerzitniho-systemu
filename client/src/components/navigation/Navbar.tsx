@@ -197,7 +197,7 @@ export function Navbar({ role = UserRoles.STUDENT }: NavbarProps) {
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar {...stringAvatar(`${user?.firstname} ${user?.lastname}`)}
-                        src={`data:image/png;base64,${user?.image?.toString("base64")}`} />
+                        src={user?.image && `data:image/png;base64,${user?.image?.toString("base64")}`} />
               </IconButton>
             </Tooltip>
             <Menu

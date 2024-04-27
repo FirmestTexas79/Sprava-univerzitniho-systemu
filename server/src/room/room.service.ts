@@ -48,16 +48,12 @@ export class RoomService implements RestService<Room, CreateRoomDto, UpdateRoomD
 
   async findAll(query: ListAllEntitiesQuery<Room>): Promise<ResponseData<Room[]>> {
     const response = { statusCode: 200, message: "Found" } as ResponseData<Room[]>;
-    const queryOffset = query.offset || ((query.page || 1) - 1) * query.limit;
-    const queryLimit = query.limit || 100;
     const querySortBy = query.sortBy || ("startTime" as keyof Room);
     const querySortOrder = query.sortOrder || SortType.ASC;
     const queryFilterBy = query.filterBy;
     const queryFilterValue = query.filterValue;
 
     const data = await this.prismaService.room.findMany({
-      skip: queryOffset,
-      take: queryLimit,
       orderBy: {
         [querySortBy]: querySortOrder,
       },

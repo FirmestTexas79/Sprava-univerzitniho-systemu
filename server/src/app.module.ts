@@ -14,6 +14,7 @@ import { RoomModule } from "./room/room.module";
 import { RatingModule } from "./rating/rating.module";
 import { ScheduleModule } from "./schedule/schedule.module";
 import { AppService } from "./app.service";
+import { FieldOfStudyModule } from './field-of-study/field-of-study.module';
 
 @Module({
   controllers: [AppController],
@@ -31,6 +32,7 @@ import { AppService } from "./app.service";
     RoomModule,
     RatingModule,
     ScheduleModule,
+    FieldOfStudyModule,
   ],
   providers: [AppService],
 })

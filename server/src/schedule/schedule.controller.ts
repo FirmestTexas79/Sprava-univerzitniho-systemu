@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Res, UseGuards } from "@nestjs/common";
 import { Schedule } from "@prisma/client";
 import { ScheduleService } from "./schedule.service";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -50,7 +50,7 @@ export class ScheduleController implements RestController<Schedule, CreateSchedu
     res.status(response.statusCode).json(response);
   }
 
-  @Put(":id")
+  @Patch(":id")
   async update(@Param("id") id: string, @Body() dto: UpdateScheduleDto, @Res() res: Response) {
     const response = await this.scheduleService.update(id, dto);
 

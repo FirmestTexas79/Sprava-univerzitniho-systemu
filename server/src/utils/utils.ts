@@ -10,12 +10,7 @@ export function generateRandomPassword(
   const numberChars = "0123456789";
   const symbolChars = "!@#$%^&*()-_=+";
 
-  const allChars = [
-    lowercaseChars,
-    uppercaseChars,
-    numberChars,
-    symbolChars,
-  ].map((charSet, index) => ({
+  const allChars = [lowercaseChars, uppercaseChars, numberChars, symbolChars].map((charSet, index) => ({
     charSet,
     shouldInclude: index === 0 ? minLowercase : index === 1 ? minUppercase : index === 2 ? minNumbers : minSymbols,
   }));
@@ -40,5 +35,8 @@ export function generateRandomPassword(
   }
 
   // Shuffle the characters in the password
-  return password.split("").sort(() => Math.random() - 0.5).join("");
+  return password
+    .split("")
+    .sort(() => Math.random() - 0.5)
+    .join("");
 }

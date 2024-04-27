@@ -2,7 +2,7 @@ import { InputProps } from "./InputProps.ts";
 import { FormHelperText, Select } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 
-interface Option<T> {
+export interface Option<T> {
   label: string;
   value: T;
 }
@@ -12,6 +12,7 @@ interface SelectInputProps<T> extends InputProps<T> {
   helperText?: string;
   label?: string;
   options: Array<Option<T>>;
+  onOpen?: () => void;
   required?: boolean;
   placeholder?: string;
 }
@@ -25,6 +26,7 @@ export function SelectInput<T extends any>({
                                              placeholder,
                                              value,
                                              onChange,
+                                             onOpen,
                                              disabled,
                                            }: SelectInputProps<T>) {
   return (
@@ -35,10 +37,11 @@ export function SelectInput<T extends any>({
         onChange={(event) => onChange(event.target.value as T)}
         value={value || ""}
         fullWidth
+        onOpen={() => onOpen && onOpen()}
         disabled={disabled}
         error={error}
         placeholder={placeholder || label}>
-        {options.map((option,index) =>
+        {options.map((option, index) =>
           (<MenuItem key={index} value={option.value}>{option.label}</MenuItem>))}
       </Select>
       <FormHelperText error={error}>{helperText}</FormHelperText>

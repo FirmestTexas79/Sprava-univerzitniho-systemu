@@ -43,16 +43,12 @@ export class RatingService implements RestService<Rating, CreateRatingDto, Updat
 
   async findAll(query: ListAllEntitiesQuery<Rating>): Promise<ResponseData<Rating[]>> {
     const response = { statusCode: 200, message: "Found" } as ResponseData<Rating[]>;
-    const queryOffset = query.offset || ((query.page || 1) - 1) * query.limit;
-    const queryLimit = query.limit || 100;
     const querySortBy = query.sortBy || ("startTime" as keyof Rating);
     const querySortOrder = query.sortOrder || SortType.ASC;
     const queryFilterBy = query.filterBy;
     const queryFilterValue = query.filterValue;
 
     const data = await this.prismaService.rating.findMany({
-      skip: queryOffset,
-      take: queryLimit,
       orderBy: {
         [querySortBy]: querySortOrder,
       },

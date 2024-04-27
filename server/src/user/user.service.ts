@@ -15,7 +15,8 @@ export class UserService implements RestService<User, CreateUserDto, UpdateUserD
   constructor(
     private prismaService: PrismaService,
     private logger: Logger = new Logger(UserService.name),
-  ) {}
+  ) {
+  }
 
   /**
    * Get the user
@@ -63,17 +64,16 @@ export class UserService implements RestService<User, CreateUserDto, UpdateUserD
   }
 
   async findAll(query: ListAllEntitiesQuery<User>): Promise<ResponseData<User[]>> {
-    const queryOffset = query.offset || ((query.page || 1) - 1) * query.limit;
-    const queryLimit = query.limit || 100;
     const querySortBy = query.sortBy || "firstname";
     const querySortOrder = query.sortOrder || SortType.ASC;
     const queryFilterBy = query.filterBy;
     const queryFilterValue = query.filterValue;
 
     const users = await this.prismaService.user.findMany({
-      skip: queryOffset,
-      take: queryLimit,
       orderBy: { [querySortBy]: querySortOrder },
+      where: {
+        [queryFilterBy]: queryFilterValue,
+      },
     });
 
     const filteredUsers = users.filter((user) => {

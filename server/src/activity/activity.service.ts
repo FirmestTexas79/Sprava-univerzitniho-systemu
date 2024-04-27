@@ -44,16 +44,12 @@ export class ActivityService implements RestService<Activity, CreateActivityDto,
 
   async findAll(query: ListAllEntitiesQuery<Activity>): Promise<ResponseData<Activity[]>> {
     const response = { statusCode: 200, message: "Found" } as ResponseData<Activity[]>;
-    const queryOffset = query.offset || ((query.page || 1) - 1) * query.limit;
-    const queryLimit = query.limit || 100;
     const querySortBy = query.sortBy || ("startTime" as keyof Activity);
     const querySortOrder = query.sortOrder || SortType.ASC;
     const queryFilterBy = query.filterBy;
     const queryFilterValue = query.filterValue;
 
     const data = await this.prismaService.activity.findMany({
-      skip: queryOffset,
-      take: queryLimit,
       orderBy: {
         [querySortBy]: querySortOrder,
       },

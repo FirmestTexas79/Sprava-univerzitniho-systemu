@@ -16,4 +16,5 @@ export enum RoutePath {
   AUTH_CHANGE_PASSWORD = "/auth/change-password",
   SCHEDULE = "/schedule/",
   AUTH = "/auth/",
+  FIELD_OF_STUDY = "/field-of-study/",
 }

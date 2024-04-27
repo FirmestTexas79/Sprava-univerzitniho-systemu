@@ -7,18 +7,6 @@ import { SortType } from "./sort-type.enum";
  * List all entities query
  */
 export class ListAllEntitiesQuery<T = object> {
-  @ApiProperty({ required: false, default: 100 })
-  @IsNumber()
-  @Type(() => Number)
-  @IsOptional()
-  limit?: number;
-
-  @ApiProperty({ required: false, default: 0 })
-  @IsNumber()
-  @Type(() => Number)
-  @IsOptional()
-  offset?: number;
-
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
@@ -28,12 +16,6 @@ export class ListAllEntitiesQuery<T = object> {
   @IsEnum(SortType)
   @IsOptional()
   sortOrder?: SortType;
-
-  @ApiProperty({ required: false, default: 1 })
-  @IsNumber()
-  @Type(() => Number)
-  @IsOptional()
-  page?: number;
 
   @ApiProperty({ required: false })
   @IsString()

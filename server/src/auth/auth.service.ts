@@ -11,6 +11,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { generateRandomPassword } from "../utils/utils";
 import { ResponseData } from "../utils/response-data";
 import { UserToken } from "../utils/user-token";
+import { UserRoles } from "@prisma/client";
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,8 @@ export class AuthService {
     private tokens: AuthTokenService,
     private emailService: EmailService,
     private logger: Logger = new Logger(AuthService.name),
-  ) {}
+  ) {
+  }
 
   /**
    * Log in a user
@@ -86,6 +88,10 @@ export class AuthService {
     // Hash the password
     const hash = await argon.hash(password);
 
+    if (dto.role === UserRoles.STUDENT && dto.year === null) {
+      dto.year = 1;
+    }
+
     try {
       // Create a new user
       const user = await this.prisma.user.create({
@@ -97,9 +103,10 @@ export class AuthService {
           lastname: dto.lastname,
           birthdate: dto.birthdate,
           phone: dto.phone,
+          year: dto.year,
           titleBefore: dto.titleBefore,
           titleAfter: dto.titleAfter,
-          fieldOfStudyId: dto.fieldOfStudy,
+          fieldOfStudyId: dto.fieldOfStudyId,
           password: hash,
         },
       });
@@ -130,15 +137,24 @@ export class AuthService {
    * @param email user email
    */
   private async signToken(userId: string, email: string): Promise<UserToken> {
-    const payload = { sub: userId, email: email };
+    const payload = {
+      sub: userId,
+      email: email,
+    };
 
     this.logger.log(`Payload for ${userId}`);
 
     const secret = this.config.get("JWT_SECRET");
 
-    const token = await this.jwt.signAsync(payload, { expiresIn: "4h", secret: secret });
+    const token = await this.jwt.signAsync(payload, {
+      expiresIn: "4h",
+      secret: secret,
+    });
 
-    return { token: token, expiration: new Date(Date.now() + 4 * 60 * 60 * 1000) };
+    return {
+      token: token,
+      expiration: new Date(Date.now() + 4 * 60 * 60 * 1000),
+    };
   }
 
   /**
@@ -147,7 +163,10 @@ export class AuthService {
    * @param dto The user's credentials
    */
   async forgotPassword(origin: string, dto: AuthDto): Promise<ResponseData> {
-    const response: ResponseData = { statusCode: HttpStatus.OK, message: "Password reset email sent" } as ResponseData;
+    const response: ResponseData = {
+      statusCode: HttpStatus.OK,
+      message: "Password reset email sent",
+    } as ResponseData;
     const user = await this.prisma.user.findUnique({
       where: {
         email: dto.email,
@@ -182,7 +201,10 @@ export class AuthService {
    * @param dto The user's credentials
    */
   async changePassword(userId: string, dto: ChangePasswordAuthDto): Promise<ResponseData> {
-    const response: ResponseData = { statusCode: HttpStatus.OK, message: "Password changed" } as ResponseData;
+    const response: ResponseData = {
+      statusCode: HttpStatus.OK,
+      message: "Password changed",
+    } as ResponseData;
 
     const user = await this.prisma.user.findUnique({
       where: {
@@ -239,7 +261,10 @@ export class AuthService {
    * @param dto The user's credentials
    */
   async resetPassword(dto: ResetPasswordAuthDto): Promise<ResponseData> {
-    const response: ResponseData = { statusCode: HttpStatus.OK, message: "Password reset" } as ResponseData;
+    const response: ResponseData = {
+      statusCode: HttpStatus.OK,
+      message: "Password reset",
+    } as ResponseData;
     if (dto.newPassword !== dto.confirmPassword) {
       response.error = "Forbidden";
       response.statusCode = HttpStatus.FORBIDDEN;

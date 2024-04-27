@@ -28,7 +28,7 @@ const registerFormData = z.object({
   titleBefore: z.string().nullish(),
   phone: z.string().regex(/^\+(?:[0-9] ?){6,14}[0-9]$/).nullish(),
   year: z.number().int().min(1).nullish(),
-  fieldOfStudy: z.string().cuid().nullish(),
+  fieldOfStudyId: z.string().cuid().nullish(),
   sex: z.nativeEnum(Sex),
   role: z.nativeEnum(UserRoles),
 });
@@ -83,6 +83,7 @@ export class AuthApi {
    * @param form
    */
   async register(form: RegisterForm) {
+    this.validate(registerFormData, form);
     const { data } = await axios.post<any, {
       data: ResponseData<UserToken>
     }>(RoutePath.AUTH + "register", form, this.config);

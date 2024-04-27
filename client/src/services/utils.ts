@@ -22,6 +22,28 @@ export function stringAvatar(name: string) {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
   };
 }
+
+export const SEX_OPTIONS = [{
+  label: "Muž",
+  value: "MALE",
+}, {
+  label: "Žena",
+  value: "FEMALE",
+}, {
+  label: "Jiné",
+  value: "OTHER",
+}];
+
+export const USER_ROLES_OPTIONS = [{
+  label: "Student",
+  value: "STUDENT",
+}, {
+  label: "Učitel",
+  value: "TEACHER",
+}, {
+  label: "Administrátor",
+  value: "ADMIN",
+}];

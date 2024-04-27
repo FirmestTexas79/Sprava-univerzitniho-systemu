@@ -44,16 +44,12 @@ export class ScheduleService implements RestService<Schedule, CreateScheduleDto,
 
   async findAll(query: ListAllEntitiesQuery<Schedule>): Promise<ResponseData<Schedule[]>> {
     const response = { statusCode: 200, message: "Found" } as ResponseData<Schedule[]>;
-    const queryOffset = query.offset || ((query.page || 1) - 1) * query.limit;
-    const queryLimit = query.limit || 100;
     const querySortBy = query.sortBy || ("startTime" as keyof Schedule);
     const querySortOrder = query.sortOrder || SortType.ASC;
     const queryFilterBy = query.filterBy;
     const queryFilterValue = query.filterValue;
 
     const data = await this.prismaService.schedule.findMany({
-      skip: queryOffset,
-      take: queryLimit,
       orderBy: {
         [querySortBy]: querySortOrder,
       },
