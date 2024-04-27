@@ -1,0 +1,27 @@
+.page-container {
+    padding-left: 100px; /* Okraj zleva */
+    padding-right: 100px; /* Okraj zprava */
+    min-height: 100vh;
+    justify-content: center;
+}
+
+.content-container {
+    max-width: 800px; /* Maximální šířka obsahu */
+    width: 100%;
+    margin: 0 auto; /* Zarovnání na střed */
+}
+
+body {
+    background-color: #f0f0f0; /* Barva pozadí */
+    background-image: linear-gradient(to right, #ff7e5f, #feb47b); /* Přechodový efekt */
+    animation: backgroundAnimation 20s infinite alternate; /* Animace pozadí */
+}
+
+@keyframes backgroundAnimation {
+    0% {
+        background-position: left bottom;
+    }
+    100% {
+        background-position: right top;
+    }
+}
