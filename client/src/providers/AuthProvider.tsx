@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { UserApi } from "../services/UserApi.ts";
+import { UserApi } from "../services/server/UserApi.ts";
 import { User } from "@prisma/client";
 import { UserToken } from "../../../lib/src/persistance/user-token.ts";
 

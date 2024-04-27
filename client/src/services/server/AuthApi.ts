@@ -1,7 +1,7 @@
-import { RoutePath } from "../../../lib/src/persistance/RoutePath.ts";
-import axios from "../api/axios.ts";
-import { ResponseData } from "../../../lib/src/persistance/response-data.ts";
-import { UserToken } from "../../../lib/src/persistance/user-token.ts";
+import { RoutePath } from "../../../../lib/src/persistance/RoutePath.ts";
+import axios from "../../api/axios.ts";
+import { ResponseData } from "../../../../lib/src/persistance/response-data.ts";
+import { UserToken } from "../../../../lib/src/persistance/user-token.ts";
 import { z, ZodObject, ZodRawShape } from "zod";
 import { Sex, UserRoles } from "@prisma/client";
 import { AxiosRequestConfig } from "axios";

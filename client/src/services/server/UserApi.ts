@@ -1,7 +1,7 @@
-import { RoutePath } from "../../../lib/src/persistance/RoutePath.ts";
+import { RoutePath } from "../../../../lib/src/persistance/RoutePath.ts";
 import { Sex, User, UserRoles } from "@prisma/client";
-import { ResponseData } from "../../../lib/src/persistance/response-data.ts";
-import axios from "../api/axios.ts";
+import { ResponseData } from "../../../../lib/src/persistance/response-data.ts";
+import axios from "../../api/axios.ts";
 import { Api } from "./Api.ts";
 import { z } from "zod";
 
@@ -36,11 +36,21 @@ export type CreateUserForm = z.infer<typeof userForm>;
 export class UserApi extends Api<User, CreateUserForm, UpdateUserForm> {
 
   constructor(token: string | null = null) {
-    super(token, RoutePath.USER, { create: userForm, update: userUpdateForm });
+    super(token, RoutePath.USER, {
+      create: userForm,
+      update: userUpdateForm,
+    });
   }
 
   async getMe() {
     const { data } = await axios.get<any, { data: ResponseData<User> }>(this.path + "me", this.config);
+    return data;
+  }
+
+  async multiFilter(filter: { key: keyof User, value: any }[]) {
+    const { data } = await axios.post<any, {
+      data: ResponseData<User[]>
+    }>(this.path + "multi-filter", { filter: filter }, this.config);
     return data;
   }
 }

@@ -8,6 +8,7 @@ import { RestService } from "../utils/rest.service";
 import { ResponseData } from "../utils/response-data";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
 import { SortType } from "../utils/sort-type.enum";
+import { MultiFilterUserDto } from "./dto/multi-filter-user.dto";
 
 @Injectable()
 export class UserService implements RestService<User, CreateUserDto, UpdateUserDto> {
@@ -144,6 +145,27 @@ export class UserService implements RestService<User, CreateUserDto, UpdateUserD
     return {
       statusCode: 200,
       message: "User soft deleted",
+    };
+  }
+
+  async multiFilter(dto: MultiFilterUserDto) {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        AND: dto.filter.map((f) => ({
+          [f.key]: f.value,
+        })),
+      },
+    });
+
+    users.forEach((user) => {
+      delete user.password;
+    });
+
+    this.logger.log(users);
+    return {
+      statusCode: 200,
+      message: "Users found",
+      data: users,
     };
   }
 }

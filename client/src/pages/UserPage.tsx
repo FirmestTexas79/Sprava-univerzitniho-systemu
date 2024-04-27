@@ -3,7 +3,7 @@ import { Box, Button, Container, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { User, UserRoles } from "@prisma/client";
-import { UpdateUserForm, UserApi } from "../services/UserApi.ts";
+import { UpdateUserForm, UserApi } from "../services/server/UserApi.ts";
 import { Page } from "../components/Page.tsx";
 import { TextInput } from "../components/inputs/TextInput.tsx";
 import { z } from "zod";

@@ -77,9 +77,19 @@ model FieldOfStudy {
   name        String
   description String?
 
+  duration Int
+
+  type FieldOfStudyTypes
+
   students User[]
 
   @@map("fields_of_study")
+}
+
+enum FieldOfStudyTypes {
+  BACHELOR @map("BACHELOR")
+  MAGISTER @map("MAGISTER")
+  DOCTORAL @map("DOCTORAL")
 }
 
 // AuthToken Model

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.tsx";
-import { AuthApi, LoginForm } from "../services/AuthApi.ts";
+import { AuthApi, LoginForm } from "../services/server/AuthApi.ts";
 import { Page } from "../components/Page.tsx";
 import { TextInput } from "../components/inputs/TextInput.tsx";
 import { Alert, Button } from "@mui/material";

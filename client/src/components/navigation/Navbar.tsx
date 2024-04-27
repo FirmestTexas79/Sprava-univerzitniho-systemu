@@ -14,6 +14,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import { stringAvatar } from "../../services/utils.ts";
 
 type NavbarProps = {
   role?: UserRoles
@@ -38,6 +39,10 @@ const PAGES: Page[] = [
     label: "Rozvrh",
     route: "/schedule",
   },
+  {
+    label: "Uživatelé",
+    route: "/users",
+  }
 ];
 
 export function Navbar({ role = UserRoles.STUDENT }: NavbarProps) {
@@ -154,7 +159,7 @@ export function Navbar({ role = UserRoles.STUDENT }: NavbarProps) {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar {...stringAvatar(`${user?.firstname} ${user?.lastname}`)} src={`data:image/png;base64,${user?.image?.toString("base64")}`} />
               </IconButton>
             </Tooltip>
             <Menu
