@@ -1,22 +1,31 @@
 import { Api } from "./Api.ts";
 import { RoutePath } from "../../../lib/src/persistance/RoutePath.ts";
-import { Room } from "@prisma/client";
+import { Room, RoomTypes } from "@prisma/client";
 import { z } from "zod";
-import { RoomType } from "../../../lib/src/models/Room.ts";
 
-const roomForm = z.object({
+const createRoomForm = z.object({
   capacity: z.number(),
   name: z.string().min(2),
-  description: z.string().optional(),
+  description: z.string().nullish(),
   floor: z.number(),
-  type: z.nativeEnum(RoomType).optional(),
+  type: z.nativeEnum(RoomTypes).nullish(),
 });
 
-export type RoomForm = z.infer<typeof roomForm>;
+const updateRoomForm = z.object({
+  capacity: z.number().nullish(),
+  name: z.string().min(2).nullish(),
+  description: z.string().nullish(),
+  floor: z.number().nullish(),
+  type: z.nativeEnum(RoomTypes).nullish(),
+});
 
-export class RoomApi extends Api<Room, RoomForm> {
+export type CreateRoomForm = z.infer<typeof createRoomForm>;
+
+export type UpdateRoomForm = z.infer<typeof updateRoomForm>;
+
+export class RoomApi extends Api<Room, CreateRoomForm, UpdateRoomForm> {
 
   constructor(token: string | null = null) {
-    super(token, RoutePath.ROOM);
+    super(token, RoutePath.ROOM,{ create: createRoomForm, update: updateRoomForm});
   }
 }

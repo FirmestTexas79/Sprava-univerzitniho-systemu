@@ -45,4 +45,9 @@ export class RegisterAuthDto extends PartialType(AuthDto) {
   @IsEnum(UserRoles)
   @IsNotEmpty()
   role: UserRoles;
+
+  @ApiProperty({ required: true, example: "clvbj80ip0000cgc4lkus3lyh" })
+  @IsString()
+  @IsNotEmpty()
+  fieldOfStudy: string;
 }

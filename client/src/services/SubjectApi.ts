@@ -3,21 +3,36 @@ import { Subject } from "@prisma/client";
 import { RoutePath } from "../../../lib/src/persistance/RoutePath.ts";
 import { z } from "zod";
 
-const subjectForm = z.object({
+const createSubjectForm = z.object({
   category: z.string(),
   credits: z.number().min(1),
   department: z.string(),
-  description: z.string().optional(),
-  guarantorId: z.string().cuid2(),
+  description: z.string().nullish(),
+  guarantorId: z.string().cuid(),
   name: z.string().min(2),
   shortName: z.string().min(2),
 });
 
-export type SubjectForm = z.infer<typeof subjectForm>;
+const updateSubjectForm = z.object({
+  category: z.string().nullish(),
+  credits: z.number().min(1).nullish(),
+  department: z.string().nullish(),
+  description: z.string().nullish(),
+  guarantorId: z.string().cuid().nullish(),
+  name: z.string().min(2).nullish(),
+  shortName: z.string().min(2).nullish(),
+});
 
-export class SubjectApi extends Api<Subject, SubjectForm> {
+export type UpdateSubjectForm = z.infer<typeof updateSubjectForm>;
+
+export type CreateSubjectForm = z.infer<typeof createSubjectForm>;
+
+export class SubjectApi extends Api<Subject, CreateSubjectForm, UpdateSubjectForm> {
 
   constructor(token: string | null = null) {
-    super(token, RoutePath.SUBJECT);
+    super(token, RoutePath.SUBJECT, {
+      create: createSubjectForm,
+      update: updateSubjectForm,
+    });
   }
 }

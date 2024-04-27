@@ -3,16 +3,26 @@ import { Activity } from "@prisma/client";
 import { RoutePath } from "../../../lib/src/persistance/RoutePath.ts";
 import { z } from "zod";
 
-const activityForm = z.object({
-  description: z.string().optional(),
+const createActivityForm = z.object({
+  description: z.string().nullish(),
   name: z.string().min(2),
 });
 
-export type ActivityForm = z.infer<typeof activityForm>;
+const updateActivityForm = z.object({
+  description: z.string().nullish(),
+  name: z.string().min(2).nullish(),
+});
 
-export class ActivityApi extends Api<Activity, ActivityForm> {
+export type UpdateActivityForm = z.infer<typeof updateActivityForm>;
+
+export type CreateActivityForm = z.infer<typeof createActivityForm>;
+
+export class ActivityApi extends Api<Activity, CreateActivityForm, UpdateActivityForm> {
 
   constructor(token: string | null = null) {
-    super(token, RoutePath.ACTIVITY);
+    super(token, RoutePath.ACTIVITY, {
+      create: createActivityForm,
+      update: updateActivityForm,
+    });
   }
 }

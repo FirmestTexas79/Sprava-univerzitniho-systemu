@@ -26,7 +26,6 @@ model User {
   lastname    String
   titleAfter  String?
   titleBefore String?
-  credits     Int?
   email       String    @unique
   phone       String?
   birthdate   DateTime
@@ -34,7 +33,12 @@ model User {
   image       Bytes?
   role        UserRoles @default(STUDENT)
   password    String
-  exams       Exam[]
+  year        Int?
+
+  fieldOfStudyId String?
+  fieldOfStudy   FieldOfStudy? @relation(fields: [fieldOfStudyId], references: [id])
+
+  exams Exam[]
 
   guarantorId String?
   guarantor   Subject[] @relation("Guarantor")
@@ -62,6 +66,20 @@ enum Sex {
 enum Visibility {
   HIDDEN  @map("HIDDEN")
   VISIBLE @map("VISIBLE")
+}
+
+model FieldOfStudy {
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  visibility Visibility? @default(VISIBLE)
+
+  name        String
+  description String?
+
+  students User[]
+
+  @@map("fields_of_study")
 }
 
 // AuthToken Model

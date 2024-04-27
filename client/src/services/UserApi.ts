@@ -10,19 +10,33 @@ const userForm = z.object({
   firstname: z.string(),
   lastname: z.string(),
   birthdate: z.date(),
-  titleAfter: z.string().optional(),
-  titleBefore: z.string().optional(),
-  phone: z.string().regex(/^\+(?:[0-9] ?){6,14}[0-9]$/).optional(),
+  titleAfter: z.string().nullish(),
+  titleBefore: z.string().nullish(),
+  phone: z.string().regex(/^\+(?:[0-9] ?){6,14}[0-9]$/).nullish(),
   sex: z.nativeEnum(Sex),
   role: z.nativeEnum(UserRoles),
 });
 
-export type UserForm = z.infer<typeof userForm>;
+const userUpdateForm = z.object({
+  email: z.string().nullish(),
+  firstname: z.string().nullish(),
+  lastname: z.string().nullish(),
+  birthdate: z.date().nullish(),
+  titleAfter: z.string().nullish(),
+  titleBefore: z.string().nullish(),
+  phone: z.string().regex(/^\+(?:[0-9] ?){6,14}[0-9]$/).nullish(),
+  sex: z.nativeEnum(Sex).nullish(),
+  role: z.nativeEnum(UserRoles).nullish(),
+});
 
-export class UserApi extends Api<User, UserForm> {
+export type UpdateUserForm = z.infer<typeof userForm>;
+
+export type CreateUserForm = z.infer<typeof userForm>;
+
+export class UserApi extends Api<User, CreateUserForm, UpdateUserForm> {
 
   constructor(token: string | null = null) {
-    super(token, RoutePath.USER);
+    super(token, RoutePath.USER, { create: userForm, update: userUpdateForm });
   }
 
   async getMe() {

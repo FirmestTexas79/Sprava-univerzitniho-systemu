@@ -3,9 +3,9 @@ import { UserApi } from "../services/UserApi.ts";
 import { User } from "@prisma/client";
 import { UserToken } from "../../../lib/src/persistance/user-token.ts";
 
-
 type AuthContextType = {
   user: User | null
+  setUser: (user: User) => void
   login: (token: UserToken) => void
   token: UserToken | null
   logout: () => void
@@ -43,10 +43,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, token }}>{
+    <AuthContext.Provider value={{
+      user,
+      setUser,
+      login,
+      logout,
+      token,
+    }}>{
       children
     }</AuthContext.Provider>
   );
-
 
 }

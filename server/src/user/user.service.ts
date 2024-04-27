@@ -108,6 +108,7 @@ export class UserService implements RestService<User, CreateUserDto, UpdateUserD
   }
 
   async update(id: string, dto: UpdateUserDto): Promise<ResponseData<User>> {
+    this.logger.log("Update user: " + JSON.stringify(dto));
     const userData = await this.prismaService.user.update({
       where: { id },
       data: { ...dto },

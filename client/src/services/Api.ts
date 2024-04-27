@@ -3,14 +3,21 @@ import axios from "../api/axios.ts";
 import { ResponseData } from "../../../lib/src/persistance/response-data.ts";
 import { ListAllEntitiesQuery } from "../../../server/src/utils/list-all-entities.query.ts";
 import { RoutePath } from "../../../lib/src/persistance/RoutePath.ts";
-import { z, ZodRawShape } from "zod";
+import { z, ZodObject, ZodRawShape } from "zod";
 
-export abstract class Api<T = object, U = object> {
-  protected config: AxiosRequestConfig = {};
+interface Schemas<V extends ZodRawShape = any> {
+  create: ZodObject<V>;
+  update: ZodObject<V>;
+}
+
+export abstract class Api<T = object, C = object, U = object> {
+  protected config: AxiosRequestConfig;
   protected path: RoutePath;
+  protected schemas: Schemas;
 
-  protected constructor(token: string | null = null, path: RoutePath) {
+  protected constructor(token: string | null = null, path: RoutePath, schemas: Schemas) {
     this.config = { headers: { Authorization: `Bearer ${token}` } };
+    this.schemas = schemas;
     this.path = path;
   }
 
@@ -18,7 +25,8 @@ export abstract class Api<T = object, U = object> {
    * Create a new entity
    * @param form - The form data to create the entity
    */
-  async create(form: U) {
+  async create(form: C) {
+    this.validate(this.schemas.create, form);
     const { data } = await axios.post<any, { data: ResponseData<T> }>(this.path, form, this.config);
     return data;
   }
@@ -29,7 +37,8 @@ export abstract class Api<T = object, U = object> {
    * @param form - The form data to update the entity
    */
   async update(id: string, form: U) {
-    const { data } = await axios.put<any, { data: ResponseData<T> }>(this.path + id, form, this.config);
+    this.validate(this.schemas.update, form);
+    const { data } = await axios.patch<any, { data: ResponseData<T> }>(this.path + id, form, this.config);
     return data;
   }
 
@@ -77,11 +86,15 @@ export abstract class Api<T = object, U = object> {
    * @param schema
    * @param form
    */
-  protected validate<T extends ZodRawShape>(schema: z.ZodObject<T>, form: object) {
+  protected validate<V extends ZodRawShape>(schema: ZodObject<V>, form: C | U): asserts form is V {
     try {
       schema.parse(form);
-    } catch (e: any) {
-      throw e.errors;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw error;
+      } else {
+        throw new Error("Validation failed");
+      }
     }
   }
 }

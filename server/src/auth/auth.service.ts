@@ -99,6 +99,7 @@ export class AuthService {
           phone: dto.phone,
           titleBefore: dto.titleBefore,
           titleAfter: dto.titleAfter,
+          fieldOfStudyId: dto.fieldOfStudy,
           password: hash,
         },
       });

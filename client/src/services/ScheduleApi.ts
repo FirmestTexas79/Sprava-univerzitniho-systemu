@@ -3,20 +3,34 @@ import { Schedule } from "@prisma/client";
 import { RoutePath } from "../../../lib/src/persistance/RoutePath.ts";
 import { z } from "zod";
 
-const scheduleForm = z.object({
-  studentId: z.string().cuid2(),
-  subjectId: z.string().cuid2(),
-  teacherId: z.string().cuid2(),
-  roomId: z.string().cuid2().optional(),
-  startTime: z.date().optional(),
-  endTime: z.date().optional(),
+const createScheduleForm = z.object({
+  studentId: z.string().cuid(),
+  subjectId: z.string().cuid(),
+  teacherId: z.string().cuid(),
+  roomId: z.string().cuid().nullish(),
+  startTime: z.date().nullish(),
+  endTime: z.date().nullish(),
 });
 
-export type ScheduleForm = z.infer<typeof scheduleForm>;
+const updateScheduleForm = z.object({
+  studentId: z.string().cuid().nullish(),
+  subjectId: z.string().cuid().nullish(),
+  teacherId: z.string().cuid().nullish(),
+  roomId: z.string().cuid().nullish(),
+  startTime: z.date().nullish(),
+  endTime: z.date().nullish(),
+});
 
-export class ScheduleApi extends Api<Schedule, ScheduleForm> {
+export type UpdateScheduleForm = z.infer<typeof updateScheduleForm>;
+
+export type CreateScheduleForm = z.infer<typeof createScheduleForm>;
+
+export class ScheduleApi extends Api<Schedule, CreateScheduleForm, UpdateScheduleForm> {
 
   constructor(token: string | null = null) {
-    super(token, RoutePath.SCHEDULE);
+    super(token, RoutePath.SCHEDULE, {
+      create: createScheduleForm,
+      update: updateScheduleForm,
+    });
   }
 }
