@@ -1,16 +1,14 @@
 import { Page } from "../components/Page.tsx";
 import { TextInput } from "../components/inputs/TextInput.tsx";
-import { Alert, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { AuthApi, AuthForm } from "../services/server/AuthApi.ts";
 import { useState } from "react";
-import { z } from "zod";
-import { AxiosError } from "axios";
+import "../styles/LoginPage.css"
 
 export function ForgotPasswordPage() {
   const [form, setForm] = useState<AuthForm>();
   const [errors, setErrors] = useState<Map<string | number, string>>();
-  const [error, setError] = useState<string>();
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
@@ -19,50 +17,54 @@ export function ForgotPasswordPage() {
 
     const api = new AuthApi();
     try {
-      await api.forgotPassword(form);
+      const r = await api.forgotPassword(form);
+      console.log(r);
       setSuccess(true);
     } catch (error: any) {
-      if (error instanceof z.ZodError) {
-        const fieldErrors = new Map<string | number, string>();
-        error.errors.forEach((err: { path: any[]; message: string; }) => {
-          const field = err.path[0];
-          fieldErrors.set(field, err.message);
-        });
-        setErrors(fieldErrors);
-      } else if (error instanceof AxiosError) {
-        setError(error.response?.data.message);
-      }
+      const fieldErrors = new Map<string | number, string>();
+      error.forEach((err: { path: any[]; message: string; }) => {
+        const field = err.path[0];
+        fieldErrors.set(field, err.message);
+      });
+      setErrors(fieldErrors);
     }
   }
 
   return (
-    <Page ignoreAuth disableNavbar>
-      <h1>Obnova hesla</h1>
-      {error && (<Alert severity="error">{error}</Alert>)}
-      {!success ? (<>
-        <TextInput
-          value={form?.email}
-          onChange={(value) => {
-            setForm({
-              ...form,
-              email: value,
-            });
-          }}
-          label={"E-mail"}
-          type={"email"}
-          error={errors?.has("email")}
-          helperText={errors?.get("email")}
-          required
-        />
-        <Button
-          disabled={!form?.email}
-          variant="contained"
-          fullWidth
-          onClick={handleSubmit}
-        >Odeslat odkaz na obnovu hesla
-        </Button></>) : <h2>Odkaz na obnovu hesla byl odeslán</h2>
-      }
-      <Button onClick={() => navigate("/login")}>Přihlásit se</Button>
-    </Page>
+      <Page ignoreAuth>
+        <section className="container">
+          <div className="container">
+            <div className="login-container">
+              <div className="circle circle-three"></div>
+              <div className="form-container">
+                <h1 className="opacity">Obnova hesla</h1>
+                {!success ? (<>
+                  <TextInput
+                      value={form?.email}
+                      onChange={(value) => {
+                        setForm({ ...form, email: value });
+                      }}
+                      label={"E-mail"}
+                      type={"email"}
+                      error={errors?.has("email")}
+                      helperText={errors?.get("email")}
+                      required
+                  />
+                  <Button
+                      disabled={!form?.email}
+                      variant="contained"
+                      fullWidth
+                      onClick={handleSubmit}
+                  >Odeslat odkaz na obnovu hesla
+                  </Button></>) : <h2>Odkaz na obnovu hesla byl odeslán</h2>
+                }
+                <Button onClick={() => navigate("/login")}>Přihlásit se</Button>
+              </div>
+              <div className="circle circle-four"></div>
+            </div>
+          </div>
+          <div className="theme-btn-container"></div>
+        </section>
+      </Page>
   );
 }
