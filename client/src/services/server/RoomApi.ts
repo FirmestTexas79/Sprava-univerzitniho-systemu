@@ -1,5 +1,5 @@
 import { Api } from "./Api.ts";
-import { RoutePath } from "../../../lib/src/persistance/RoutePath.ts";
+import { RoutePath } from "../../../../lib/src/persistance/RoutePath.ts";
 import { Room, RoomTypes } from "@prisma/client";
 import { z } from "zod";
 

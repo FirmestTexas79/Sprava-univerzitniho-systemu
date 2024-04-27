@@ -1,8 +1,8 @@
 import { AxiosRequestConfig } from "axios";
-import axios from "../api/axios.ts";
-import { ResponseData } from "../../../lib/src/persistance/response-data.ts";
-import { ListAllEntitiesQuery } from "../../../server/src/utils/list-all-entities.query.ts";
-import { RoutePath } from "../../../lib/src/persistance/RoutePath.ts";
+import axios from "../../api/axios.ts";
+import { ResponseData } from "../../../../lib/src/persistance/response-data.ts";
+import { ListAllEntitiesQuery } from "../../../../server/src/utils/list-all-entities.query.ts";
+import { RoutePath } from "../../../../lib/src/persistance/RoutePath.ts";
 import { z, ZodObject, ZodRawShape } from "zod";
 
 interface Schemas<V extends ZodRawShape = any> {

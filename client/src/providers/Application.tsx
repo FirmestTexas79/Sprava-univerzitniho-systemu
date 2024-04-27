@@ -5,6 +5,7 @@ import LoginPage from "../pages/LoginPage.tsx";
 import ResetPasswordPage from "../pages/ResetPasswordPage.tsx";
 import { ForgotPasswordPage } from "../pages/ForgotPasswordPage.tsx";
 import { SchedulePage } from "../pages/SchedulePage.tsx";
+import { UsersPage } from "../pages/UsersPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: "/user/:id",
     element: <UserPage />,
+  },
+  {
+    path: "/users",
+    element: <UsersPage />,
   },
   {
     path: "*",

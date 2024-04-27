@@ -1,6 +1,6 @@
 import { Api } from "./Api.ts";
 import { Schedule } from "@prisma/client";
-import { RoutePath } from "../../../lib/src/persistance/RoutePath.ts";
+import { RoutePath } from "../../../../lib/src/persistance/RoutePath.ts";
 import { z } from "zod";
 
 const createScheduleForm = z.object({

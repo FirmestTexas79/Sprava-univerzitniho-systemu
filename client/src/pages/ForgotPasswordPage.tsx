@@ -2,7 +2,7 @@ import { Page } from "../components/Page.tsx";
 import { TextInput } from "../components/inputs/TextInput.tsx";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { AuthApi, AuthForm } from "../services/AuthApi.ts";
+import { AuthApi, AuthForm } from "../services/server/AuthApi.ts";
 import { useState } from "react";
 import "../styles/LoginPage.css"
 
