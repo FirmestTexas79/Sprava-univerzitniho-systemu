@@ -6,6 +6,8 @@ import ResetPasswordPage from "../pages/ResetPasswordPage.tsx";
 import { ForgotPasswordPage } from "../pages/ForgotPasswordPage.tsx";
 import { SchedulePage } from "../pages/SchedulePage.tsx";
 import { UsersPage } from "../pages/UsersPage.tsx";
+import SubjectsPage from "../pages/SubjectsPage.tsx";
+import RoomsPage from "../pages/RoomsPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +41,14 @@ const router = createBrowserRouter([
   {
     path: "/schedule",
     element: <SchedulePage />,
+  },
+  {
+    path: "/rooms",
+    element: <RoomsPage />,
+  },
+  {
+    path: "/subjects",
+    element: <SubjectsPage />,
   },
 ]);
 

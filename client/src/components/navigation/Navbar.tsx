@@ -30,7 +30,7 @@ type Settings = {
   onClick: () => void;
 }
 
-const PAGES: Page[] = [
+const STUDENT_PAGES: Page[] = [
   {
     label: "Dashboard",
     route: "/",
@@ -42,21 +42,58 @@ const PAGES: Page[] = [
   {
     label: "Uživatelé",
     route: "/users",
-  }
+  },
+];
+
+const TEACHER_PAGES: Page[] = [
+  {
+    label: "Dashboard",
+    route: "/",
+  },
+  {
+    label: "Rozvrh",
+    route: "/schedule",
+  },
+  {
+    label: "Uživatelé",
+    route: "/users",
+  },
+];
+
+const ADMIN_PAGES: Page[] = [
+  {
+    label: "Dashboard",
+    route: "/",
+  },
+  {
+    label: "Uživatelé",
+    route: "/users",
+  },
+  {
+    label: "Místnosti",
+    route: "/rooms",
+  },
+  {
+    label: "Předměty",
+    route: "/subjects",
+  },
 ];
 
 export function Navbar({ role = UserRoles.STUDENT }: NavbarProps) {
-  const { logout,user } = useAuth();
+  const {
+    logout,
+    user,
+  } = useAuth();
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  const [pages, setPages] = useState<Page[]>(PAGES);
+  const [pages, setPages] = useState<Page[]>(role === UserRoles.STUDENT ? STUDENT_PAGES : role === UserRoles.TEACHER ? TEACHER_PAGES : ADMIN_PAGES);
   const [settings, setSettings] = useState<Settings[]>([{
     label: "Profil",
     onClick: () => {
       navigate(`/user/${user?.id}`);
     },
-  },{
+  }, {
     label: "Odlášení",
     onClick: () => {
       logout();
@@ -159,7 +196,8 @@ export function Navbar({ role = UserRoles.STUDENT }: NavbarProps) {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar {...stringAvatar(`${user?.firstname} ${user?.lastname}`)} src={`data:image/png;base64,${user?.image?.toString("base64")}`} />
+                <Avatar {...stringAvatar(`${user?.firstname} ${user?.lastname}`)}
+                        src={`data:image/png;base64,${user?.image?.toString("base64")}`} />
               </IconButton>
             </Tooltip>
             <Menu
