@@ -2,16 +2,18 @@ import { useAuth } from "../hooks/useAuth.tsx";
 import { Box, Button, Container, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { User, UserRoles } from "@prisma/client";
+import { FieldOfStudy, User, UserRoles, Visibility } from "@prisma/client";
 import { UpdateUserForm, UserApi } from "../services/server/UserApi.ts";
 import { Page } from "../components/Page.tsx";
 import { TextInput } from "../components/inputs/TextInput.tsx";
 import { z } from "zod";
 import { AxiosError } from "axios";
 import { DateInput } from "../components/inputs/DateInput.tsx";
-import { SelectInput } from "../components/inputs/SelectInput.tsx";
+import { Option, SelectInput } from "../components/inputs/SelectInput.tsx";
 import { NumberInput } from "../components/inputs/NumberInput.tsx";
 import { SEX_OPTIONS, USER_ROLES_OPTIONS } from "../services/utils.ts";
+import { FieldOfStudyApi } from "../services/server/FieldOfStudyApi.ts";
+import { SortType } from "../../../server/src/utils/sort-type.enum.ts";
 
 export default function UserPage() {
   const { id } = useParams();
@@ -22,6 +24,8 @@ export default function UserPage() {
   } = useAuth();
   const [currentUser, setCurrentUser] = useState<User>();
   const [errors, setErrors] = useState<Map<string | number, string>>();
+  const [fieldOfStudy, setFieldOfStudy] = useState<FieldOfStudy[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [info, setInfo] = useState<string>();
   const navigate = useNavigate();
 
@@ -32,6 +36,9 @@ export default function UserPage() {
       api.findOne(id).then((value) => {
         if (value.data?.birthdate) {
           value.data.birthdate = new Date(value.data.birthdate);
+        }
+        if(value.data?.fieldOfStudyId) {
+          getFieldOfStudyOptions().catch(console.error)
         }
         setCurrentUser(value.data);
       }).catch(() => navigate("/"));
@@ -78,6 +85,24 @@ export default function UserPage() {
       ...currentUser,
       [key]: value,
     } as User);
+  }
+
+  async function getFieldOfStudyOptions() {
+    if (loaded) return;
+
+    try {
+      const api = new FieldOfStudyApi(token?.token);
+      const { data } = await api.findAll({
+        sortBy: "name",
+        sortOrder: SortType.ASC,
+        filterBy: "visibility",
+        filterValue: Visibility.VISIBLE,
+      });
+      data && setFieldOfStudy(data);
+      setLoaded(true);
+    } catch (error: any) {
+      setInfo(error?.message);
+    }
   }
 
   return (<Page>
@@ -168,7 +193,11 @@ export default function UserPage() {
               value={currentUser?.year}
               label="Ročník" />
             <SelectInput
-              options={[]}
+              options={fieldOfStudy?.map((value) => ({
+                label: value.name + " - " + value.type,
+                value: value.id,
+              } as Option<string>)) || []}
+              onOpen={() => getFieldOfStudyOptions()}
               onChange={(value) => onChange("fieldOfStudyId", value)}
               error={errors?.has("fieldOfStudyId")}
               helperText={errors?.get("fieldOfStudyId")}
