@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth.tsx";
-import { AuthApi, LoginForm } from "../services/server/AuthApi.ts";
-import { Page } from "../components/Page.tsx";
-import { TextInput } from "../components/inputs/TextInput.tsx";
+import { useAuth } from "../../hooks/useAuth.tsx";
+import { AuthApi, LoginForm } from "../../services/server/AuthApi.ts";
+import { Page } from "../../components/Page.tsx";
+import { TextInput } from "../../components/inputs/TextInput.tsx";
 import { Button, FormHelperText } from "@mui/material";
-import "../styles/LoginPage.css"
-import uhkLogo from "../assets/uhklogo.png";
+import "../../styles/LoginPage.css"
+import uhkLogo from "../../assets/uhklogo.png";
 
 
 export default function LoginPage() {
@@ -41,7 +41,7 @@ export default function LoginPage() {
 
 
     return (
-        <Page>
+        <Page disableNavbar ignoreAuth>
             <section className="container">
                 <div className="login-container"> {/* Přidáváme třídu pro stylizaci */}
                     <div className="circle circle-one"></div>

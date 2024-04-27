@@ -1,9 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import DashboardPage from "../pages/DashboardPage.tsx";
 import UserPage from "../pages/UserPage.tsx";
-import LoginPage from "../pages/LoginPage.tsx";
-import ResetPasswordPage from "../pages/ResetPasswordPage.tsx";
-import { ForgotPasswordPage } from "../pages/ForgotPasswordPage.tsx";
+import LoginPage from "../pages/auth/LoginPage.tsx";
+import ResetPasswordPage from "../pages/auth/ResetPasswordPage.tsx";
+import { ForgotPasswordPage } from "../pages/auth/ForgotPasswordPage.tsx";
 import { SchedulePage } from "../pages/SchedulePage.tsx";
 import { UsersPage } from "../pages/UsersPage.tsx";
 import SubjectsPage from "../pages/SubjectsPage.tsx";
