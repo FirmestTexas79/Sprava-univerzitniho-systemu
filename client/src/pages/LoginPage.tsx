@@ -5,6 +5,8 @@ import { AuthApi, LoginForm } from "../services/AuthApi.ts";
 import { Page } from "../components/Page.tsx";
 import { TextInput } from "../components/inputs/TextInput.tsx";
 import { Button, FormHelperText } from "@mui/material";
+import "../styles/LoginPage.css"
+import uhkLogo from "../assets/uhklogo.png";
 
 
 export default function LoginPage() {
@@ -40,32 +42,42 @@ export default function LoginPage() {
 
   return (
     <Page>
-      <h1>Přihlášení</h1>
-      <FormHelperText error={!!error.message}>{error.message}</FormHelperText>
-      <TextInput
-        label={"Email"}
-        type={"email"}
-        error={errors?.has("email")}
-        helperText={errors?.get("email")}
-        value={loginForm.email}
-        onChange={(value) => setLoginForm({ ...loginForm, email: value })}
-      />
-      <TextInput
-        label={"Heslo"}
-        type={"password"}
-        error={errors?.has("password")}
-        helperText={errors?.get("password")}
-        value={loginForm.password}
-        onChange={(value) => setLoginForm({ ...loginForm, password: value })}
-      />
-      <Button
-        disabled={!loginForm.email || !loginForm.password}
-        variant="contained"
-        fullWidth
-        onClick={handleSubmit}
-      >Přihlásit
-      </Button>
-      <Button onClick={() => navigate("/forgot-password")}>Zapomenuté heslo</Button>
+      <section className="container">
+        <div className="login-container"> {/* Přidáváme třídu pro stylizaci */}
+          <div className="circle circle-one"></div>
+          <div className="form-container">
+            <img src={uhkLogo} alt="Logo UHK" className="uhk-logo" />
+            <h1 className="opacity">Přihlášení</h1> {/* Přidáváme třídu pro stylizaci */}
+            <FormHelperText error={!!error.message}>{error.message}</FormHelperText>
+            <TextInput
+              label={"Email"}
+              type={"email"}
+              error={errors?.has("email")}
+              helperText={errors?.get("email")}
+              value={loginForm.email}
+              onChange={(value) => setLoginForm({ ...loginForm, email: value })}
+            />
+            <TextInput
+              label={"Heslo"}
+              type={"password"}
+              error={errors?.has("password")}
+              helperText={errors?.get("password")}
+              value={loginForm.password}
+              onChange={(value) => setLoginForm({ ...loginForm, password: value })}
+            />
+            <Button
+              className="opacity" // Přidáváme třídu pro stylizaci
+              disabled={!loginForm.email || !loginForm.password}
+              variant="contained"
+              fullWidth
+              onClick={handleSubmit}
+            >Přihlásit</Button>
+            <Button className="register-forget opacity" onClick={() => navigate("/forgot-password")}>Zapomenuté heslo</Button>
+          </div>
+          <div className="circle circle-two"></div>
+        </div>
+        <div className="theme-btn-container"></div>
+      </section>
     </Page>
-  );
+);
 }

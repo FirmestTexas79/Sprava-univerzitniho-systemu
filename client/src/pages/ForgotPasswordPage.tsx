@@ -4,6 +4,7 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { AuthApi, AuthForm } from "../services/AuthApi.ts";
 import { useState } from "react";
+import "../styles/LoginPage.css"
 
 export function ForgotPasswordPage() {
   const [form, setForm] = useState<AuthForm>();
@@ -16,7 +17,8 @@ export function ForgotPasswordPage() {
 
     const api = new AuthApi();
     try {
-      await api.forgotPassword(form);
+      const r = await api.forgotPassword(form);
+      console.log(r);
       setSuccess(true);
     } catch (error: any) {
       const fieldErrors = new Map<string | number, string>();
@@ -30,28 +32,39 @@ export function ForgotPasswordPage() {
 
   return (
     <Page ignoreAuth>
-      <h1>Obnova hesla</h1>
-      {!success ? (<>
-        <TextInput
-          value={form?.email}
-          onChange={(value) => {
-            setForm({ ...form, email: value });
-          }}
-          label={"E-mail"}
-          type={"email"}
-          error={errors?.has("email")}
-          helperText={errors?.get("email")}
-          required
-        />
-        <Button
-          disabled={!form?.email}
-          variant="contained"
-          fullWidth
-          onClick={handleSubmit}
-        >Odeslat odkaz na obnovu hesla
-        </Button></>) : <h2>Odkaz na obnovu hesla byl odeslán</h2>
-      }
-      <Button onClick={() => navigate("/login")}>Přihlásit se</Button>
+      <section className="container">
+        <div className="container">
+          <div className="login-container">
+            <div className="circle circle-three"></div>
+            <div className="form-container">
+              <h1 className="opacity">Obnova hesla</h1>
+              {!success ? (<>
+                <TextInput
+                  value={form?.email}
+                  onChange={(value) => {
+                    setForm({ ...form, email: value });
+                  }}
+                  label={"E-mail"}
+                  type={"email"}
+                  error={errors?.has("email")}
+                  helperText={errors?.get("email")}
+                  required
+                />
+                <Button
+                  disabled={!form?.email}
+                  variant="contained"
+                  fullWidth
+                  onClick={handleSubmit}
+                >Odeslat odkaz na obnovu hesla
+                </Button></>) : <h2>Odkaz na obnovu hesla byl odeslán</h2>
+              }
+              <Button onClick={() => navigate("/login")}>Přihlásit se</Button>
+            </div>
+            <div className="circle circle-four"></div>
+          </div>
+        </div>
+        <div className="theme-btn-container"></div>
+      </section>
     </Page>
-  );
+);
 }
