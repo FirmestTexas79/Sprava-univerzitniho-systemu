@@ -1,13 +1,16 @@
 import { Page } from "../components/Page.tsx";
 import { TextInput } from "../components/inputs/TextInput.tsx";
-import { Button } from "@mui/material";
+import { Alert, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { AuthApi, AuthForm } from "../services/AuthApi.ts";
 import { useState } from "react";
+import { z } from "zod";
+import { AxiosError } from "axios";
 
 export function ForgotPasswordPage() {
   const [form, setForm] = useState<AuthForm>();
   const [errors, setErrors] = useState<Map<string | number, string>>();
+  const [error, setError] = useState<string>();
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
@@ -19,23 +22,31 @@ export function ForgotPasswordPage() {
       await api.forgotPassword(form);
       setSuccess(true);
     } catch (error: any) {
-      const fieldErrors = new Map<string | number, string>();
-      error.forEach((err: { path: any[]; message: string; }) => {
-        const field = err.path[0];
-        fieldErrors.set(field, err.message);
-      });
-      setErrors(fieldErrors);
+      if (error instanceof z.ZodError) {
+        const fieldErrors = new Map<string | number, string>();
+        error.errors.forEach((err: { path: any[]; message: string; }) => {
+          const field = err.path[0];
+          fieldErrors.set(field, err.message);
+        });
+        setErrors(fieldErrors);
+      } else if (error instanceof AxiosError) {
+        setError(error.response?.data.message);
+      }
     }
   }
 
   return (
-    <Page ignoreAuth>
+    <Page ignoreAuth disableNavbar>
       <h1>Obnova hesla</h1>
+      {error && (<Alert severity="error">{error}</Alert>)}
       {!success ? (<>
         <TextInput
           value={form?.email}
           onChange={(value) => {
-            setForm({ ...form, email: value });
+            setForm({
+              ...form,
+              email: value,
+            });
           }}
           label={"E-mail"}
           type={"email"}

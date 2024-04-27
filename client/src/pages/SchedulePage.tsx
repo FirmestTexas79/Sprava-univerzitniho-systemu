@@ -1,10 +1,9 @@
 import { Page } from "../components/Page.tsx";
 
-export default function DashboardPage() {
-
+export function SchedulePage() {
   return (
     <Page>
-      <h1>Dashboard</h1>
+      <h1>Schedule</h1>
     </Page>
   );
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Put, Query, Res, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "@prisma/client";
 import { UpdateUserDto } from "./dto";
@@ -6,7 +6,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtGuard } from "../auth/guard";
 import { GetUser } from "../auth/decorator";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
-import { ResponseData } from "../utils/response-data";
+import { Response } from "express";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -16,32 +16,44 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get("me")
-  async getMe(@GetUser() user: User): Promise<ResponseData<User>> {
-    return this.userService.getMe(user);
+  async getMe(@GetUser() user: User, @Res() res: Response) {
+    const response = await this.userService.getMe(user);
+
+    res.status(response.statusCode).json(response);
   }
 
   @Put(":id")
-  async update(@Param("id") id: string, @Body() dto: UpdateUserDto): Promise<ResponseData<User>> {
-    return this.userService.update(id, dto);
+  async update(@Param("id") id: string, @Body() dto: UpdateUserDto, @Res() res: Response) {
+    const response = await this.userService.update(id, dto);
+
+    res.status(response.statusCode).json(response);
   }
 
   @Delete(":id")
-  async delete(@Param("id") id: string): Promise<ResponseData> {
-    return this.userService.delete(id);
+  async delete(@Param("id") id: string, @Res() res: Response) {
+    const response = await this.userService.delete(id);
+
+    res.status(response.statusCode).json(response);
   }
 
   @Get()
-  async findAll(@Query() query: ListAllEntitiesQuery<User>): Promise<ResponseData<User[]>> {
-    return this.userService.findAll(query);
+  async findAll(@Query() query: ListAllEntitiesQuery<User>, @Res() res: Response) {
+    const response = await this.userService.findAll(query);
+
+    res.status(response.statusCode).json(response);
   }
 
   @Get(":id")
-  async findOne(@Param("id") id: string): Promise<ResponseData<User>> {
-    return this.userService.findOne(id);
+  async findOne(@Param("id") id: string, @Res() res: Response) {
+    const response = await this.userService.findOne(id);
+
+    res.status(response.statusCode).json(response);
   }
 
   @Delete("soft/:id")
-  async softDelete(@Param("id") id: string): Promise<ResponseData> {
-    return this.userService.softDelete(id);
+  async softDelete(@Param("id") id: string, @Res() res: Response) {
+    const response = await this.userService.softDelete(id);
+
+    res.status(response.statusCode).json(response);
   }
 }

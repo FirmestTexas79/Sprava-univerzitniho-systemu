@@ -1,47 +1,60 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtGuard } from "../auth/guard";
 import { RestController } from "../utils/rest.controller";
 import { Subject } from "@prisma/client";
 import { CreateSubjectDto, UpdateSubjectDto } from "./dto";
 import { SubjectService } from "./subject.service";
-import { ResponseData } from "../utils/response-data";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
+import { Response } from "express";
 
 @ApiTags("Subject")
 @ApiBearerAuth()
 @UseGuards(JwtGuard)
 @Controller("subject")
 export class SubjectController implements RestController<Subject, CreateSubjectDto, UpdateSubjectDto> {
-  constructor(private subjectService: SubjectService) {}
+  constructor(private subjectService: SubjectService) {
+  }
 
   @Post()
-  async create(@Body() dto: CreateSubjectDto): Promise<ResponseData<Subject>> {
-    return this.subjectService.create(dto);
+  async create(@Body() dto: CreateSubjectDto, @Res() res: Response) {
+    const response = await this.subjectService.create(dto);
+
+    res.status(response.statusCode).json(response);
   }
 
   @Delete(":id")
-  async delete(@Param("id") id: string): Promise<ResponseData> {
-    return this.subjectService.delete(id);
+  async delete(@Param("id") id: string, @Res() res: Response) {
+    const response = await this.subjectService.delete(id);
+
+    res.status(response.statusCode).json(response);
   }
 
   @Get()
-  async findAll(@Query() query: ListAllEntitiesQuery<Subject>): Promise<ResponseData<Subject[]>> {
-    return this.subjectService.findAll(query);
+  async findAll(@Query() query: ListAllEntitiesQuery<Subject>, @Res() res: Response) {
+    const response = await this.subjectService.findAll(query);
+
+    res.status(response.statusCode).json(response);
   }
 
   @Get(":id")
-  async findOne(@Param("id") id: string): Promise<ResponseData<Subject>> {
-    return this.subjectService.findOne(id);
+  async findOne(@Param("id") id: string, @Res() res: Response) {
+    const response = await this.subjectService.findOne(id);
+
+    res.status(response.statusCode).json(response);
   }
 
   @Delete("soft/:id")
-  async softDelete(@Param("id") id: string): Promise<ResponseData> {
-    return this.subjectService.softDelete(id);
+  async softDelete(@Param("id") id: string, @Res() res: Response) {
+    const response = await this.subjectService.softDelete(id);
+
+    res.status(response.statusCode).json(response);
   }
 
   @Put(":id")
-  async update(@Param("id") id: string, @Body() dto: UpdateSubjectDto): Promise<ResponseData<Subject>> {
-    return this.subjectService.update(id, dto);
+  async update(@Param("id") id: string, @Body() dto: UpdateSubjectDto, @Res() res: Response) {
+    const response = await this.subjectService.update(id, dto);
+
+    res.status(response.statusCode).json(response);
   }
 }

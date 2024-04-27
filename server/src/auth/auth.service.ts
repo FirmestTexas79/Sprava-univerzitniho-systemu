@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { AuthDto, ChangePasswordAuthDto, LoginAuthDto, RegisterAuthDto, ResetPasswordAuthDto } from "./dto";
 import * as argon from "argon2";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
@@ -29,7 +29,7 @@ export class AuthService {
    */
   async login(dto: LoginAuthDto): Promise<ResponseData<UserToken>> {
     const response: ResponseData<UserToken> = {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       message: "User logged in",
     } as ResponseData<UserToken>;
     // Find the user by email
@@ -42,7 +42,7 @@ export class AuthService {
     // If the user does not exist, throw an error
     if (!user) {
       response.error = "Forbidden";
-      response.statusCode = 403;
+      response.statusCode = HttpStatus.FORBIDDEN;
       response.message = "Invalid credentials";
       return response;
     }
@@ -53,7 +53,7 @@ export class AuthService {
     // If the password is invalid, throw an error
     if (!valid) {
       response.error = "Forbidden";
-      response.statusCode = 403;
+      response.statusCode = HttpStatus.FORBIDDEN;
       response.message = "Invalid credentials";
       return response;
     }
@@ -77,7 +77,7 @@ export class AuthService {
    */
   async register(dto: RegisterAuthDto): Promise<ResponseData<UserToken>> {
     const response: ResponseData<UserToken> = {
-      statusCode: 201,
+      statusCode: HttpStatus.CREATED,
       message: "User registered",
     } as ResponseData<UserToken>;
 
@@ -110,10 +110,10 @@ export class AuthService {
     } catch (error) {
       // If the error is a known request error
       if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === "P2002") {
+        if (error.code === "PHttpStatus.OK2") {
           this.logger.error(error);
           response.error = "Forbidden";
-          response.statusCode = 403;
+          response.statusCode = HttpStatus.FORBIDDEN;
           response.message = "Email is already taken";
           return response;
         }
@@ -146,7 +146,7 @@ export class AuthService {
    * @param dto The user's credentials
    */
   async forgotPassword(origin: string, dto: AuthDto): Promise<ResponseData> {
-    const response: ResponseData = { statusCode: 200, message: "Password reset email sent" } as ResponseData;
+    const response: ResponseData = { statusCode: HttpStatus.OK, message: "Password reset email sent" } as ResponseData;
     const user = await this.prisma.user.findUnique({
       where: {
         email: dto.email,
@@ -155,7 +155,7 @@ export class AuthService {
 
     if (!user) {
       response.error = "Forbidden";
-      response.statusCode = 403;
+      response.statusCode = HttpStatus.FORBIDDEN;
       response.message = "Invalid user.";
       return response;
     }
@@ -181,7 +181,7 @@ export class AuthService {
    * @param dto The user's credentials
    */
   async changePassword(userId: string, dto: ChangePasswordAuthDto): Promise<ResponseData> {
-    const response: ResponseData = { statusCode: 200, message: "Password changed" } as ResponseData;
+    const response: ResponseData = { statusCode: HttpStatus.OK, message: "Password changed" } as ResponseData;
 
     const user = await this.prisma.user.findUnique({
       where: {
@@ -191,7 +191,7 @@ export class AuthService {
 
     if (!user) {
       response.error = "Forbidden";
-      response.statusCode = 403;
+      response.statusCode = HttpStatus.FORBIDDEN;
       response.message = "Invalid user.";
       return response;
     }
@@ -200,21 +200,21 @@ export class AuthService {
 
     if (!valid) {
       response.error = "Forbidden";
-      response.statusCode = 403;
+      response.statusCode = HttpStatus.FORBIDDEN;
       response.message = "Invalid password.";
       return response;
     }
 
     if (dto.newPassword !== dto.confirmPassword) {
       response.error = "Forbidden";
-      response.statusCode = 403;
+      response.statusCode = HttpStatus.FORBIDDEN;
       response.message = "Passwords do not match.";
       return response;
     }
 
     if (dto.oldPassword === dto.newPassword) {
       response.error = "Forbidden";
-      response.statusCode = 403;
+      response.statusCode = HttpStatus.FORBIDDEN;
       response.message = "New password must be different from old password.";
       return response;
     }
@@ -238,10 +238,10 @@ export class AuthService {
    * @param dto The user's credentials
    */
   async resetPassword(dto: ResetPasswordAuthDto): Promise<ResponseData> {
-    const response: ResponseData = { statusCode: 200, message: "Password reset" } as ResponseData;
+    const response: ResponseData = { statusCode: HttpStatus.OK, message: "Password reset" } as ResponseData;
     if (dto.newPassword !== dto.confirmPassword) {
       response.error = "Forbidden";
-      response.statusCode = 403;
+      response.statusCode = HttpStatus.FORBIDDEN;
       response.message = "Passwords do not match.";
       return response;
     }
@@ -250,7 +250,7 @@ export class AuthService {
 
     if (!token) {
       response.error = "Forbidden";
-      response.statusCode = 403;
+      response.statusCode = HttpStatus.FORBIDDEN;
       response.message = "Invalid token.";
       return response;
     }
@@ -258,7 +258,7 @@ export class AuthService {
     if (token.expiresAt < new Date()) {
       await this.tokens.removeTokenById(token.id);
       response.error = "Forbidden";
-      response.statusCode = 403;
+      response.statusCode = HttpStatus.FORBIDDEN;
       response.message = "Token expired.";
       return response;
     }
@@ -271,7 +271,7 @@ export class AuthService {
 
     if (!user) {
       response.error = "Forbidden";
-      response.statusCode = 403;
+      response.statusCode = HttpStatus.FORBIDDEN;
       response.message = "Invalid user.";
       return response;
     }
@@ -280,7 +280,7 @@ export class AuthService {
 
     if (valid) {
       response.error = "Forbidden";
-      response.statusCode = 403;
+      response.statusCode = HttpStatus.FORBIDDEN;
       response.message = "New password must be different from old password.";
       return response;
     }

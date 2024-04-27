@@ -5,12 +5,12 @@ import { Navbar } from "./navigation/Navbar.tsx";
 
 type PageProps = {
   children: ReactNode,
-  navbar?: boolean,
+  disableNavbar?: boolean,
   ignoreAuth?: boolean
 }
 
 
-export function Page({ children, navbar = true, ignoreAuth }: PageProps) {
+export function Page({ children, disableNavbar = false, ignoreAuth }: PageProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ export function Page({ children, navbar = true, ignoreAuth }: PageProps) {
 
   return (
     <div>
-      {navbar && <Navbar role={user?.role} />}
+      {!disableNavbar && <Navbar role={user?.role} />}
       {children}
     </div>
   );

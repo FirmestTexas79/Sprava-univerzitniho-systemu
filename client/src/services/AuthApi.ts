@@ -64,7 +64,6 @@ export class AuthApi {
     this.path = RoutePath.AUTH;
   }
 
-
   /**
    * Login
    * @param form
@@ -136,11 +135,15 @@ export class AuthApi {
    * @param schema
    * @param form
    */
-  protected validate<T extends ZodRawShape>(schema: ZodObject<T>, form: object) {
+  protected validate<T extends ZodRawShape>(schema: ZodObject<T>, form: object): asserts form is T {
     try {
       schema.parse(form);
-    } catch (e: any) {
-      throw e.errors;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw error;
+      } else {
+        throw new Error("Validation failed");
+      }
     }
   }
 }
