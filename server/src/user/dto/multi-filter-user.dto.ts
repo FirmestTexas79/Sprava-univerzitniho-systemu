@@ -12,7 +12,7 @@ export class MultiFilterUserDto {
       },
     ],
   })
-  @IsArray({ each: true })
+  @IsArray()
   @IsNotEmpty()
   filter: { key: keyof User; value: any }[];
 }

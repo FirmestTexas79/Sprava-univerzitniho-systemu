@@ -370,7 +370,7 @@ export class AuthService {
             </head>
             <body>
                 <p>Dobrý den,</p>
-                <p>Váš účet byl vytvořen. Vaše heslo je: ${password}</p>
+                <p>Váš účet byl vytvořen. Vaše heslo je: <strong>${password}</strong></p>
                 <p>S tímto heslem se můžete přihlásit do svého účtu.</p>
                 <p>S pozdravem,</p>
                 <p>${this.config.get("NÁZEV_APLIKACE")}</p>

@@ -2,6 +2,8 @@ import { Api } from "./Api.ts";
 import { Subject } from "@prisma/client";
 import { RoutePath } from "../../../../lib/src/persistance/RoutePath.ts";
 import { z } from "zod";
+import axios from "../../api/axios.ts";
+import { ResponseData } from "../../../../lib/src/persistance/response-data.ts";
 
 const createSubjectForm = z.object({
   category: z.string(),
@@ -34,5 +36,12 @@ export class SubjectApi extends Api<Subject, CreateSubjectForm, UpdateSubjectFor
       create: createSubjectForm,
       update: updateSubjectForm,
     });
+  }
+
+  async getSubjectsByIds(array: string[]) {
+    const { data } = await axios.post<any, {
+      data: ResponseData<Subject[]>
+    }>(this.path + "by-ids", { ids: array }, this.config);
+    return data;
   }
 }

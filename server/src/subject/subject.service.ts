@@ -6,16 +6,21 @@ import { PrismaService } from "../prisma/prisma.service";
 import { ResponseData } from "../utils/response-data";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
 import { SortType } from "../utils/sort-type.enum";
+import { GetSubjectsByIdsDto } from "./dto/get-subjects-by-ids.dto";
 
 @Injectable()
 export class SubjectService implements RestService<Subject, CreateSubjectDto, UpdateSubjectDto> {
   constructor(
     private prismaService: PrismaService,
     private logger: Logger = new Logger(SubjectService.name),
-  ) {}
+  ) {
+  }
 
   async create(dto: CreateSubjectDto): Promise<ResponseData<Subject>> {
-    const response = { statusCode: 201, message: "Subject created" } as ResponseData<Subject>;
+    const response = {
+      statusCode: 201,
+      message: "Subject created",
+    } as ResponseData<Subject>;
     const data = await this.prismaService.subject.create({
       data: {
         ...dto,
@@ -29,7 +34,10 @@ export class SubjectService implements RestService<Subject, CreateSubjectDto, Up
   }
 
   async delete(id: string): Promise<ResponseData> {
-    const response = { statusCode: 200, message: "Deleted" } as ResponseData;
+    const response = {
+      statusCode: 200,
+      message: "Deleted",
+    } as ResponseData;
     await this.prismaService.subject.delete({
       where: {
         id: id,
@@ -42,7 +50,10 @@ export class SubjectService implements RestService<Subject, CreateSubjectDto, Up
   }
 
   async findAll(query: ListAllEntitiesQuery<Subject>): Promise<ResponseData<Subject[]>> {
-    const response = { statusCode: 200, message: "Found" } as ResponseData<Subject[]>;
+    const response = {
+      statusCode: 200,
+      message: "Found",
+    } as ResponseData<Subject[]>;
     const querySortBy = query.sortBy || ("startTime" as keyof Subject);
     const querySortOrder = query.sortOrder || SortType.ASC;
     const queryFilterBy = query.filterBy;
@@ -65,7 +76,10 @@ export class SubjectService implements RestService<Subject, CreateSubjectDto, Up
   }
 
   async findOne(id: string): Promise<ResponseData<Subject>> {
-    const response = { statusCode: 200, message: "Found" } as ResponseData<Subject>;
+    const response = {
+      statusCode: 200,
+      message: "Found",
+    } as ResponseData<Subject>;
     const data = await this.prismaService.subject.findUnique({
       where: {
         id: id,
@@ -79,7 +93,10 @@ export class SubjectService implements RestService<Subject, CreateSubjectDto, Up
   }
 
   async softDelete(id: string): Promise<ResponseData> {
-    const response = { statusCode: 200, message: "Soft Deleted" } as ResponseData;
+    const response = {
+      statusCode: 200,
+      message: "Soft Deleted",
+    } as ResponseData;
     await this.prismaService.subject.update({
       where: {
         id: id,
@@ -95,13 +112,35 @@ export class SubjectService implements RestService<Subject, CreateSubjectDto, Up
   }
 
   async update(id: string, dto: UpdateSubjectDto): Promise<ResponseData<Subject>> {
-    const response = { statusCode: 200, message: "Updated" } as ResponseData<Subject>;
+    const response = {
+      statusCode: 200,
+      message: "Updated",
+    } as ResponseData<Subject>;
     const data = await this.prismaService.subject.update({
       where: {
         id: id,
       },
       data: {
         ...dto,
+      },
+    });
+
+    response.data = data;
+    this.logger.log(response);
+
+    return response;
+  }
+
+  async getSubjectsByIds(dto: GetSubjectsByIdsDto) {
+    const response = {
+      statusCode: 200,
+      message: "Subjects found",
+    } as ResponseData<Subject[]>;
+    const data = await this.prismaService.subject.findMany({
+      where: {
+        id: {
+          in: dto.ids,
+        },
       },
     });
 

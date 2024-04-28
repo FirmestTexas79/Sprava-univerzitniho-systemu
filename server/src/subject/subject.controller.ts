@@ -7,6 +7,7 @@ import { CreateSubjectDto, UpdateSubjectDto } from "./dto";
 import { SubjectService } from "./subject.service";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
 import { Response } from "express";
+import { GetSubjectsByIdsDto } from "./dto/get-subjects-by-ids.dto";
 
 @ApiTags("Subject")
 @ApiBearerAuth()
@@ -54,6 +55,13 @@ export class SubjectController implements RestController<Subject, CreateSubjectD
   @Patch(":id")
   async update(@Param("id") id: string, @Body() dto: UpdateSubjectDto, @Res() res: Response) {
     const response = await this.subjectService.update(id, dto);
+
+    res.status(response.statusCode).json(response);
+  }
+
+  @Post("by-ids")
+  async getSubjectsByIds(@Body() dto: GetSubjectsByIdsDto, @Res() res: Response) {
+    const response = await this.subjectService.getSubjectsByIds(dto);
 
     res.status(response.statusCode).json(response);
   }
