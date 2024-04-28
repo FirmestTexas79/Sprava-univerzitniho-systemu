@@ -127,120 +127,135 @@ export function UsersPage() {
   }
 
   return (
-    <Page>
-      <h1>Uživatelé</h1>
-      <TextInput onChange={(value) => onChangeFilter("email", value)} label="Email" />
-      <TextInput onChange={(value) => onChangeFilter("firstname", value)} label="Jméno" />
-      <TextInput onChange={(value) => onChangeFilter("lastname", value)} label="Příjmení" />
-      <Button
-        variant="contained"
-        fullWidth
-        onClick={search}>Vyhledat uživatele</Button>
-      {users.length > 0 && (<table>
-        <thead>
-        <tr>
-          <th>Email</th>
-          <th>Jméno</th>
-          <th>Příjmení</th>
-          <th>Role</th>
-        </tr>
-        </thead>
-        <tbody>
-        {users.filter(filterUser).map((usr) => (
-          <tr key={usr.id} style={{ cursor: "pointer" }} onClick={() => navigate(`/user/${usr.id}`)}>
-            <td>{usr.email}</td>
-            <td>{usr.firstname}</td>
-            <td>{usr.lastname}</td>
-            <td>{usr.role}</td>
-          </tr>
-        ))}
-        </tbody>
-      </table>)}
+      <Page>
+        <div className="page-container">
+          <div className="form-container">
+            <div className="search-container">
+              <h1>Vyhledávání uživatelů</h1>
+              <div className="input-container">
+                <TextInput onChange={(value) => onChangeFilter("email", value)} label="Email"/>
+                <TextInput onChange={(value) => onChangeFilter("firstname", value)} label="Jméno"/>
+                <TextInput onChange={(value) => onChangeFilter("lastname", value)} label="Příjmení"/>
+              </div>
+            <div className="button-container">
+              <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={search}>Vyhledat uživatele</Button>
+            </div>
+          </div>
+          </div>
+          {users.length > 0 && (
+              <div className="results-container">
+                <h2>Výsledky vyhledávání</h2>
+                <table>
+                  <thead>
+                  <tr>
+                    <th>Email</th>
+                    <th>Jméno</th>
+                    <th>Příjmení</th>
+                    <th>Role</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {users.filter(filterUser).map((usr) => (
+                      <tr key={usr.id} style={{cursor: "pointer"}} onClick={() => navigate(`/user/${usr.id}`)}>
+                        <td>{usr.email}</td>
+                        <td>{usr.firstname}</td>
+                        <td>{usr.lastname}</td>
+                        <td>{usr.role}</td>
+                      </tr>
+                  ))}
+                  </tbody>
+                </table>
+              </div>
+          )}
 
-      {user?.role === UserRoles.ADMIN && (<>
-        <h2>Zaregistrovat uživatele</h2>
-        {info && <p>{info}</p>}
-        <TextInput
-          value={form.email}
-          onChange={(value) => onChangeForm("email", value)}
-          label="Email"
-          error={errors?.has("email")}
-          helperText={errors?.get("email")} />
-        <TextInput
-          value={form.firstname}
-          onChange={(value) => onChangeForm("firstname", value)}
-          label="Jméno"
-          error={errors?.has("firstname")}
-          helperText={errors?.get("firstname")} />
-        <TextInput
-          value={form.lastname}
-          onChange={(value) => onChangeForm("lastname", value)}
-          label="Příjmení"
-          error={errors?.has("lastname")}
-          helperText={errors?.get("lastname")} />
-        <TextInput
-          value={form.titleAfter}
-          onChange={(value) => onChangeForm("titleAfter", value)}
-          label="Titul za"
-          error={errors?.has("titleAfter")}
-          helperText={errors?.get("titleAfter")} />
-        <TextInput
-          value={form.titleBefore}
-          onChange={(value) => onChangeForm("titleBefore", value)}
-          label="Titul před"
-          error={errors?.has("titleBefore")}
-          helperText={errors?.get("titleBefore")} />
-        <TextInput
-          value={form.phone}
-          onChange={(value) => onChangeForm("phone", value)}
-          placeholder={"+420775485242"}
-          label="Telefon" error={errors?.has("phone")}
-          helperText={errors?.get("phone")} />
-        <DateInput
-          disableFuture
-          onChange={(value) => onChangeForm("birthdate", value)}
-          value={form.birthdate}
-          label="Datum narození" error={errors?.has("birthdate")}
-          helperText={errors?.get("birthdate")} />
-        <SelectInput
-          options={SEX_OPTIONS}
-          value={form.sex}
-          onChange={(value) => onChangeForm("sex", value)}
-          label="Pohlaví"
-          error={errors?.has("sex")}
-          helperText={errors?.get("sex")} />
-        <SelectInput
-          options={USER_ROLES_OPTIONS}
-          value={form?.role}
-          onChange={(value) => {
-            onChangeForm("role", value);
-          }}
-          label="Role" error={errors?.has("role")}
-          helperText={errors?.get("role")} />
-        {form.role === UserRoles.STUDENT && (<>
-          <SelectInput
-            options={fieldOfStudy?.map((value) => ({
-              label: value.name + " - " + value.type,
-              value: value.id,
-            } as Option<string>)) || []}
-            onChange={(value) => onChangeForm("fieldOfStudyId", value)}
-            onOpen={() => getFieldOfStudyOptions()}
-            value={form.fieldOfStudyId}
-            label="Obor"
-            error={errors?.has("fieldOfStudyId")}
-            helperText={errors?.get("fieldOfStudyId")} />
-          <NumberInput
-            min={1}
-            max={4}
-            onChange={(value) => onChangeForm("year", value)}
-            value={form.year || 1}
-            label="Ročník"
-            error={errors?.has("year")}
-            helperText={errors?.get("year")} /></>)}
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={createUser}>Vytvořit uživatele</Button></>)}
-    </Page>
-  );
+          {user?.role === UserRoles.ADMIN && (<>
+            <h2>Zaregistrovat uživatele</h2>
+            {info && <p>{info}</p>}
+            <TextInput
+                value={form.email}
+                onChange={(value) => onChangeForm("email", value)}
+                label="Email"
+                error={errors?.has("email")}
+                helperText={errors?.get("email")}/>
+            <TextInput
+                value={form.firstname}
+                onChange={(value) => onChangeForm("firstname", value)}
+                label="Jméno"
+                error={errors?.has("firstname")}
+                helperText={errors?.get("firstname")}/>
+            <TextInput
+                value={form.lastname}
+                onChange={(value) => onChangeForm("lastname", value)}
+                label="Příjmení"
+                error={errors?.has("lastname")}
+                helperText={errors?.get("lastname")}/>
+            <TextInput
+                value={form.titleAfter}
+                onChange={(value) => onChangeForm("titleAfter", value)}
+                label="Titul za"
+                error={errors?.has("titleAfter")}
+                helperText={errors?.get("titleAfter")}/>
+            <TextInput
+                value={form.titleBefore}
+                onChange={(value) => onChangeForm("titleBefore", value)}
+                label="Titul před"
+                error={errors?.has("titleBefore")}
+                helperText={errors?.get("titleBefore")}/>
+            <TextInput
+                value={form.phone}
+                onChange={(value) => onChangeForm("phone", value)}
+                placeholder={"+420775485242"}
+                label="Telefon" error={errors?.has("phone")}
+                helperText={errors?.get("phone")}/>
+            <DateInput
+                disableFuture
+                onChange={(value) => onChangeForm("birthdate", value)}
+                value={form.birthdate}
+                label="Datum narození" error={errors?.has("birthdate")}
+                helperText={errors?.get("birthdate")}/>
+            <SelectInput
+                options={SEX_OPTIONS}
+                value={form.sex}
+                onChange={(value) => onChangeForm("sex", value)}
+                label="Pohlaví"
+                error={errors?.has("sex")}
+                helperText={errors?.get("sex")}/>
+            <SelectInput
+                options={USER_ROLES_OPTIONS}
+                value={form?.role}
+                onChange={(value) => {
+                  onChangeForm("role", value);
+                }}
+                label="Role" error={errors?.has("role")}
+                helperText={errors?.get("role")}/>
+            {form.role === UserRoles.STUDENT && (<>
+              <SelectInput
+                  options={fieldOfStudy?.map((value) => ({
+                    label: value.name + " - " + value.type,
+                    value: value.id,
+                  } as Option<string>)) || []}
+                  onChange={(value) => onChangeForm("fieldOfStudyId", value)}
+                  onOpen={() => getFieldOfStudyOptions()}
+                  value={form.fieldOfStudyId}
+                  label="Obor"
+                  error={errors?.has("fieldOfStudyId")}
+                  helperText={errors?.get("fieldOfStudyId")}/>
+              <NumberInput
+                  min={1}
+                  max={4}
+                  onChange={(value) => onChangeForm("year", value)}
+                  value={form.year || 1}
+                  label="Ročník"
+                  error={errors?.has("year")}
+                  helperText={errors?.get("year")}/></>)}
+            <Button
+                variant="contained"
+                fullWidth
+                onClick={createUser}>Vytvořit uživatele</Button></>)}
+        </div>
+      </Page>
+);
 }

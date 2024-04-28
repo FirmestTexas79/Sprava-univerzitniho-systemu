@@ -1,4 +1,4 @@
-import "./styles/index.css";
+import "./styles/Page.css";
 
 import { AuthProvider } from "./providers/AuthProvider.tsx";
 import { Application } from "./providers/Application.tsx";
