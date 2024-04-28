@@ -2,6 +2,8 @@ import { Api } from "./Api.ts";
 import { RoutePath } from "../../../../lib/src/persistance/RoutePath.ts";
 import { FieldOfStudy, FieldOfStudyTypes } from "@prisma/client";
 import { z } from "zod";
+import { ResponseData } from "../../../../lib/src/persistance/response-data.ts";
+import axios from "../../api/axios.ts";
 
 const createFieldOfStudyForm = z.object({
   name: z.string().min(2),
@@ -27,5 +29,14 @@ export class FieldOfStudyApi extends Api<FieldOfStudy, CreateFieldOfStudyForm, U
       create: createFieldOfStudyForm,
       update: updateFieldOfStudyForm,
     });
+  }
+
+  /**
+   * Get field of study by subject id
+   * @param subjectId Subject id
+   */
+  async getFieldOfStudiesBySubjectId(subjectId: string) {
+    const { data } = await axios.get<any, { data: ResponseData<FieldOfStudy[]> }>(this.path + "by-subject/" + subjectId, this.config);
+    return data;
   }
 }

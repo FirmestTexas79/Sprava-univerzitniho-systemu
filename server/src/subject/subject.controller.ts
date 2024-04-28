@@ -65,4 +65,11 @@ export class SubjectController implements RestController<Subject, CreateSubjectD
 
     res.status(response.statusCode).json(response);
   }
+
+  @Get("by-field-of-study/:id")
+  async getSubjectsByFieldOfStudy(@Param("id") id: string, @Res() res: Response) {
+    const response = await this.subjectService.getSubjectsByFieldOfStudy(id);
+
+    res.status(response.statusCode).json(response);
+  }
 }

@@ -25,7 +25,7 @@ export function TextAreaInput({
       required={required}
       disabled={disabled}
       multiline
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e) => onChange && onChange(e.target.value)}
       rows={4}
       maxRows={4}
       variant="outlined"

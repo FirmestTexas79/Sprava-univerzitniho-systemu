@@ -9,6 +9,8 @@ interface CheckBoxProps extends InputProps<boolean> {
 export function CheckBox({ onPress, value, onChange }: CheckBoxProps) {
   return (<Checkbox onClick={() => {
     onPress();
-    onChange(!value);
+    if (onChange) {
+      onChange(!value);
+    }
   }} value={value} />);
 }

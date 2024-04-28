@@ -3,20 +3,16 @@ import { useEffect, useState } from "react";
 import { Exam, Room, Subject, User, UserRoles } from "@prisma/client";
 import { SortType } from "../../../../server/src/utils/sort-type.enum.ts";
 import { useAuth } from "../../hooks/useAuth.tsx";
-import { CreateExamForm, ExamApi } from "../../services/server/ExamApi.ts";
+import { ExamApi } from "../../services/server/ExamApi.ts";
 import { Time } from "../../../../lib/src/utils/Time.ts";
 import { ArrayUtils } from "../../../../lib/src/utils/ArrayUtils.ts";
 import { SubjectApi } from "../../services/server/SubjectApi.ts";
 import { UserApi } from "../../services/server/UserApi.ts";
-import { EXAM_TYPES_OPTIONS, makeRoomLabel, makeUserLabel } from "../../services/utils.ts";
-import { TextInput } from "../../components/inputs/TextInput.tsx";
-import { TextAreaInput } from "../../components/inputs/TextAreaInput.tsx";
-import { SelectInput } from "../../components/inputs/SelectInput.tsx";
-import { NumberInput } from "../../components/inputs/NumberInput.tsx";
+import { makeUserLabel } from "../../services/utils.ts";
 import { Button } from "@mui/material";
 import { AxiosError } from "axios";
 import { z } from "zod";
-import { RoomApi } from "../../services/server/RoomApi.ts";
+import { SchedulerDialog } from "../../components/dialog/SchedulerDialog.tsx";
 
 export function ExamsPage() {
   const {
@@ -27,9 +23,9 @@ export function ExamsPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [form, setForm] = useState<CreateExamForm>({} as CreateExamForm);
-  const [info, setInfo] = useState<string>();
   const [errors, setErrors] = useState<Map<string | number, string>>();
+  const [info, setInfo] = useState<string>();
+  const [schedulerDialogOpen, setSchedulerDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -63,20 +59,6 @@ export function ExamsPage() {
     api.getSubjectsByIds(array).then((value) => {
       if (value.data) {
         setSubjects(value.data);
-      }
-    });
-  }
-
-  function getRooms() {
-    if (!token) return;
-
-    const api = new RoomApi(token.token);
-    api.findAll({
-      sortBy: "type",
-      sortOrder: SortType.ASC,
-    }).then((value) => {
-      if (value.data) {
-        setRooms(value.data);
       }
     });
   }
@@ -127,115 +109,130 @@ export function ExamsPage() {
     }
   }
 
-  function onChange(key: keyof CreateExamForm, value: any) {
-    setForm({
-      ...form,
-      [key]: value,
-    });
+  function openSchedulerDialog() {
+    setSchedulerDialogOpen(true);
+  }
+
+  function closeSchedulerDialog() {
+    setSchedulerDialogOpen(false);
   }
 
   return (
-      <Page>
-        <div className="page-container">
-          <h1>Testy</h1>
-          {subjects.map((value) => (
-              <table key={value.id}>
-                <caption>{value.shortName}: {value.name}</caption>
-                <thead>
-                <tr>
-                  <th>Název</th>
-                  <th>Popis</th>
-                  <th>Typ</th>
-                  <th>Čas</th>
-                  <th>Maximální kapacita</th>
-                  <th>Zkoušející</th>
-                </tr>
-                </thead>
-                <tbody>
-                {exams.filter(exam => exam.subjectId === value.id).map((exam) => (
-                    <tr key={exam.id}>
-                      <td>{exam.name}</td>
-                      <td>{exam.description}</td>
-                      <td>{exam.type}</td>
-                      <td>{Time.formatDateTimeRange(exam.start, exam.end)}</td>
-                      <td>{exam.capacity}</td>
-                      <td>{makeUserLabel(users.find((user) => user.id === exam.teacherId))}</td>
-                    </tr>
-                ))}
-                </tbody>
-              </table>))}
-          {user?.role !== UserRoles.STUDENT && (<>
-            <h2>Vytvořit test</h2>
-            <TextInput
-                error={errors?.has("name")}
-                helperText={errors?.get("name")}
-                value={form.name}
-                onChange={(value) => onChange("name", value)}
-                label="Název"/>
-            <SelectInput
-                error={errors?.has("type")}
-                helperText={errors?.get("type")}
-                options={EXAM_TYPES_OPTIONS}
-                value={form.type}
-                onChange={(value) => onChange("type", value)}
-                label="Typ"/>
-            <SelectInput
-                error={errors?.has("roomId")}
-                helperText={errors?.get("roomId")}
-                onOpen={getRooms}
-                options={rooms.map((value: Room) => ({
-                  value: value.id,
-                  label: makeRoomLabel(value),
-                }))}
-                value={form.roomId}
-                onChange={(value) => {
-                  onChange("roomId", value);
-                  onChange("capacity", rooms.find((room) => room.id === value)?.capacity);
-                }}
-                label="Místnost"/>
-            <NumberInput
-                error={errors?.has("capacity")}
-                helperText={errors?.get("capacity")}
-                min={1}
-                max={form.roomId ? rooms.find((room) => room.id === form.roomId)?.capacity : 0}
-                value={form.capacity}
-                onChange={(value) => onChange("capacity", value)}
-                label="Maximální kapacita"/>
-            <SelectInput
-                error={errors?.has("subjectId")}
-                helperText={errors?.get("subjectId")}
-                options={subjects.map((value) => ({
-                  label: `${value.shortName}: ${value.name}`,
-                  value: value.id,
-                }))}
-                value={form.subjectId}
-                onChange={(value) => onChange("subjectId", value)}
-                label="Předmět"/>
-            <SelectInput
-                disabled={!form.subjectId}
-                error={errors?.has("teacherId")}
-                helperText={errors?.get("teacherId")}
-                options={users.map((value) => ({
-                  label: makeUserLabel(value),
-                  value: value.id,
-                }))} //TODO: all teachers
-                onOpen={() => getSubjectTeachers(form.subjectId)}
-                value={form.teacherId}
-                onChange={(value) => onChange("teacherId", value)}
-                label="Zkoušející"/>
-            <TextAreaInput
-                error={errors?.has("description")}
-                helperText={errors?.get("description")}
-                value={form.description}
-                onChange={(value) => onChange("description", value)}
-                label="Popis"/>
-            <Button
-                variant="contained"
-                onClick={onSubmit}
-                fullWidth>Uložit</Button>
-          </>)
-          }
-        </div>
-      </Page>
-);
+    <Page>
+      <h1>Testy</h1>
+      {subjects.map((value) => (
+        <table key={value.id}>
+          <caption>{value.shortName}: {value.name}</caption>
+          <thead>
+          <tr>
+            <th>Název</th>
+            <th>Popis</th>
+            <th>Typ</th>
+            <th>Čas</th>
+            <th>Maximální kapacita</th>
+            <th>Zkoušející</th>
+          </tr>
+          </thead>
+          <tbody>
+          {exams.filter(exam => exam.subjectId === value.id).map((exam) => (
+            <tr key={exam.id}>
+              <td>{exam.name}</td>
+              <td>{exam.description}</td>
+              <td>{exam.type}</td>
+              <td>{Time.formatDateTimeRange(exam.start, exam.end)}</td>
+              <td>{exam.capacity}</td>
+              <td>{makeUserLabel(users.find((user) => user.id === exam.teacherId))}</td>
+            </tr>
+          ))}
+          </tbody>
+        </table>))}
+      {user?.role !== UserRoles.STUDENT && (<>
+        <h2>Vytvořit test</h2>
+        {/* <TextInput
+          error={errors?.has("name")}
+          helperText={errors?.get("name")}
+          value={form.name}
+          onChange={(value) => onChange("name", value)}
+          label="Název" />
+        <SelectInput
+          error={errors?.has("type")}
+          helperText={errors?.get("type")}
+          options={EXAM_TYPES_OPTIONS}
+          value={form.type}
+          onChange={(value) => onChange("type", value)}
+          label="Typ" />
+        <TextInput
+          error={errors?.has("roomId")}
+          helperText={errors?.get("roomId")}
+          value={form.roomId}
+          onClick={openSchedulerDialog}
+          label="Místnost" />
+
+        <SelectInput
+          error={errors?.has("roomId")}
+          helperText={errors?.get("roomId")}
+          onOpen={getRooms}
+          options={rooms.map((value: Room) => ({
+            value: value.id,
+            label: makeRoomLabel(value),
+          }))}
+          value={form.roomId}
+          onChange={(value) => {
+            setForm({
+              ...form,
+              roomId: value,
+              capacity: rooms.find((room) => room.id === value)?.capacity ?? 0,
+            });
+          }}
+          label="Místnost" />
+        <NumberInput
+          disabled={!form.roomId}
+          error={errors?.has("capacity")}
+          helperText={errors?.get("capacity")}
+          min={1}
+          max={form.roomId ? rooms.find((room) => room.id === form.roomId)?.capacity : 0}
+          value={form.capacity}
+          onChange={(value) => onChange("capacity", value)}
+          label="Maximální kapacita" />
+        <SelectInput
+          error={errors?.has("subjectId")}
+          helperText={errors?.get("subjectId")}
+          options={subjects.map((value) => ({
+            label: `${value.shortName}: ${value.name}`,
+            value: value.id,
+          }))}
+          value={form.subjectId}
+          onChange={(value) => onChange("subjectId", value)}
+          label="Předmět" />
+        <SelectInput
+          disabled={!form.subjectId}
+          error={errors?.has("teacherId")}
+          helperText={errors?.get("teacherId")}
+          options={users.map((value) => ({
+            label: makeUserLabel(value),
+            value: value.id,
+          }))} //TODO: all teachers
+          onOpen={() => getSubjectTeachers(form.subjectId)}
+          value={form.teacherId}
+          onChange={(value) => onChange("teacherId", value)}
+          label="Zkoušející" />
+        <TextAreaInput
+          error={errors?.has("description")}
+          helperText={errors?.get("description")}
+          value={form.description}
+          onChange={(value) => onChange("description", value)}
+          label="Popis" />
+        <Button
+          variant="contained"
+          onClick={onSubmit}
+          fullWidth>Uložit</Button> */}
+        <Button
+          variant="contained"
+          onClick={openSchedulerDialog}
+          fullWidth>Vytvořit</Button>
+      </>)
+      }
+      <SchedulerDialog open={schedulerDialogOpen} onClose={closeSchedulerDialog} />
+    </Page>
+  );
 }

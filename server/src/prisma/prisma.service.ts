@@ -24,6 +24,7 @@ export class PrismaService extends PrismaClient {
       this.subject.deleteMany(),
       this.schedule.deleteMany(),
       this.authToken.deleteMany(),
+      this.fieldOfStudy.deleteMany(),
     ]);
   }
 }

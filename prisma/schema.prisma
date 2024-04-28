@@ -79,6 +79,8 @@ model FieldOfStudy {
 
   type FieldOfStudyTypes
 
+  subjects Subject[] @relation("fieldOfStudiesSubjects")
+
   students User[]
 
   @@map("fields_of_study")
@@ -134,10 +136,12 @@ model Subject {
 
   teachers User[] @relation("teachers")
 
+  fieldOfStudies FieldOfStudy[] @relation("fieldOfStudiesSubjects")
+
   description String?
   category    String
   exams       Exam[]
-  Schedule    Schedule[]
+  schedules   Schedule[]
 
   @@map("subjects")
 }
@@ -188,8 +192,8 @@ model Room {
   type        RoomTypes
   description String?
   capacity    Int
-  Exam        Exam[]
-  Schedule    Schedule[]
+  exam        Exam[]
+  schedules   Schedule[]
 
   @@map("rooms")
 }
@@ -239,5 +243,5 @@ model Schedule {
   startTime DateTime?
   endTime   DateTime?
 
-  @@map("student_schedules")
+  @@map("schedules")
 }

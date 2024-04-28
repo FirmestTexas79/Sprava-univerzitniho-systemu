@@ -13,6 +13,8 @@ const createSubjectForm = z.object({
   guarantorId: z.string().cuid(),
   name: z.string().min(2),
   shortName: z.string().min(2),
+  teachers: z.array(z.string().cuid()).nullish(),
+  fieldOfStudies: z.array(z.string().cuid()).nullish(),
 });
 
 const updateSubjectForm = z.object({
@@ -23,6 +25,8 @@ const updateSubjectForm = z.object({
   guarantorId: z.string().cuid().nullish(),
   name: z.string().min(2).nullish(),
   shortName: z.string().min(2).nullish(),
+  teachers: z.array(z.string().cuid()).nullish(),
+  fieldOfStudies: z.array(z.string().cuid()).nullish(),
 });
 
 export type UpdateSubjectForm = z.infer<typeof updateSubjectForm>;
@@ -38,10 +42,25 @@ export class SubjectApi extends Api<Subject, CreateSubjectForm, UpdateSubjectFor
     });
   }
 
+  /**
+   * Get subjects by field of study
+   * @param array Array of field of study ids
+   */
   async getSubjectsByIds(array: string[]) {
     const { data } = await axios.post<any, {
       data: ResponseData<Subject[]>
     }>(this.path + "by-ids", { ids: array }, this.config);
+    return data;
+  }
+
+  /**
+   * Get subjects by field of study
+   * @param fieldOfStudyId Field of study id
+   */
+  async getSubjectsByFieldOfStudy(fieldOfStudyId: string) {
+    const { data } = await axios.get<any, {
+      data: ResponseData<Subject[]>
+    }>(this.path + "by-field-of-study/" + fieldOfStudyId, this.config);
     return data;
   }
 }

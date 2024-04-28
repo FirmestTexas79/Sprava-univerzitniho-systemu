@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { RestService } from "../utils/rest.service";
 import { Subject, Visibility } from "@prisma/client";
-import { CreateSubjectDto, UpdateSubjectDto, GetSubjectsByIdsDto } from "./dto";
+import { CreateSubjectDto, GetSubjectsByIdsDto, UpdateSubjectDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { ResponseData } from "../utils/response-data";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
@@ -20,9 +20,30 @@ export class SubjectService implements RestService<Subject, CreateSubjectDto, Up
       statusCode: 201,
       message: "Subject created",
     } as ResponseData<Subject>;
+
     const data = await this.prismaService.subject.create({
       data: {
-        ...dto,
+        department: dto.department,
+        name: dto.name,
+        shortName: dto.shortName,
+        description: dto.description,
+        category: dto.category,
+        credits: dto.credits,
+        guarantorId: dto.guarantorId,
+        fieldOfStudies: {
+          connect: dto.fieldOfStudies.map((fos) => {
+            return {
+              id: fos,
+            };
+          }),
+        },
+        teachers: {
+          connect: dto.teachers.map((teacherId) => {
+            return {
+              id: teacherId,
+            };
+          }),
+        },
       },
     });
 
@@ -79,7 +100,7 @@ export class SubjectService implements RestService<Subject, CreateSubjectDto, Up
       statusCode: 200,
       message: "Found",
     } as ResponseData<Subject>;
-    const data = await this.prismaService.subject.findUnique({
+    const data: Subject = await this.prismaService.subject.findUnique({
       where: {
         id: id,
       },
@@ -120,7 +141,27 @@ export class SubjectService implements RestService<Subject, CreateSubjectDto, Up
         id: id,
       },
       data: {
-        ...dto,
+        department: dto.department,
+        name: dto.name,
+        shortName: dto.shortName,
+        description: dto.description,
+        category: dto.category,
+        credits: dto.credits,
+        guarantorId: dto.guarantorId,
+        fieldOfStudies: {
+          connect: dto.fieldOfStudies.map((fos) => {
+            return {
+              id: fos,
+            };
+          }),
+        },
+        teachers: {
+          connect: dto.teachers.map((teacherId) => {
+            return {
+              id: teacherId,
+            };
+          }),
+        },
       },
     });
 
@@ -139,6 +180,27 @@ export class SubjectService implements RestService<Subject, CreateSubjectDto, Up
       where: {
         id: {
           in: dto.ids,
+        },
+      },
+    });
+
+    response.data = data;
+    this.logger.log(response);
+
+    return response;
+  }
+
+  async getSubjectsByFieldOfStudy(id: string) {
+    const response = {
+      statusCode: 200,
+      message: "Subjects found",
+    } as ResponseData<Subject[]>;
+    const data = await this.prismaService.subject.findMany({
+      where: {
+        fieldOfStudies: {
+          some: {
+            id: id,
+          },
         },
       },
     });

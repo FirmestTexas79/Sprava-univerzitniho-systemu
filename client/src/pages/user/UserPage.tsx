@@ -8,7 +8,7 @@ import { Page } from "../../components/Page.tsx";
 import { TextInput } from "../../components/inputs/TextInput.tsx";
 import { z } from "zod";
 import { AxiosError } from "axios";
-import { DateInput } from "../../components/inputs/DateInput.tsx";
+import { DateInput } from "../../components/inputs/time/DateInput.tsx";
 import { Option, SelectInput } from "../../components/inputs/SelectInput.tsx";
 import { NumberInput } from "../../components/inputs/NumberInput.tsx";
 import { SEX_OPTIONS, USER_ROLES_OPTIONS } from "../../services/utils.ts";
@@ -112,6 +112,7 @@ export default function UserPage() {
         <Typography variant="h4">User</Typography>
         <Typography variant="h6">ID: {currentUser?.id}</Typography>
         <Typography variant="h6">Email: {currentUser?.email}</Typography>
+        <Typography variant="h6">Role: {currentUser?.role}</Typography>
         <Typography variant="h6">Firstname: {currentUser?.firstname}</Typography>
         <Typography variant="h6">Lastname: {currentUser?.lastname}</Typography>
         <Typography variant="h6">Birthdate: {currentUser?.birthdate.toLocaleDateString()}</Typography>

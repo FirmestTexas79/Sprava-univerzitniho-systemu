@@ -6,7 +6,7 @@ import { useState } from "react";
 import { FieldOfStudy, User, UserRoles, Visibility } from "@prisma/client";
 import { TextInput } from "../../components/inputs/TextInput.tsx";
 import { useNavigate } from "react-router-dom";
-import { DateInput } from "../../components/inputs/DateInput.tsx";
+import { DateInput } from "../../components/inputs/time/DateInput.tsx";
 import { NumberInput } from "../../components/inputs/NumberInput.tsx";
 import { Option, SelectInput } from "../../components/inputs/SelectInput.tsx";
 import { SEX_OPTIONS, USER_ROLES_OPTIONS } from "../../services/utils.ts";
