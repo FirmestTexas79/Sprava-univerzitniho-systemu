@@ -44,7 +44,8 @@ model User {
 
   ratings Rating[]
 
-  teacherSubjects Subject[] @relation("teachers")
+  teacherSubjects Subject[]  @relation("teachers")
+  teacherSchedule Schedule[] @relation("teacher")
 
   @@map("users")
 }
@@ -237,11 +238,15 @@ model Schedule {
   subjectId String
   subject   Subject @relation(fields: [subjectId], references: [id])
 
+  teacherId String
+  teacher   User   @relation("teacher", fields: [teacherId], references: [id])
+
   roomId String?
   room   Room?   @relation(fields: [roomId], references: [id])
 
   startTime DateTime?
   endTime   DateTime?
+  day       Int?
 
   @@map("schedules")
 }

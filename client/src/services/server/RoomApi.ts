@@ -1,7 +1,9 @@
 import { Api } from "./Api.ts";
 import { RoutePath } from "../../../../lib/src/persistance/RoutePath.ts";
-import { Room, RoomTypes } from "@prisma/client";
+import { Room, RoomTypes, User } from "@prisma/client";
 import { z } from "zod";
+import axios from "../../api/axios.ts";
+import { ResponseData } from "../../../../lib/src/persistance/response-data.ts";
 
 const createRoomForm = z.object({
   capacity: z.number(),
@@ -27,5 +29,16 @@ export class RoomApi extends Api<Room, CreateRoomForm, UpdateRoomForm> {
 
   constructor(token: string | null = null) {
     super(token, RoutePath.ROOM,{ create: createRoomForm, update: updateRoomForm});
+  }
+
+  /**
+   * Get rooms by ids
+   * @param array Array of ids
+   */
+  async getRoomsByIds(array: string[]) {
+    const { data } = await axios.post<any, {
+      data: ResponseData<Room[]>
+    }>(this.path + "by-ids", { ids: array }, this.config);
+    return data;
   }
 }

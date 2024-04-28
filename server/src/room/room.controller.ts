@@ -7,6 +7,7 @@ import { CreateRoomDto, UpdateRoomDto } from "./dto";
 import { RoomService } from "./room.service";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
 import { Response } from "express";
+import { GetRoomsByIdsDto } from "../schedule/dto";
 
 @ApiTags("Room")
 @ApiBearerAuth()
@@ -54,6 +55,13 @@ export class RoomController implements RestController<Room, CreateRoomDto, Updat
   @Patch(":id")
   async update(@Param("id") id: string, @Body() dto: UpdateRoomDto, @Res() res: Response) {
     const response = await this.roomService.update(id, dto);
+
+    res.status(response.statusCode).json(response);
+  }
+
+  @Post("by-ids")
+  async getRoomsByIds(@Body() dto: GetRoomsByIdsDto, @Res() res: Response) {
+    const response = await this.roomService.getRoomsByIds(dto);
 
     res.status(response.statusCode).json(response);
   }

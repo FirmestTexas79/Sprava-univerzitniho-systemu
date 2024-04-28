@@ -81,6 +81,37 @@ export const EXAM_TYPES_OPTIONS = [{
   value: "PROJECT",
 }];
 
+export const DAYS_OPTIONS = [
+  {
+    value: 0,
+    label: "Pondělí",
+  },
+  {
+    value: 1,
+    label: "Úterý",
+  },
+  {
+    value: 2,
+    label: "Středa",
+  },
+  {
+    value: 3,
+    label: "Čtvrtek",
+  },
+  {
+    value: 4,
+    label: "Pátek",
+  },
+  {
+    value: 5,
+    label: "Sobota",
+  },
+  {
+    value: 6,
+    label: "Neděle",
+  },
+];
+
 export function makeUserLabel(user?: User) {
   if (!user) return "";
 

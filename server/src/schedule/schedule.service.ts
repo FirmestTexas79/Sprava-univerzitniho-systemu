@@ -111,4 +111,18 @@ export class ScheduleService implements RestService<Schedule, CreateScheduleDto,
 
     return response;
   }
+
+  async getSchedulesBySubjectId(id: string) {
+    const response = { statusCode: 200, message: "Found" } as ResponseData<Schedule[]>;
+    const data = await this.prismaService.schedule.findMany({
+      where: {
+        subjectId: id,
+      },
+    });
+
+    response.data = data;
+    this.logger.log(response);
+
+    return response;
+  }
 }
