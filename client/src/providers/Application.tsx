@@ -7,8 +7,9 @@ import { ForgotPasswordPage } from "../pages/auth/ForgotPasswordPage.tsx";
 import { SchedulePage } from "../pages/SchedulePage.tsx";
 import { UsersPage } from "../pages/user/UsersPage.tsx";
 import SubjectsPage from "../pages/subject/SubjectsPage.tsx";
-import RoomsPage from "../pages/RoomsPage.tsx";
+import RoomsPage from "../pages/room/RoomsPage.tsx";
 import { SubjectPage } from "../pages/subject/SubjectPage.tsx";
+import { RoomPage } from "../pages/room/RoomPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
   {
     path: "/rooms",
     element: <RoomsPage />,
+  },
+  {
+    path: "/room/:id",
+    element: <RoomPage />,
   },
   {
     path: "/subjects",

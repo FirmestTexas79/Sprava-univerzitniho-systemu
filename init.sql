@@ -36,3 +36,9 @@ VALUES ('clvh9c4t30004356x7bandnpj1', 'Programování 1', '2021-05-02 00:00:00.0
        ('clvh9c4t30004356x7bandnpj2', 'Matematika 1', '2021-05-02 00:00:00.000', '2021-05-02 00:00:00.000', 5, 'MAT1',
         'BASIC', 'KIV', 'clvh9c4t30004356x7bandnpjW');
 
+INSERT INTO `rooms` (`id`, `name`, `createdAt`, `updatedAt`, `capacity`, `type`, `floor`)
+VALUES ('clvh9c4t30004356x7bandnpjR', 'A1', '2021-05-02 00:00:00.000', '2021-05-02 00:00:00.000', 50, 'LECTURE', 1),
+       ('clvh9c4t30004356x7bandnpjT', 'A2', '2021-05-02 00:00:00.000', '2021-05-02 00:00:00.000', 50, 'LECTURE', 1),
+       ('clvh9c4t30004356x7bandnpjU', 'A3', '2021-05-02 00:00:00.000', '2021-05-02 00:00:00.000', 18, 'COMPUTERS', 1),
+       ('clvh9c4t30004356x7bandnpjV', 'A4', '2021-05-02 00:00:00.000', '2021-05-02 00:00:00.000', 18, 'COMPUTERS', 1),
+       ('clvh9c4t30004356x7bandnpjZ', 'A5', '2021-05-02 00:00:00.000', '2021-05-02 00:00:00.000', 8, 'LABORATORY', 1);

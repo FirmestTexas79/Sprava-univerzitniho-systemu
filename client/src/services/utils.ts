@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { RoomTypes, Sex, User, UserRoles } from "@prisma/client";
 
 export function stringToColor(string: string) {
   let hash = 0;
@@ -30,24 +30,44 @@ export function stringAvatar(name: string) {
 
 export const SEX_OPTIONS = [{
   label: "Muž",
-  value: "MALE",
+  value: Sex.MALE,
 }, {
   label: "Žena",
-  value: "FEMALE",
+  value: Sex.FEMALE,
 }, {
   label: "Jiné",
-  value: "OTHER",
+  value: Sex.OTHER,
 }];
 
 export const USER_ROLES_OPTIONS = [{
   label: "Student",
-  value: "STUDENT",
+  value: UserRoles.STUDENT,
 }, {
   label: "Učitel",
-  value: "TEACHER",
+  value: UserRoles.TEACHER,
 }, {
   label: "Administrátor",
-  value: "ADMIN",
+  value: UserRoles.ADMIN,
+}];
+
+export const ROOM_TYPES_OPTIONS = [{
+  label: "Seminář",
+  value: RoomTypes.SEMINAR,
+}, {
+  label: "Laboratoř",
+  value: RoomTypes.LABORATORY,
+}, {
+  label: "Počítačová učebna",
+  value: RoomTypes.COMPUTERS,
+}, {
+  label: "Kancelář",
+  value: RoomTypes.OFFICE,
+}, {
+  label: "Jiné",
+  value: RoomTypes.OTHER,
+}, {
+  label: "Přednáškový sál",
+  value: RoomTypes.LECTURE,
 }];
 
 export function makeUserLabel(user: User) {
