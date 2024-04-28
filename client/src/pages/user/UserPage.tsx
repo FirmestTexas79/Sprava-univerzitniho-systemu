@@ -106,28 +106,6 @@ export default function UserPage() {
     }
   }
 
-  function onSubmit() {
-    if (!token) return;
-
-    const api = new SubjectApi(token.token);
-    api.create(subject?.id!, { ...subject } as UpdateSubjectForm).then((response) => {
-      if (response.data) {
-        setSubject(response.data);
-      }
-    }).catch((error: any) => {
-      if (error instanceof z.ZodError) {
-        const fieldErrors = new Map<string | number, string>();
-        error.errors.forEach((err: { path: any[]; message: string; }) => {
-          const field = err.path[0];
-          fieldErrors.set(field, err.message);
-        });
-        setErrors(fieldErrors);
-      } else if (error instanceof AxiosError) {
-        setInfo(error.response?.data.message);
-      }
-    });
-  }
-
   return (<Page>
     <Container maxWidth="sm">
       {user?.role !== UserRoles.ADMIN ? (<Box>
