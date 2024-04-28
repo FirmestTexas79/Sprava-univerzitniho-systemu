@@ -42,11 +42,18 @@ export class UserApi extends Api<User, CreateUserForm, UpdateUserForm> {
     });
   }
 
+  /**
+   * Get user by token
+   */
   async getMe() {
     const { data } = await axios.get<any, { data: ResponseData<User> }>(this.path + "me", this.config);
     return data;
   }
 
+  /**
+   * Get all users
+   * @param filter Filter by key and value
+   */
   async multiFilter(filter: { key: keyof User, value: any }[]) {
     const { data } = await axios.post<any, {
       data: ResponseData<User[]>
@@ -54,10 +61,33 @@ export class UserApi extends Api<User, CreateUserForm, UpdateUserForm> {
     return data;
   }
 
+
   async teacherWithoutGuarantorSubject() {
     const { data } = await axios.post<any, {
       data: ResponseData<User[]>
     }>(this.path + "teacher-without-guarantor-subject", null, this.config);
+    return data;
+  }
+
+  /**
+   * Get users by ids array
+   * @param array
+   */
+  async getUsersByIds(array: string[]) {
+    const { data } = await axios.post<any, {
+      data: ResponseData<User[]>
+    }>(this.path + "by-ids", { ids: array }, this.config);
+    return data;
+  }
+
+  /**
+   * Get users by subject id
+   * @param subjectId
+   */
+  async getUsersBySubjectId(subjectId: string) {
+    const { data } = await axios.get<any, {
+      data: ResponseData<User[]>
+    }>(this.path + "by-subject/" + subjectId, this.config);
     return data;
   }
 }

@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { User, Visibility } from "@prisma/client";
-import { CreateUserDto, UpdateUserDto } from "./dto";
+import { CreateUserDto, GetUsersByIdsDto, UpdateUserDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
 import * as argon from "argon2";
 import { generateRandomPassword } from "../utils/utils";
@@ -200,6 +200,53 @@ export class UserService implements RestService<User, CreateUserDto, UpdateUserD
     });
 
     this.logger.debug(users);
+
+    response.data = users;
+    this.logger.log(response);
+
+    return response;
+  }
+
+  async getUsersByIds(dto: GetUsersByIdsDto) {
+    const response = {
+      statusCode: HttpStatus.OK,
+      message: "Users found",
+    } as ResponseData<User[]>;
+
+    const users = await this.prismaService.user.findMany({
+      where: {
+        id: {
+          in: dto.ids,
+        },
+      },
+    });
+
+    users.forEach((user) => {
+      delete user.password;
+    });
+
+    response.data = users;
+    this.logger.log(response);
+
+    return response;
+  }
+
+  async getUsersBySubjectId(subjectId: string) {
+    const response = {
+      statusCode: HttpStatus.OK,
+      message: "Users found",
+    } as ResponseData<User[]>;
+
+    //TODO: implement this method
+    const users = await this.prismaService.user.findMany({
+      where: {
+        role: "TEACHER",
+      },
+    });
+
+    users.forEach((user) => {
+      delete user.password;
+    });
 
     response.data = users;
     this.logger.log(response);

@@ -15,7 +15,7 @@ export default function LoginPage() {
     const { login, user } = useAuth();
     const [loginForm, setLoginForm] = useState<LoginForm>({ email: "", password: "" });
     const [errors, setErrors] = useState<Map<string | number, string>>();
-    const [info, setInfo] = useState<{ message?: string }>({});
+    const [info, setInfo] = useState<string>();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,21 +28,19 @@ export default function LoginPage() {
         const api = new AuthApi();
         try {
             const { data, message, error } = await api.login(loginForm);
-            if (error) setInfo({ message: message });
+            if (error && message) setInfo(message);
             data && login(data);
             // @ts-ignore
         } catch (error: any) {
-            console.log(error);
             if (error instanceof z.ZodError) {
                 const fieldErrors = new Map<string | number, string>();
-                error.errors.forEach((err: { path: any[]; message: string; }) => {
+                error.errors.forEach((err) => {
                     const field = err.path[0];
                     fieldErrors.set(field, err.message);
                 });
                 setErrors(fieldErrors);
             } else if (error instanceof AxiosError) {
-                console.log(error);
-                setInfo(error.response?.data);
+                setInfo(error.response?.data.message);
             }
         }
     }
@@ -56,7 +54,7 @@ export default function LoginPage() {
                     <div className="form-container">
                         <img src={uhkLogo} alt="Logo UHK" className="uhk-logo" />
                         <h1 className="opacity">Přihlášení</h1> {/* Přidáváme třídu pro stylizaci */}
-                        <FormHelperText error={!!info.message}>{info.message}</FormHelperText>
+                        <FormHelperText error={!!info}>{info}</FormHelperText>
                         <TextInput
                             label={"Email"}
                             type={"email"}

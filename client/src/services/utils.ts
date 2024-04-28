@@ -1,4 +1,4 @@
-import { RoomTypes, Sex, User, UserRoles } from "@prisma/client";
+import { Room, RoomTypes, Sex, User, UserRoles } from "@prisma/client";
 
 export function stringToColor(string: string) {
   let hash = 0;
@@ -70,6 +70,25 @@ export const ROOM_TYPES_OPTIONS = [{
   value: RoomTypes.LECTURE,
 }];
 
-export function makeUserLabel(user: User) {
-  return `${user?.titleBefore || ""} ${user.firstname} ${user.lastname} ${user?.titleAfter || ""}`;
+export const EXAM_TYPES_OPTIONS = [{
+  label: "Zkouška",
+  value: "EXAM",
+}, {
+  label: "Prezentace",
+  value: "PRESENTATION",
+}, {
+  label: "Projekt",
+  value: "PROJECT",
+}];
+
+export function makeUserLabel(user?: User) {
+  if (!user) return "";
+
+  return `${user?.titleBefore ?? ""} ${user.firstname} ${user.lastname} ${user?.titleAfter ?? ""}`;
+}
+
+export function makeRoomLabel(room?: Room) {
+  if (!room) return "";
+
+  return `${room.name} - ${room.type} - ${room.capacity}`;
 }

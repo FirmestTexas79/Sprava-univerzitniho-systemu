@@ -78,7 +78,7 @@ export function SubjectPage() {
     }).catch((error: any) => {
       if (error instanceof z.ZodError) {
         const fieldErrors = new Map<string | number, string>();
-        error.errors.forEach((err: { path: any[]; message: string; }) => {
+        error.errors.forEach((err) => {
           const field = err.path[0];
           fieldErrors.set(field, err.message);
         });

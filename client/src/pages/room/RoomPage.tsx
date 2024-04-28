@@ -54,8 +54,8 @@ export function RoomPage() {
     }).catch((error: any) => {
       if (error instanceof z.ZodError) {
         const fieldErrors = new Map<string | number, string>();
-        error.errors.forEach((err: { path: string[]; message: string; }) => {
-          const field: string = err.path[0];
+        error.errors.forEach((err) => {
+          const field = err.path[0];
           fieldErrors.set(field, err.message);
         });
         setErrors(fieldErrors);

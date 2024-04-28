@@ -4,6 +4,7 @@ import { RoutePath } from "../../../../lib/src/persistance/RoutePath.ts";
 import { z } from "zod";
 
 const createExamForm = z.object({
+  name: z.string().min(2),
   capacity: z.number().min(1),
   description: z.string().nullish(),
   end: z.date(),
@@ -18,6 +19,7 @@ const createExamForm = z.object({
 export type CreateExamForm = z.infer<typeof createExamForm>;
 
 const updateExamForm = z.object({
+  name: z.string().min(2).nullish(),
   capacity: z.number().min(1).nullish(),
   description: z.string().nullish(),
   end: z.date().nullish(),

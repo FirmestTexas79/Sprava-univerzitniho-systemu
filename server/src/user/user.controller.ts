@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "@prisma/client";
-import { UpdateUserDto } from "./dto";
+import { GetUsersByIdsDto, UpdateUserDto } from "./dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtGuard } from "../auth/guard";
 import { GetUser } from "../auth/decorator";
@@ -69,6 +69,20 @@ export class UserController {
   @Post("teacher-without-guarantor-subject")
   async teacherWithoutGuarantorSubject(@Res() res: Response) {
     const response = await this.userService.teacherWithoutGuarantorSubject();
+
+    res.status(response.statusCode).json(response);
+  }
+
+  @Post("by-ids")
+  async getUsersByIds(@Body() dto: GetUsersByIdsDto, @Res() res: Response) {
+    const response = await this.userService.getUsersByIds(dto);
+
+    res.status(response.statusCode).json(response);
+  }
+
+  @Get("by-subject/:subjectId")
+  async getUsersBySubjectId(@Param("subjectId") subjectId: string, @Res() res: Response) {
+    const response = await this.userService.getUsersBySubjectId(subjectId);
 
     res.status(response.statusCode).json(response);
   }

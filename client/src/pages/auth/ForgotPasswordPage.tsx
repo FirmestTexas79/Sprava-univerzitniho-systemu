@@ -5,11 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { AuthApi, AuthForm } from "../../services/server/AuthApi.ts";
 import { useState } from "react";
 import "../../styles/LoginPage.css"
+import { z } from "zod";
+import { AxiosError } from "axios";
 
 export function ForgotPasswordPage() {
   const [form, setForm] = useState<AuthForm>();
   const [errors, setErrors] = useState<Map<string | number, string>>();
   const [success, setSuccess] = useState(false);
+  const [info, setInfo] = useState<string>();
   const navigate = useNavigate();
 
   async function handleSubmit() {
@@ -21,12 +24,16 @@ export function ForgotPasswordPage() {
       console.log(r);
       setSuccess(true);
     } catch (error: any) {
-      const fieldErrors = new Map<string | number, string>();
-      error.forEach((err: { path: any[]; message: string; }) => {
-        const field = err.path[0];
-        fieldErrors.set(field, err.message);
-      });
-      setErrors(fieldErrors);
+      if (error instanceof z.ZodError) {
+        const fieldErrors = new Map<string | number, string>();
+        error.errors.forEach((err) => {
+          const field = err.path[0];
+          fieldErrors.set(field, err.message);
+        });
+        setErrors(fieldErrors);
+      } else if (error instanceof AxiosError) {
+        setInfo(error.response?.data.message);
+      }
     }
   }
 

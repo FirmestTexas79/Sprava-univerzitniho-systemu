@@ -12,7 +12,7 @@ import { CreateRoomForm, RoomApi } from "../../services/server/RoomApi.ts";
 import { NumberInput } from "../../components/inputs/NumberInput.tsx";
 import { AxiosError } from "axios";
 import { SortType } from "../../../../server/src/utils/sort-type.enum.ts";
-import { ArrayUtils } from "../../../../lib/src/utils/ArrayUtils.ts";
+import { z } from "zod";
 
 export default function RoomsPage() {
   const {
@@ -57,10 +57,16 @@ export default function RoomsPage() {
         setInfo("Místnost byla vytvořena");
         setRooms([...rooms, response.data]);
       }
-    } catch (e) {
-      const error = e as AxiosError;
-      if (error.response?.data.errors) {
-        setErrors(new Map(error.response.data.errors));
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const fieldErrors = new Map<string | number, string>();
+        error.errors.forEach((err) => {
+          const field = err.path[0];
+          fieldErrors.set(field, err.message);
+        });
+        setErrors(fieldErrors);
+      } else if (error instanceof AxiosError) {
+        setInfo(error.response?.data.message);
       }
     }
   }
@@ -104,8 +110,8 @@ export default function RoomsPage() {
           value={form.type}
           options={ROOM_TYPES_OPTIONS} />
         <NumberInput
-          error={errors?.has("capacity")}
-          helperText={errors?.get("capacity")}
+          error={errors?.has("floor")}
+          helperText={errors?.get("floor")}
           onChange={(value) => onChange("floor", value)}
           min={0}
           label="Patro"

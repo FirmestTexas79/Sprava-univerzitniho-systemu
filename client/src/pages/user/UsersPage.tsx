@@ -70,10 +70,9 @@ export function UsersPage() {
         setForm(emptyUserForm as unknown as RegisterForm);
       }
     } catch (error: any) {
-      console.error(error);
       if (error instanceof z.ZodError) {
         const fieldErrors = new Map<string | number, string>();
-        error.errors.forEach((err: { path: any[]; message: string; }) => {
+        error.errors.forEach((err) => {
           const field = err.path[0];
           fieldErrors.set(field, err.message);
         });
