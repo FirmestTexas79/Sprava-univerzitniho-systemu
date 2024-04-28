@@ -56,4 +56,11 @@ export class ScheduleController implements RestController<Schedule, CreateSchedu
 
     res.status(response.statusCode).json(response);
   }
+
+  @Get("by-subject/:id")
+  async getSchedulesBySubjectId(@Param("id") id: string, @Res() res: Response) {
+    const response = await this.scheduleService.getSchedulesBySubjectId(id);
+
+    res.status(response.statusCode).json(response);
+  }
 }

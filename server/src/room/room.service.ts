@@ -6,6 +6,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { ResponseData } from "../utils/response-data";
 import { ListAllEntitiesQuery } from "../utils/list-all-entities.query";
 import { SortType } from "../utils/sort-type.enum";
+import { GetRoomsByIdsDto } from "../schedule/dto";
 
 @Injectable()
 export class RoomService implements RestService<Room, CreateRoomDto, UpdateRoomDto> {
@@ -107,6 +108,26 @@ export class RoomService implements RestService<Room, CreateRoomDto, UpdateRoomD
       },
       data: {
         ...dto,
+      },
+    });
+
+    response.data = data;
+    this.logger.log(response);
+
+    return response;
+  }
+
+  /**
+   * Get rooms by ids
+   * @param dto Array of ids
+   */
+  async getRoomsByIds(dto: GetRoomsByIdsDto) {
+    const response = { statusCode: 200, message: "Found" } as ResponseData<Room[]>;
+    const data = await this.prismaService.room.findMany({
+      where: {
+        id: {
+          in: dto.ids,
+        },
       },
     });
 

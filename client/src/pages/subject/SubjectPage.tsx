@@ -2,7 +2,7 @@ import { Page } from "../../components/Page.tsx";
 import { useAuth } from "../../hooks/useAuth.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { FieldOfStudy, User, UserRoles } from "@prisma/client";
+import { FieldOfStudy, Room, Schedule, Subject, User, UserRoles } from "@prisma/client";
 import { SubjectApi, UpdateSubjectForm } from "../../services/server/SubjectApi.ts";
 import { Box, Button, Typography } from "@mui/material";
 import { TextInput } from "../../components/inputs/TextInput.tsx";
@@ -12,16 +12,24 @@ import { SelectInput } from "../../components/inputs/SelectInput.tsx";
 import { UserApi } from "../../services/server/UserApi.ts";
 import { AxiosError } from "axios";
 import { z } from "zod";
-import { makeFieldOfStudiesLabel, makeUserLabel } from "../../services/utils.ts";
+import { DAYS_OPTIONS, makeFieldOfStudiesLabel, makeRoomLabel, makeUserLabel } from "../../services/utils.ts";
 import { FieldOfStudyApi } from "../../services/server/FieldOfStudyApi.ts";
+import { CreateScheduleForm, ScheduleApi } from "../../services/server/ScheduleApi.ts";
+import { SortType } from "../../../../server/src/utils/sort-type.enum.ts";
+import { TimeInput } from "../../components/inputs/time/TimeInput.tsx";
+import { RoomApi } from "../../services/server/RoomApi.ts";
 
 export function SubjectPage() {
   const { id } = useParams();
-  const [subject, setSubject] = useState<UpdateSubjectForm>();
+  const [subject, setSubject] = useState<UpdateSubjectForm | Subject>();
   const [users, setUsers] = useState<User[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
   const [fieldOfStudies, setFieldOfStudies] = useState<FieldOfStudy[]>([]);
   const [info, setInfo] = useState<string>();
   const [errors, setErrors] = useState<Map<string | number, string>>();
+  const [schedule, setSchedule] = useState<CreateScheduleForm>();
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [scheduleErrors, setScheduleErrors] = useState<Map<string | number, string>>();
   const {
     token,
     user,
@@ -34,32 +42,65 @@ export function SubjectPage() {
 
     const api = new SubjectApi(token.token);
     api.findOne(id).then((value) => {
-      console.debug(value)
+      console.debug(value);
       if (value.data) {
-          const userApi = new UserApi(token.token);
-          userApi.getUsersBySubjectId(value.data.id).then((val) => {
-            console.debug(val)
-            if (val.data) {
-              setUsers(val.data);
-            }
-          });
 
-          const fieldOfStudyApi = new FieldOfStudyApi(token.token);
-          fieldOfStudyApi.getFieldOfStudiesBySubjectId(value.data.id).then((val) => {
-            console.debug(val)
-            if (val.data) {
-              setFieldOfStudies(val.data);
-            }
-          });
+        // Get users by subject id
+        const userApi = new UserApi(token.token);
+        userApi.getUsersBySubjectId(value.data.id).then((val) => {
+          if (val.data) {
+            setUsers(val.data);
+          }
+        });
+
+        // Get schedules by subject id
+        const scheduleApi = new ScheduleApi(token.token);
+        scheduleApi.getSchedulesBySubjectId(value.data.id).then((val) => {
+          if (val.data) {
+
+            val.data.forEach((schedule) => {
+              if (schedule.endTime) {
+                schedule.endTime = new Date(schedule.endTime);
+              }
+              if (schedule.startTime) {
+                schedule.startTime = new Date(schedule.startTime);
+              }
+            });
+
+            console.debug(val.data)
+
+            setSchedules(val.data);
+          }
+        });
+
+        // Get rooms by subject id
+        const fieldOfStudyApi = new FieldOfStudyApi(token.token);
+        fieldOfStudyApi.getFieldOfStudiesBySubjectId(value.data.id).then((val) => {
+          if (val.data) {
+            setFieldOfStudies(val.data);
+          }
+        });
         setSubject(value.data);
       }
     }).catch(() => navigate(-1));
   }, []);
 
-  function onChange<T extends UpdateSubjectForm,K extends keyof T>(key: T, value: T[K]) {
-    console.debug(key, value);
+  useEffect(() => {
+    if(!token) return;
+
+    getRoomOptions();
+  }, [schedules]);
+
+  function onChange<T extends UpdateSubjectForm, K extends keyof T>(key: T, value: T[K]) {
     setSubject({
       ...subject,
+      [key]: value,
+    });
+  }
+
+  function onScheduleChange(key: keyof CreateScheduleForm, value: any) {
+    setSchedule({
+      ...schedule,
       [key]: value,
     });
   }
@@ -78,13 +119,27 @@ export function SubjectPage() {
     });
   }
 
+  function getRoomOptions() {
+    if (!token) return;
+
+    const api = new RoomApi(token.token);
+    api.findAll({
+      sortBy: "name",
+      sortOrder: SortType.ASC,
+    }).then((value) => {
+      if (value.data) {
+        setRooms(value.data);
+      }
+    });
+  }
+
   function getFieldOfStudiesOptions() {
     if (!token) return;
 
     const api = new FieldOfStudyApi(token.token);
     api.findAll({
       sortBy: "name",
-      sortOrder: "asc",
+      sortOrder: SortType.ASC,
     }).then((value) => {
       if (value.data) {
         setFieldOfStudies(value.data);
@@ -115,9 +170,40 @@ export function SubjectPage() {
     });
   }
 
+  function onSubmitSchedule() {
+    if (!token) return;
+    if (!schedule) return;
+
+    schedule.subjectId = subject?.id;
+    const api = new ScheduleApi(token.token);
+    api.create(schedule).then((response) => {
+      if (response.data) {
+        if (response.data.endTime) {
+          response.data.endTime = new Date(response.data.endTime);
+        }
+        if (response.data.startTime) {
+          response.data.startTime = new Date(response.data.startTime);
+        }
+        setSchedules(response.data);
+        setSchedule({});
+      }
+    }).catch((error: any) => {
+      if (error instanceof z.ZodError) {
+        const fieldErrors = new Map<string | number, string>();
+        error.errors.forEach((err) => {
+          const field = err.path[0];
+          fieldErrors.set(field, err.message);
+        });
+        setScheduleErrors(fieldErrors);
+      } else if (error instanceof AxiosError) {
+        setInfo(error.response?.data.message);
+      }
+    });
+  }
+
   return (
     <Page>
-      {user?.role === UserRoles.ADMIN || user?.id === subject?.guarantorId ? (<Box>
+      {user?.role === UserRoles.ADMIN || user?.id === subject?.guarantorId ? (<><Box>
         <Typography variant="h4">Předmět</Typography>
         <TextInput
           error={errors?.has("name")}
@@ -207,7 +293,59 @@ export function SubjectPage() {
           variant="contained"
           fullWidth
           onClick={onSubmit}>Uložit</Button>
-      </Box>) : (<Box>
+      </Box>
+        <Box>
+          <Typography variant="h6">Přidat do Rozvrhu</Typography>
+          <SelectInput
+            options={users.filter(value => value.role === UserRoles.TEACHER).map((g) => ({
+              value: g.id,
+              label: makeUserLabel(g),
+            }))}
+            onOpen={() => getUserOptions()}
+            error={scheduleErrors?.has("teacherId")}
+            helperText={scheduleErrors?.get("teacherId")}
+            onChange={(value) => onScheduleChange("teacherId", value)}
+            label="Učitel"
+            value={schedule?.teacherId}
+          />
+          <SelectInput
+            error={scheduleErrors?.has("roomId")}
+            helperText={scheduleErrors?.get("roomId")}
+            onOpen={() => getRoomOptions()}
+            options={rooms.map((value: Room) => ({
+              value: value.id,
+              label: makeRoomLabel(value),
+            }))}
+            value={schedule?.roomId}
+            onChange={(value) => onScheduleChange("roomId", value)}
+            label="Místnost" />
+          <SelectInput
+            value={schedule?.day}
+            error={scheduleErrors?.has("day")}
+            helperText={scheduleErrors?.get("day")}
+            onChange={(value) => onScheduleChange("day", value)}
+            label="Den"
+            options={DAYS_OPTIONS}
+          />
+          <TimeInput
+            error={scheduleErrors?.has("startTime")}
+            helperText={scheduleErrors?.get("startTime")}
+            value={schedule?.startTime}
+            onChange={(value) => onScheduleChange("startTime", value)}
+            label="Začátek" />
+          <TimeInput
+            error={scheduleErrors?.has("endTime")}
+            helperText={scheduleErrors?.get("endTime")}
+            value={schedule?.endTime}
+            onChange={(value) => onScheduleChange("endTime", value)}
+            label="Konec" />
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={onSubmitSchedule}
+          >Přidat</Button>
+        </Box>
+      </>) : (<Box>
         <Typography variant="h4">Předmět</Typography>
         <Typography variant="h6">ID: {subject?.id}</Typography>
         <Typography variant="h6">Název: {subject?.name}</Typography>
@@ -222,6 +360,31 @@ export function SubjectPage() {
           variant="h6">Vyučující: {users.map((value) => makeUserLabel(value)).join(", ")}</Typography>
         <Typography
           variant="h6">Obory: {fieldOfStudies.map((value) => makeFieldOfStudiesLabel(value)).join(", ")}</Typography>
+      </Box>)}
+      {schedules?.length > 0 && (<Box>
+        <Typography variant="h4">Rozvrh</Typography>
+        <table>
+          <thead>
+          <tr>
+            <th>Učitel</th>
+            <th>Místnost</th>
+            <th>Den</th>
+            <th>Začátek</th>
+            <th>Konec</th>
+          </tr>
+          </thead>
+          <tbody>
+          {schedules.map((schedule) => (
+            <tr key={schedule.id}>
+              <td>{makeUserLabel(users.find((user) => user.id === schedule.teacherId))}</td>
+              <td>{makeRoomLabel(rooms.find((room) => room.id === schedule.roomId))}</td>
+              <td>{DAYS_OPTIONS.find((day) => day.value === schedule.day)?.label}</td>
+              <td>{schedule.startTime?.toLocaleTimeString()}</td>
+              <td>{schedule.endTime?.toLocaleTimeString()}</td>
+            </tr>
+          ))}
+          </tbody>
+        </table>
       </Box>)}
     </Page>
   );
