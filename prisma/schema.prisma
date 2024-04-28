@@ -243,5 +243,5 @@ model Schedule {
   startTime DateTime?
   endTime   DateTime?
 
-  @@map("student_schedules")
+  @@map("schedules")
 }

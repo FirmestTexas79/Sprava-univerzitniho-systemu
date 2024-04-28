@@ -189,4 +189,25 @@ export class SubjectService implements RestService<Subject, CreateSubjectDto, Up
 
     return response;
   }
+
+  async getSubjectsByFieldOfStudy(id: string) {
+    const response = {
+      statusCode: 200,
+      message: "Subjects found",
+    } as ResponseData<Subject[]>;
+    const data = await this.prismaService.subject.findMany({
+      where: {
+        fieldOfStudies: {
+          some: {
+            id: id,
+          },
+        },
+      },
+    });
+
+    response.data = data;
+    this.logger.log(response);
+
+    return response;
+  }
 }

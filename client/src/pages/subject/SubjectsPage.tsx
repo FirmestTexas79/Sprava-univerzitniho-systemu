@@ -15,6 +15,7 @@ import { UserApi } from "../../services/server/UserApi.ts";
 import { z } from "zod";
 import { AxiosError } from "axios";
 import { FieldOfStudyApi } from "../../services/server/FieldOfStudyApi.ts";
+import { SelectSessionSubjectDialog } from "../../components/dialog/SelectSessionSubjectDialog.tsx";
 
 const emptySubjectForm = {
   category: "",
@@ -40,24 +41,29 @@ export default function SubjectsPage() {
   const [form, setForm] = useState<CreateSubjectForm>({} as CreateSubjectForm);
   const [info, setInfo] = useState<string>();
   const [errors, setErrors] = useState<Map<string | number, string>>();
-
-  useEffect(() => {
-    if (user?.role === UserRoles.STUDENT) {
-      navigate("/");
-    }
-  }, []);
+  const [dialog, setDialog] = useState(false);
+  const [selectSubject, setSelectSubject] = useState<Subject>();
 
   useEffect(() => {
     const api = new SubjectApi(token?.token);
 
-    api.findAll({
-      sortBy: "name",
-      sortOrder: SortType.ASC,
-    }).then((value) => {
-      if (value.data) {
-        setSubjects(value.data);
-      }
-    });
+    if (user?.role === UserRoles.STUDENT) {
+      if(!user.fieldOfStudyId) return;
+      api.getSubjectsByFieldOfStudy(user.fieldOfStudyId).then((value) => {
+        if (value.data) {
+          setSubjects(value.data);
+        }
+      });
+    } else {
+      api.findAll({
+        sortBy: "name",
+        sortOrder: SortType.ASC,
+      }).then((value) => {
+        if (value.data) {
+          setSubjects(value.data);
+        }
+      });
+    }
   }, []);
 
   function onChange(key: keyof CreateSubjectForm, value?: any) {
@@ -90,7 +96,10 @@ export default function SubjectsPage() {
     if (!token) return;
 
     const api = new FieldOfStudyApi(token.token);
-    api.findAll({sortBy: "name", sortOrder: SortType.ASC}).then((value) => {
+    api.findAll({
+      sortBy: "name",
+      sortOrder: SortType.ASC,
+    }).then((value) => {
       if (value.data) {
         setFieldOfStudies(value.data);
       }
@@ -122,6 +131,14 @@ export default function SubjectsPage() {
     }
   }
 
+  function openDialog() {
+    setDialog(true);
+  }
+
+  function closeDialog() {
+    setDialog(false);
+  }
+
   return (
     <Page>
       <h1>Předměty</h1>
@@ -133,16 +150,23 @@ export default function SubjectsPage() {
           <th>Zkratka</th>
           <th>Kategorie</th>
           <th>Kredity</th>
+          <th>Detail</th>
+          {user?.role === UserRoles.STUDENT && <th>Termíny</th>}
         </tr>
         </thead>
         <tbody>
         {subjects.map((subject) => (
-          <tr key={subject.id} style={{ cursor: "pointer",backgroundColor: subject.guarantorId === user?.id && "rgba(255,255,255,0.2)" }} onClick={() => navigate(`/subject/${subject.id}`)}>
+          <tr key={subject.id} style={{ backgroundColor: subject.guarantorId === user?.id ? "rgba(255,255,255,0.2)" : "default" }}>
             <td>{subject.department}</td>
             <td>{subject.name}</td>
             <td>{subject.shortName}</td>
             <td>{subject.category}</td>
             <td>{subject.credits}</td>
+            <td style={{ cursor: "pointer" }} onClick={() => navigate(`/subject/${subject.id}`)}>Otevřít</td>
+            {user?.role === UserRoles.STUDENT && <td style={{ cursor: "pointer" }} onClick={() => {
+              setSelectSubject(subject);
+              openDialog();
+            }}>Vybrat</td>}
           </tr>
         ))}
         </tbody>
@@ -235,6 +259,7 @@ export default function SubjectsPage() {
         >Vytvořit předmět
         </Button>
       </>)}
+      <SelectSessionSubjectDialog value={selectSubject} open={dialog} onClose={closeDialog} />
     </Page>
   );
 }

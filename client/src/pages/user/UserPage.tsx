@@ -112,6 +112,7 @@ export default function UserPage() {
         <Typography variant="h4">User</Typography>
         <Typography variant="h6">ID: {currentUser?.id}</Typography>
         <Typography variant="h6">Email: {currentUser?.email}</Typography>
+        <Typography variant="h6">Role: {currentUser?.role}</Typography>
         <Typography variant="h6">Firstname: {currentUser?.firstname}</Typography>
         <Typography variant="h6">Lastname: {currentUser?.lastname}</Typography>
         <Typography variant="h6">Birthdate: {currentUser?.birthdate.toLocaleDateString()}</Typography>

@@ -42,10 +42,25 @@ export class SubjectApi extends Api<Subject, CreateSubjectForm, UpdateSubjectFor
     });
   }
 
+  /**
+   * Get subjects by field of study
+   * @param array Array of field of study ids
+   */
   async getSubjectsByIds(array: string[]) {
     const { data } = await axios.post<any, {
       data: ResponseData<Subject[]>
     }>(this.path + "by-ids", { ids: array }, this.config);
+    return data;
+  }
+
+  /**
+   * Get subjects by field of study
+   * @param fieldOfStudyId Field of study id
+   */
+  async getSubjectsByFieldOfStudy(fieldOfStudyId: string) {
+    const { data } = await axios.get<any, {
+      data: ResponseData<Subject[]>
+    }>(this.path + "by-field-of-study/" + fieldOfStudyId, this.config);
     return data;
   }
 }

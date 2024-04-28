@@ -36,7 +36,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (!data.data) return;
 
       data.data.birthdate = new Date(data.data.birthdate);
-      console.log(data.data);
+
+      document.title = `${data.data.role} ${data.data.firstname} ${data.data.lastname}`;
       setUser(data.data);
     });
 
