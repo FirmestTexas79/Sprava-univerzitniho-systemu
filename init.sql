@@ -33,6 +33,8 @@ INSERT INTO `subjects` (`id`, `name`, `createdAt`, `updatedAt`, `credits`, `shor
                         `guarantorId`)
 VALUES ('clvh9c4t30104356x7bandnpj1', 'Programování 1', '2021-05-02 00:00:00.000', '2021-05-02 00:00:00.000', 5, 'PG1',
         'BASIC', 'KIV', 'clvh9c4t32004356x7bandnpjY'),
+       ('clvh9c4t30104356x7bandnpj7', 'Databázové systémy 2', '2021-05-02 00:00:00.000', '2021-05-02 00:00:00.000', 6, 'DBS2',
+        'BASIC', 'KIV', 'clvh9c4t32004356x7bandnpjY'),
        ('clvh9c4t30204356x7bandnpj2', 'Matematika 1', '2021-05-02 00:00:00.000', '2021-05-02 00:00:00.000', 5, 'MAT1',
         'BASIC', 'KIV', 'clvh9c4t33004356x7bandnpjW');
 
@@ -42,3 +44,8 @@ VALUES ('clvh9c4t30014356x7bandnpjR', 'A1', '2021-05-02 00:00:00.000', '2021-05-
        ('clvh9c4t30034356x7bandnpjU', 'A3', '2021-05-02 00:00:00.000', '2021-05-02 00:00:00.000', 18, 'COMPUTERS', 1),
        ('clvh9c4t30044356x7bandnpjV', 'A4', '2021-05-02 00:00:00.000', '2021-05-02 00:00:00.000', 18, 'COMPUTERS', 1),
        ('clvh9c4t30054356x7bandnpjZ', 'A5', '2021-05-02 00:00:00.000', '2021-05-02 00:00:00.000', 8, 'LABORATORY', 1);
+
+INSERT INTO `exams`(`id`, `name`, `type`, `start`, `end`, `score`, `teacherId`, `subjectId`, `capacity`, `roomId`, `description`, `createAt`, `updatedAt`)
+VALUES ('clvk2jlzv0000135xtg4ecrx0', 'Zápočet matematika', 'EXAM', '2024-05-02 00:00:00.000', '2024-05-02 03:00:00.000', '20', 'clvh9c4t32004356x7bandnpjY', 'clvh9c4t30204356x7bandnpj2', '50', 'clvh9c4t30014356x7bandnpjR', 'Logaritmy a matice', '2024-04-02 00:00:00.000', '2024-04-02 10:00:00.000'),
+       ('clvk2jlzv0000135xtg4ecrx9', 'Zápočet programování', 'EXAM', '2024-06-02 12:30:00.000', '2024-06-02 13:30:00.000', '10', 'clvh9c4t33004356x7bandnpjW', 'clvh9c4t30104356x7bandnpj1', '16', 'clvh9c4t30044356x7bandnpjV', 'Zápočet před projektem', '2024-06-01 12:30:00.000', '2024-06-01 22:30:00.000'),
+       ('clvk2jlzv0000135xtg4ecrx8', 'Projent programování', 'PROJECT', '2024-05-18 15:20:00.000', '2024-05-18 17:20:00.000', '30', 'clvh9c4t33004356x7bandnpjW', 'clvh9c4t30104356x7bandnpj1', '8', 'clvh9c4t30054356x7bandnpjZ', 'Obhajoba projektu', '2024-05-08 13:20:00.000', '2024-05-11 13:43:00.000');
