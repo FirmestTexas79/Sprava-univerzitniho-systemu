@@ -1,8 +1,16 @@
 .page-container {
     padding-left: 100px; /* Okraj zleva */
     padding-right: 100px; /* Okraj zprava */
+    padding-top: 30px;
     min-height: 100vh;
     justify-content: center;
+    padding-bottom: 8vw;
+}
+
+.form-container {
+    background-color: #367eb6;
+    margin: 50px;
+    box-shadow: 0 10px 10px rgba(10, 0, 0, 0.8);
 }
 
 .content-container {
@@ -12,10 +20,19 @@
 }
 
 body {
-    background-color: #f0f0f0; /* Barva pozadí */
-    background-image: linear-gradient(to right, #ff7e5f, #feb47b); /* Přechodový efekt */
-    animation: backgroundAnimation 20s infinite alternate; /* Animace pozadí */
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "poppins";
+    background: var(--background);
+    color: var(--color);
+    letter-spacing: 1px;
+    transition: background 0.2s ease;
+    -webkit-transition: background 0.2s ease;
+    -moz-transition: background 0.2s ease;
+    -ms-transition: background 0.2s ease;
+    -o-transition: background 0.2s ease;
 }
+
 
 @keyframes backgroundAnimation {
     0% {
@@ -24,4 +41,59 @@ body {
     100% {
         background-position: right top;
     }
+}
+
+.search-container {
+    margin-bottom: 10px;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.label-text {
+    color: #ff4c94; /* Můžete změnit barvu podle vašeho výběru */
+}
+
+.button-container {
+    margin-top: 10px;
+}
+
+.results-container {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f0f0f0;
+}
+
+tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+tr:hover {
+    background-color: #e0e0e0;
+}
+
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
 }
