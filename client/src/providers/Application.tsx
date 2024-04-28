@@ -10,6 +10,7 @@ import SubjectsPage from "../pages/subject/SubjectsPage.tsx";
 import RoomsPage from "../pages/room/RoomsPage.tsx";
 import { SubjectPage } from "../pages/subject/SubjectPage.tsx";
 import { RoomPage } from "../pages/room/RoomPage.tsx";
+import { ExamsPage } from "../pages/exam/ExamsPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
   {
     path: "/schedule",
     element: <SchedulePage />,
+  },
+  {
+    path: "/exams",
+    element: <ExamsPage />,
   },
   {
     path: "/rooms",

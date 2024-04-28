@@ -7,13 +7,15 @@ import { TextInput } from "../../components/inputs/TextInput.tsx";
 import { Button, FormHelperText } from "@mui/material";
 import "../../styles/LoginPage.css"
 import uhkLogo from "../../assets/uhklogo.png";
+import { z } from "zod";
+import { AxiosError } from "axios";
 
 
 export default function LoginPage() {
     const { login, user } = useAuth();
     const [loginForm, setLoginForm] = useState<LoginForm>({ email: "", password: "" });
     const [errors, setErrors] = useState<Map<string | number, string>>();
-    const [error, setError] = useState<{ message?: string }>({});
+    const [info, setInfo] = useState<{ message?: string }>({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -26,16 +28,22 @@ export default function LoginPage() {
         const api = new AuthApi();
         try {
             const { data, message, error } = await api.login(loginForm);
-            if (error) setError({ message: message });
+            if (error) setInfo({ message: message });
             data && login(data);
             // @ts-ignore
         } catch (error: any) {
-            const fieldErrors = new Map<string | number, string>();
-            error.forEach((err: { path: any[]; message: string; }) => {
-                const field = err.path[0];
-                fieldErrors.set(field, err.message);
-            });
-            setErrors(fieldErrors);
+            console.log(error);
+            if (error instanceof z.ZodError) {
+                const fieldErrors = new Map<string | number, string>();
+                error.errors.forEach((err: { path: any[]; message: string; }) => {
+                    const field = err.path[0];
+                    fieldErrors.set(field, err.message);
+                });
+                setErrors(fieldErrors);
+            } else if (error instanceof AxiosError) {
+                console.log(error);
+                setInfo(error.response?.data);
+            }
         }
     }
 
@@ -48,7 +56,7 @@ export default function LoginPage() {
                     <div className="form-container">
                         <img src={uhkLogo} alt="Logo UHK" className="uhk-logo" />
                         <h1 className="opacity">Přihlášení</h1> {/* Přidáváme třídu pro stylizaci */}
-                        <FormHelperText error={!!error.message}>{error.message}</FormHelperText>
+                        <FormHelperText error={!!info.message}>{info.message}</FormHelperText>
                         <TextInput
                             label={"Email"}
                             type={"email"}

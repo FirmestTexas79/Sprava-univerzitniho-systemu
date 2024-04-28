@@ -133,7 +133,10 @@ export function UsersPage() {
       <TextInput onChange={(value) => onChangeFilter("email", value)} label="Email" />
       <TextInput onChange={(value) => onChangeFilter("firstname", value)} label="Jméno" />
       <TextInput onChange={(value) => onChangeFilter("lastname", value)} label="Příjmení" />
-      <Button onClick={search}>Vyhledat uživatele</Button>
+      <Button
+        variant="contained"
+        fullWidth
+        onClick={search}>Vyhledat uživatele</Button>
       {users.length > 0 && (<table>
         <thead>
         <tr>

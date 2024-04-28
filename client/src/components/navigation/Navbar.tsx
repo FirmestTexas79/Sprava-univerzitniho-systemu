@@ -40,6 +40,10 @@ const STUDENT_PAGES: Page[] = [
     route: "/schedule",
   },
   {
+    label: "Testy",
+    route: "/exams",
+  },
+  {
     label: "Uživatelé",
     route: "/users",
   },
@@ -53,6 +57,10 @@ const TEACHER_PAGES: Page[] = [
   {
     label: "Rozvrh",
     route: "/schedule",
+  },
+  {
+    label: "Testy",
+    route: "/exams",
   },
   {
     label: "Uživatelé",
