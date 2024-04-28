@@ -1,19 +1,20 @@
-import { useAuth } from "../hooks/useAuth.tsx";
+import { useAuth } from "../../hooks/useAuth.tsx";
 import { Box, Button, Container, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FieldOfStudy, User, UserRoles, Visibility } from "@prisma/client";
-import { UpdateUserForm, UserApi } from "../services/server/UserApi.ts";
-import { Page } from "../components/Page.tsx";
-import { TextInput } from "../components/inputs/TextInput.tsx";
+import { UpdateUserForm, UserApi } from "../../services/server/UserApi.ts";
+import { Page } from "../../components/Page.tsx";
+import { TextInput } from "../../components/inputs/TextInput.tsx";
 import { z } from "zod";
 import { AxiosError } from "axios";
-import { DateInput } from "../components/inputs/DateInput.tsx";
-import { Option, SelectInput } from "../components/inputs/SelectInput.tsx";
-import { NumberInput } from "../components/inputs/NumberInput.tsx";
-import { SEX_OPTIONS, USER_ROLES_OPTIONS } from "../services/utils.ts";
-import { FieldOfStudyApi } from "../services/server/FieldOfStudyApi.ts";
-import { SortType } from "../../../server/src/utils/sort-type.enum.ts";
+import { DateInput } from "../../components/inputs/DateInput.tsx";
+import { Option, SelectInput } from "../../components/inputs/SelectInput.tsx";
+import { NumberInput } from "../../components/inputs/NumberInput.tsx";
+import { SEX_OPTIONS, USER_ROLES_OPTIONS } from "../../services/utils.ts";
+import { FieldOfStudyApi } from "../../services/server/FieldOfStudyApi.ts";
+import { SortType } from "../../../../server/src/utils/sort-type.enum.ts";
+import { SubjectApi, UpdateSubjectForm } from "../../services/server/SubjectApi.ts";
 
 export default function UserPage() {
   const { id } = useParams();
@@ -103,6 +104,28 @@ export default function UserPage() {
     } catch (error: any) {
       setInfo(error?.message);
     }
+  }
+
+  function onSubmit() {
+    if (!token) return;
+
+    const api = new SubjectApi(token.token);
+    api.create(subject?.id!, { ...subject } as UpdateSubjectForm).then((response) => {
+      if (response.data) {
+        setSubject(response.data);
+      }
+    }).catch((error: any) => {
+      if (error instanceof z.ZodError) {
+        const fieldErrors = new Map<string | number, string>();
+        error.errors.forEach((err: { path: any[]; message: string; }) => {
+          const field = err.path[0];
+          fieldErrors.set(field, err.message);
+        });
+        setErrors(fieldErrors);
+      } else if (error instanceof AxiosError) {
+        setInfo(error.response?.data.message);
+      }
+    });
   }
 
   return (<Page>

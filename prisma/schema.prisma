@@ -40,13 +40,11 @@ model User {
 
   exams Exam[]
 
-  guarantorId String?
-  guarantor   Subject[] @relation("Guarantor")
+  guarantorSubject Subject? @relation("guator_subject")
 
   ratings Rating[]
 
-  studentSchedule Schedule[] @relation("Student")
-  teacherSchedule Schedule[] @relation("Teacher")
+  teacherSubjects Subject[] @relation("teachers")
 
   @@map("users")
 }
@@ -131,8 +129,11 @@ model Subject {
   department String
   credits    Int
 
-  guarantorId String
-  guarantor   User       @relation("Guarantor", fields: [guarantorId], references: [id])
+  guarantorId String @unique
+  guarantor   User   @relation("guator_subject", fields: [guarantorId], references: [id])
+
+  teachers User[] @relation("teachers")
+
   description String?
   category    String
   exams       Exam[]
@@ -229,14 +230,8 @@ model Schedule {
   updatedAt  DateTime    @updatedAt
   visibility Visibility? @default(VISIBLE)
 
-  studentId String
-  student   User   @relation("Student", fields: [studentId], references: [id])
-
   subjectId String
   subject   Subject @relation(fields: [subjectId], references: [id])
-
-  teacherId String
-  teacher   User   @relation("Teacher", fields: [teacherId], references: [id])
 
   roomId String?
   room   Room?   @relation(fields: [roomId], references: [id])

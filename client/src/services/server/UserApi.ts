@@ -50,7 +50,14 @@ export class UserApi extends Api<User, CreateUserForm, UpdateUserForm> {
   async multiFilter(filter: { key: keyof User, value: any }[]) {
     const { data } = await axios.post<any, {
       data: ResponseData<User[]>
-    }>(this.path + "multi-filter", { filter: filter }, this.config);
+    }>(this.path + "/multi-filter", { filter: filter }, this.config);
+    return data;
+  }
+
+  async teacherWithoutGuarantorSubject() {
+    const { data } = await axios.post<any, {
+      data: ResponseData<User[]>
+    }>(this.path + "teacher-without-guarantor-subject", null, this.config);
     return data;
   }
 }

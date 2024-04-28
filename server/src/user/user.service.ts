@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { User, Visibility } from "@prisma/client";
 import { CreateUserDto, UpdateUserDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
@@ -95,17 +95,28 @@ export class UserService implements RestService<User, CreateUserDto, UpdateUserD
     };
   }
 
-  async findOne(id: string): Promise<ResponseData<User>> {
+  async findOne(id: string): Promise<ResponseData<User | undefined>> {
+    const response = {
+      statusCode: 200,
+      message: "User found",
+    } as ResponseData<User>;
+
     const userData = await this.prismaService.user.findUnique({
       where: { id },
     });
+
+    if (!userData) {
+      response.statusCode = HttpStatus.NOT_FOUND;
+      response.message = "User not found";
+      return response;
+    }
+
     delete userData.password;
     this.logger.log(userData);
-    return {
-      statusCode: 200,
-      message: "User found",
-      data: userData,
-    };
+
+    response.data = userData;
+
+    return response;
   }
 
   async update(id: string, dto: UpdateUserDto): Promise<ResponseData<User>> {
@@ -167,5 +178,32 @@ export class UserService implements RestService<User, CreateUserDto, UpdateUserD
       message: "Users found",
       data: users,
     };
+  }
+
+  async teacherWithoutGuarantorSubject() {
+    const response = {
+      statusCode: 201,
+      message: "Users found",
+    } as ResponseData<User[]>;
+
+    this.logger.debug("Teacher without guarantor subject");
+
+    const users = await this.prismaService.user.findMany({
+      where: {
+        role: "TEACHER",
+        guarantorSubject: null,
+      },
+    });
+
+    users.forEach((user) => {
+      delete user.password;
+    });
+
+    this.logger.debug(users);
+
+    response.data = users;
+    this.logger.log(response);
+
+    return response;
   }
 }

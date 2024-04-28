@@ -65,4 +65,11 @@ export class UserController {
 
     res.status(response.statusCode).json(response);
   }
+
+  @Post("teacher-without-guarantor-subject")
+  async teacherWithoutGuarantorSubject(@Res() res: Response) {
+    const response = await this.userService.teacherWithoutGuarantorSubject();
+
+    res.status(response.statusCode).json(response);
+  }
 }

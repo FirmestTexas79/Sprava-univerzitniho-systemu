@@ -38,7 +38,7 @@ export class RegisterAuthDto extends PartialType(AuthDto) {
   })
   @IsNumber()
   @Type(() => Number)
-  @IsNotEmpty()
+  @IsOptional()
   year?: number;
 
   @ApiProperty({
@@ -85,10 +85,10 @@ export class RegisterAuthDto extends PartialType(AuthDto) {
   role: UserRoles;
 
   @ApiProperty({
-    required: true,
+    required: false,
     example: "clvbj80ip0000cgc4lkus3lyh",
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   fieldOfStudyId: string;
 }

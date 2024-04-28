@@ -1,20 +1,20 @@
-import { Page } from "../components/Page.tsx";
+import { Page } from "../../components/Page.tsx";
 import { Button } from "@mui/material";
-import { UserApi } from "../services/server/UserApi.ts";
-import { useAuth } from "../hooks/useAuth.tsx";
+import { UserApi } from "../../services/server/UserApi.ts";
+import { useAuth } from "../../hooks/useAuth.tsx";
 import { useState } from "react";
 import { FieldOfStudy, User, UserRoles, Visibility } from "@prisma/client";
-import { TextInput } from "../components/inputs/TextInput.tsx";
+import { TextInput } from "../../components/inputs/TextInput.tsx";
 import { useNavigate } from "react-router-dom";
-import { DateInput } from "../components/inputs/DateInput.tsx";
-import { NumberInput } from "../components/inputs/NumberInput.tsx";
-import { Option, SelectInput } from "../components/inputs/SelectInput.tsx";
-import { SEX_OPTIONS, USER_ROLES_OPTIONS } from "../services/utils.ts";
-import { AuthApi, RegisterForm } from "../services/server/AuthApi.ts";
+import { DateInput } from "../../components/inputs/DateInput.tsx";
+import { NumberInput } from "../../components/inputs/NumberInput.tsx";
+import { Option, SelectInput } from "../../components/inputs/SelectInput.tsx";
+import { SEX_OPTIONS, USER_ROLES_OPTIONS } from "../../services/utils.ts";
+import { AuthApi, RegisterForm } from "../../services/server/AuthApi.ts";
 import { z } from "zod";
 import { AxiosError } from "axios";
-import { FieldOfStudyApi } from "../services/server/FieldOfStudyApi.ts";
-import { SortType } from "../../../server/src/utils/sort-type.enum.ts";
+import { FieldOfStudyApi } from "../../services/server/FieldOfStudyApi.ts";
+import { SortType } from "../../../../server/src/utils/sort-type.enum.ts";
 
 const emptyUserForm = {
   birthdate: new Date(),
@@ -98,7 +98,6 @@ export function UsersPage() {
   }
 
   function onChangeForm(key: keyof User, value?: any) {
-    console.log(key, value);
     setForm({
       ...form,
       [key]: value,
@@ -236,7 +235,10 @@ export function UsersPage() {
             label="Ročník"
             error={errors?.has("year")}
             helperText={errors?.get("year")} /></>)}
-        <Button onClick={createUser}>Vytvořit uživatele</Button></>)}
+        <Button
+          variant="contained"
+          fullWidth
+          onClick={createUser}>Vytvořit uživatele</Button></>)}
     </Page>
   );
 }

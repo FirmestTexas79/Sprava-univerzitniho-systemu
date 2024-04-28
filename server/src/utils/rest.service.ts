@@ -48,5 +48,5 @@ export interface RestService<T, C = object, U = object> {
    * Find one entity
    * @param id Entity id
    */
-  findOne(id: string): Promise<ResponseData<T>>;
+  findOne(id: string): Promise<ResponseData<T | undefined>>;
 }
