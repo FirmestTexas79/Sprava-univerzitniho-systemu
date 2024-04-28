@@ -2,7 +2,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { DateView, LocalizationProvider } from "@mui/x-date-pickers";
-import { InputProps } from "./InputProps.ts";
+import { InputProps } from "../InputProps.ts";
 
 interface DateInputProps extends InputProps<Date | null> {
   onAccept?: (value: Date | null) => void;

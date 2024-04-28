@@ -66,6 +66,10 @@ const TEACHER_PAGES: Page[] = [
     label: "Uživatelé",
     route: "/users",
   },
+  {
+    label: "Předměty",
+    route: "/subjects",
+  },
 ];
 
 const ADMIN_PAGES: Page[] = [

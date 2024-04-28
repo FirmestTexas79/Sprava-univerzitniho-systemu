@@ -58,4 +58,11 @@ export class FieldOfStudyController
 
     res.status(response.statusCode).json(response);
   }
+
+  @Get("by-subject/:id")
+  async getFieldOfStudiesBySubjectId(@Param("id") id: string, @Res() res: Response) {
+    const response = await this.fieldOfStudyService.getFieldOfStudiesBySubjectId(id);
+
+    res.status(response.statusCode).json(response);
+  }
 }

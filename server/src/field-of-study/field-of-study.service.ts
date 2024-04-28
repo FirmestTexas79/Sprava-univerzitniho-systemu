@@ -130,4 +130,25 @@ export class FieldOfStudyService implements RestService<FieldOfStudy, CreateFiel
 
     return response;
   }
+
+  async getFieldOfStudiesBySubjectId(subjectId: string): Promise<ResponseData<FieldOfStudy[]>> {
+    const response = {
+      statusCode: 200,
+      message: "Found",
+    } as ResponseData<FieldOfStudy[]>;
+    const data = await this.prismaService.fieldOfStudy.findMany({
+      where: {
+        subjects: {
+          some: {
+            id: subjectId,
+          },
+        },
+      },
+    });
+
+    response.data = data;
+    this.logger.log(response);
+
+    return response;
+  }
 }

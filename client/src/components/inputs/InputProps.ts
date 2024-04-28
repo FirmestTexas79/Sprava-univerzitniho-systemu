@@ -1,5 +1,5 @@
-export interface InputProps<T extends any> {
-  onChange: (value: T) => void;
+export interface InputProps<T> {
+  onChange?: (value: T) => void;
   value?: T | null;
   disabled?: boolean;
 }

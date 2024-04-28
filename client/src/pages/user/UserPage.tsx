@@ -8,7 +8,7 @@ import { Page } from "../../components/Page.tsx";
 import { TextInput } from "../../components/inputs/TextInput.tsx";
 import { z } from "zod";
 import { AxiosError } from "axios";
-import { DateInput } from "../../components/inputs/DateInput.tsx";
+import { DateInput } from "../../components/inputs/time/DateInput.tsx";
 import { Option, SelectInput } from "../../components/inputs/SelectInput.tsx";
 import { NumberInput } from "../../components/inputs/NumberInput.tsx";
 import { SEX_OPTIONS, USER_ROLES_OPTIONS } from "../../services/utils.ts";

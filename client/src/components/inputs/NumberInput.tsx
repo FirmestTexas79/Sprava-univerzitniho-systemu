@@ -21,20 +21,23 @@ export function NumberInput({
                               required,
                               value,
                               numberType = "integer",
-  min,
-  max
+                              min,
+                              max,
                             }: NumberInputProps) {
   return (<>
     <TextField
       label={label}
       type="number"
-      onChange={(event) => numberType === "integer" ? onChange(parseInt(event.target.value)) : onChange(parseFloat(event.target.value))}
+      onChange={(event) => onChange && (numberType === "integer" ? onChange(parseInt(event.target.value)) : onChange(parseFloat(event.target.value)))}
       value={value}
       error={error}
       fullWidth
-      inputProps={{ min, max }}
+      inputProps={{
+        min,
+        max,
+      }}
       helperText={helperText}
-      placeholder={placeholder || label}
+      placeholder={placeholder ?? label}
       required={required} />
   </>);
 }

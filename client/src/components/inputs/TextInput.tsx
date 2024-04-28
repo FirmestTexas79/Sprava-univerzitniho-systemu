@@ -11,9 +11,20 @@ interface TextInputProps extends InputProps<string> {
   placeholder?: string;
   type?: "tel" | "email" | "password" | "text";
   required?: boolean;
+  onClick?: () => void;
 }
 
-export function TextInput({ value, onChange, type, helperText, error, label, placeholder,required }: TextInputProps) {
+export function TextInput({
+                            value,
+                            onChange,
+                            type,
+                            helperText,
+                            error,
+                            label,
+                            placeholder,
+                            required,
+                            onClick,
+                          }: TextInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -26,12 +37,13 @@ export function TextInput({ value, onChange, type, helperText, error, label, pla
     <>
       <OutlinedInput
         required={required}
+        onClick={onClick}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange && onChange(e.target.value)}
         type={showPassword ? "text" : type}
         autoComplete={type}
         endAdornment={type === "password" &&
-          <InputAdornment position="end">
+          <InputAdornment autoFocus={false} position="end">
             {/* @ts-ignore */}
             <IconButton
               aria-label="toggle password visibility"
@@ -45,7 +57,7 @@ export function TextInput({ value, onChange, type, helperText, error, label, pla
         }
         fullWidth
         error={error}
-        placeholder={placeholder || label}
+        placeholder={placeholder ?? label}
         label={label}
       />
       <FormHelperText error={error}>{helperText}</FormHelperText>

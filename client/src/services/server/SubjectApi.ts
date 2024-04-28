@@ -13,6 +13,8 @@ const createSubjectForm = z.object({
   guarantorId: z.string().cuid(),
   name: z.string().min(2),
   shortName: z.string().min(2),
+  teachers: z.array(z.string().cuid()).nullish(),
+  fieldOfStudies: z.array(z.string().cuid()).nullish(),
 });
 
 const updateSubjectForm = z.object({
@@ -23,6 +25,8 @@ const updateSubjectForm = z.object({
   guarantorId: z.string().cuid().nullish(),
   name: z.string().min(2).nullish(),
   shortName: z.string().min(2).nullish(),
+  teachers: z.array(z.string().cuid()).nullish(),
+  fieldOfStudies: z.array(z.string().cuid()).nullish(),
 });
 
 export type UpdateSubjectForm = z.infer<typeof updateSubjectForm>;

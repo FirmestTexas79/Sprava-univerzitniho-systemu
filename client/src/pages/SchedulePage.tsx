@@ -1,9 +1,11 @@
 import { Page } from "../components/Page.tsx";
+import { Scheduler } from "../components/inputs/time/Scheduler.tsx";
 
 export function SchedulePage() {
+
   return (
     <Page>
-      <h1>Schedule</h1>
+      <Scheduler editable={false} />
     </Page>
   );
 }

@@ -2,7 +2,7 @@ import { Page } from "../../components/Page.tsx";
 import { useAuth } from "../../hooks/useAuth.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Subject, User, UserRoles } from "@prisma/client";
+import { FieldOfStudy, User, UserRoles } from "@prisma/client";
 import { SubjectApi, UpdateSubjectForm } from "../../services/server/SubjectApi.ts";
 import { Box, Button, Typography } from "@mui/material";
 import { TextInput } from "../../components/inputs/TextInput.tsx";
@@ -12,12 +12,14 @@ import { SelectInput } from "../../components/inputs/SelectInput.tsx";
 import { UserApi } from "../../services/server/UserApi.ts";
 import { AxiosError } from "axios";
 import { z } from "zod";
-import { makeUserLabel } from "../../services/utils.ts";
+import { makeFieldOfStudiesLabel, makeUserLabel } from "../../services/utils.ts";
+import { FieldOfStudyApi } from "../../services/server/FieldOfStudyApi.ts";
 
 export function SubjectPage() {
   const { id } = useParams();
-  const [subject, setSubject] = useState<Subject>();
+  const [subject, setSubject] = useState<UpdateSubjectForm>();
   const [users, setUsers] = useState<User[]>([]);
+  const [fieldOfStudies, setFieldOfStudies] = useState<FieldOfStudy[]>([]);
   const [info, setInfo] = useState<string>();
   const [errors, setErrors] = useState<Map<string | number, string>>();
   const {
@@ -32,21 +34,30 @@ export function SubjectPage() {
 
     const api = new SubjectApi(token.token);
     api.findOne(id).then((value) => {
+      console.debug(value)
       if (value.data) {
-        if (value.data?.guarantorId) {
-          const guarantorApi = new UserApi(token.token);
-          guarantorApi.findOne(value.data.guarantorId).then((value) => {
-            if (value.data) {
-              setUsers([value.data]);
+          const userApi = new UserApi(token.token);
+          userApi.getUsersBySubjectId(value.data.id).then((val) => {
+            console.debug(val)
+            if (val.data) {
+              setUsers(val.data);
             }
           });
-        }
+
+          const fieldOfStudyApi = new FieldOfStudyApi(token.token);
+          fieldOfStudyApi.getFieldOfStudiesBySubjectId(value.data.id).then((val) => {
+            console.debug(val)
+            if (val.data) {
+              setFieldOfStudies(val.data);
+            }
+          });
         setSubject(value.data);
       }
     }).catch(() => navigate(-1));
   }, []);
 
-  function onChange(key: keyof Subject, value: any) {
+  function onChange<T extends UpdateSubjectForm,K extends keyof T>(key: T, value: T[K]) {
+    console.debug(key, value);
     setSubject({
       ...subject,
       [key]: value,
@@ -67,11 +78,26 @@ export function SubjectPage() {
     });
   }
 
-  function onSubmit() {
+  function getFieldOfStudiesOptions() {
     if (!token) return;
 
+    const api = new FieldOfStudyApi(token.token);
+    api.findAll({
+      sortBy: "name",
+      sortOrder: "asc",
+    }).then((value) => {
+      if (value.data) {
+        setFieldOfStudies(value.data);
+      }
+    });
+  }
+
+  function onSubmit() {
+    if (!token) return;
+    if (!subject) return;
+
     const api = new SubjectApi(token.token);
-    api.update(subject?.id!, { ...subject } as UpdateSubjectForm).then((response) => {
+    api.update(subject?.id, { ...subject } as UpdateSubjectForm).then((response) => {
       if (response.data) {
         setSubject(response.data);
       }
@@ -132,7 +158,36 @@ export function SubjectPage() {
           onOpen={() => getUserOptions()}
           label="Garant"
           value={subject?.guarantorId}
-          onChange={(value) => onChange("guarantorId", value)}
+          onChange={(value) => setSubject({
+            ...subject,
+            guarantorId: value,
+            teachers: [value],
+          })}
+        />
+        <SelectInput
+          options={users.filter(value => value.role === UserRoles.TEACHER).map((g) => ({
+            value: g.id,
+            label: makeUserLabel(g),
+          }))}
+          onOpen={() => getUserOptions()}
+          error={errors?.has("teachers")}
+          lockedOptions={[subject?.guarantorId]}
+          helperText={errors?.get("teachers")}
+          onChange={(value) => onChange("teachers", value)}
+          label="Vyučující"
+          value={subject?.teachers ?? []}
+        />
+        <SelectInput
+          options={fieldOfStudies.map((g) => ({
+            value: g.id,
+            label: makeFieldOfStudiesLabel(g),
+          }))}
+          onOpen={() => getFieldOfStudiesOptions()}
+          error={errors?.has("fieldOfStudies")}
+          helperText={errors?.get("fieldOfStudies")}
+          onChange={(value) => onChange("fieldOfStudies", value)}
+          label="Obory"
+          value={subject?.fieldOfStudies ?? []}
         />
         <TextInput
           error={errors?.has("department")}
@@ -159,9 +214,14 @@ export function SubjectPage() {
         <Typography variant="h6">Zkratka: {subject?.shortName}</Typography>
         <Typography variant="h6">Kategorie: {subject?.category}</Typography>
         <Typography variant="h6">Kredity: {subject?.credits}</Typography>
-        <Typography variant="h6">Garant: {subject?.guarantorId}</Typography>
+        <Typography
+          variant="h6">Garant: {makeUserLabel(users.find((user) => user.id === subject?.guarantorId))}</Typography>
         <Typography variant="h6">Katedra: {subject?.department}</Typography>
         <Typography variant="h6">Popis: {subject?.description}</Typography>
+        <Typography
+          variant="h6">Vyučující: {users.map((value) => makeUserLabel(value)).join(", ")}</Typography>
+        <Typography
+          variant="h6">Obory: {fieldOfStudies.map((value) => makeFieldOfStudiesLabel(value)).join(", ")}</Typography>
       </Box>)}
     </Page>
   );
