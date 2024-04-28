@@ -1,4 +1,12 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
 import { Room, Schedule, Subject, User } from "@prisma/client";
 import { makeSubjectLabel, makeUserLabel } from "../../services/utils.ts";
 import { useEffect, useState } from "react";
@@ -84,6 +92,9 @@ export function SelectSessionSubjectDialog({
         <DialogContentText>
           Vyberte rozvrhové akce pro tento předmět.
         </DialogContentText>
+        <Typography>Název: {value?.name}</Typography>
+        <Typography>Popis: {value?.description}</Typography>
+        <Typography variant="h6">Rozvrhové akce</Typography>
         <table>
           <thead>
           <tr>
@@ -107,7 +118,8 @@ export function SelectSessionSubjectDialog({
               <td>{0}/{schedule.roomId ? rooms.find((room) => room.id === schedule.roomId)?.capacity : 0}</td>
               <td style={{ cursor: "pointer" }} onClick={() => {
                 onClose();
-              }}>Vybrat</td>
+              }}>Vybrat
+              </td>
             </tr>
           ))}
           </tbody>
