@@ -92,6 +92,24 @@ h1 {
     -o-border-radius: 10px;
 }
 
+.form-container-cerm {
+    box-shadow: 0 4px 36px 28px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(to top right, #d39696, #1637be);
+    border-radius: 10px;
+    backdrop-filter: blur(20px);
+    z-index: 99;
+    padding: 3rem;
+    margin-top: 5vw;
+    max-width: 27vw;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 5vw;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+}
+
 .login-container form input {
     display: block;
     padding: 14.5px;
