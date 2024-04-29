@@ -62,7 +62,7 @@ export class CreateSubjectDto {
 
   @ApiProperty({
     required: false,
-    type: String,
+    type: Array,
     example: ["clvbj80ip0000cgc4lkus3lyh"],
   })
   @IsArray()
@@ -71,7 +71,7 @@ export class CreateSubjectDto {
 
   @ApiProperty({
     required: false,
-    type: String,
+    type: Array,
     example: ["clvbj80ip0000cgc4lkus3lyh"],
   })
   @IsArray()

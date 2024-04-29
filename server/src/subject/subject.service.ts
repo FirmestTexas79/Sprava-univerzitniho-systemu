@@ -136,6 +136,12 @@ export class SubjectService implements RestService<Subject, CreateSubjectDto, Up
       statusCode: 200,
       message: "Updated",
     } as ResponseData<Subject>;
+
+    const teachers = dto.teachers || [];
+    if (dto.guarantorId && !teachers.includes(dto.guarantorId)) {
+      teachers.push(dto.guarantorId);
+    }
+
     const data = await this.prismaService.subject.update({
       where: {
         id: id,
@@ -149,16 +155,16 @@ export class SubjectService implements RestService<Subject, CreateSubjectDto, Up
         credits: dto.credits,
         guarantorId: dto.guarantorId,
         fieldOfStudies: {
-          connect: dto.fieldOfStudies.map((fos) => {
+          set: dto.fieldOfStudies.map((fos) => {
             return {
               id: fos,
             };
           }),
         },
         teachers: {
-          connect: dto.teachers.map((teacherId) => {
+          set: teachers.map((tr) => {
             return {
-              id: teacherId,
+              id: tr,
             };
           }),
         },

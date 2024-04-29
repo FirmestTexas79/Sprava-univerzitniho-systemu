@@ -29,4 +29,3 @@ export function Page({ children, disableNavbar = false, ignoreAuth }: PageProps)
       </div>
   );
 }
-

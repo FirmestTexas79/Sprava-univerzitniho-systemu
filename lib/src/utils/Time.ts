@@ -44,11 +44,21 @@ export class Time {
   }
 
   static formatTime(time: Date | null) {
-    return `${time?.getHours()}:${time?.getMinutes()}`;
+    if (!time) return ""; // Handle null time
+    const hours = time.getHours();
+    const minutes = time.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
   }
 
-  static formatDay(day?: number) {
-    if(!day) return "";
+  static formatDay(day?: number | null) {
+    if(day === null || day === undefined) return "";
+
     return this.DAYS_OPTIONS.find((value) => value.value === day)?.label ?? "";
+  }
+
+  static isDateInRange(date: Date, range: Date[]): boolean {
+    if (range.length !== 2) return false;
+
+    return date >= range[0] && date <= range[1];
   }
 }

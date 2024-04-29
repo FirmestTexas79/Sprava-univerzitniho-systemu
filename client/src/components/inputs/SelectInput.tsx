@@ -1,13 +1,14 @@
 import { InputProps } from "./InputProps.ts";
 import { FormHelperText, Select } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
+import React, { ChangeEvent, useEffect, useState } from "react";
 
 export interface Option<T> {
   label: string;
   value: T;
 }
 
-interface SelectInputProps<T> extends InputProps<T> {
+interface SelectInputProps<T> extends InputProps<T | T[]> {
   error?: boolean;
   helperText?: string;
   label?: string;
@@ -16,6 +17,7 @@ interface SelectInputProps<T> extends InputProps<T> {
   onOpen?: () => void;
   required?: boolean;
   placeholder?: string;
+  defaultValue?: T | T[];
 }
 
 export function SelectInput<T>({
@@ -27,31 +29,48 @@ export function SelectInput<T>({
                                  placeholder,
                                  value,
                                  lockedOptions,
+                                 defaultValue,
                                  onChange,
                                  onOpen,
                                  disabled,
                                }: SelectInputProps<T>) {
+
+  function handleChange(event: ChangeEvent<{ value: unknown }>) {
+    if (Array.isArray(value)) {
+      onChange && onChange(event.target.value as T[]);
+    } else {
+      onChange && onChange(event.target.value as T);
+    }
+  }
 
   return (
     <>
       <Select
         label={label}
         required={required}
-        onChange={(event) => onChange(event.target.value as T)}
-        value={value ?? ""}
+        defaultValue={defaultValue}
+        onChange={handleChange}
+        value={value}
         fullWidth
-        multiple={value instanceof Array}
+        multiple={Array.isArray(value)}
         onOpen={() => onOpen && onOpen()}
         disabled={disabled}
         error={error}
-        placeholder={placeholder ?? label}>
-        {options.map((option, index) =>
-          (<MenuItem
+        placeholder={placeholder ?? label}
+      >
+        {options.map((option, index) => (
+          <MenuItem
             key={index}
             disabled={lockedOptions?.includes(option.value)}
-            value={option.value}>{option.label}</MenuItem>))}
+            value={option.value}
+          >
+            {option.label}
+          </MenuItem>
+        ))}
       </Select>
       <FormHelperText error={error}>{helperText}</FormHelperText>
     </>
   );
 }
+
+

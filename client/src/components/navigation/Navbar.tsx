@@ -82,6 +82,10 @@ const ADMIN_PAGES: Page[] = [
     route: "/",
   },
   {
+    label: "Rozvrh",
+    route: "/schedule",
+  },
+  {
     label: "Uživatelé",
     route: "/users",
   },

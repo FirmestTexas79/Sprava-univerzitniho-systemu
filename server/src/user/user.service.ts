@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable, Logger } from "@nestjs/common";
-import { User, Visibility } from "@prisma/client";
+import { Schedule, User, UserRoles, Visibility } from "@prisma/client";
 import { CreateUserDto, GetUsersByIdsDto, UpdateUserDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
 import * as argon from "argon2";
@@ -237,10 +237,13 @@ export class UserService implements RestService<User, CreateUserDto, UpdateUserD
       message: "Users found",
     } as ResponseData<User[]>;
 
-    //TODO: implement this method
     const users = await this.prismaService.user.findMany({
       where: {
-        role: "TEACHER",
+        teacherSubjects: {
+          some: {
+            id: subjectId,
+          },
+        },
       },
     });
 
@@ -249,6 +252,44 @@ export class UserService implements RestService<User, CreateUserDto, UpdateUserD
     });
 
     response.data = users;
+    this.logger.log(response);
+
+    return response;
+  }
+
+  /**
+   * Get my schedules as student
+   * @param user
+   */
+  async getSchedules(user: User) {
+    const response = {
+      statusCode: HttpStatus.OK,
+      message: "Schedules found",
+    } as ResponseData<Schedule[]>;
+
+    let data: Schedule[] = [];
+
+    if (user.role === UserRoles.STUDENT) {
+      data = await this.prismaService.schedule.findMany({
+        where: {
+          students: {
+            some: {
+              id: user.id,
+            },
+          },
+        },
+      });
+    } else if (user.role === UserRoles.TEACHER) {
+      data = await this.prismaService.schedule.findMany({
+        where: {
+          teacherId: user.id,
+        },
+      });
+    } else {
+      data = await this.prismaService.schedule.findMany();
+    }
+
+    response.data = data;
     this.logger.log(response);
 
     return response;

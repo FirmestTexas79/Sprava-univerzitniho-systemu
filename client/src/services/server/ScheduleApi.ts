@@ -4,6 +4,7 @@ import { RoutePath } from "../../../../lib/src/persistance/RoutePath.ts";
 import { z } from "zod";
 import axios from "../../api/axios.ts";
 import { ResponseData } from "../../../../lib/src/persistance/response-data.ts";
+import { Serializable } from "../../../../lib/src/persistance/serializable.ts";
 
 const createScheduleForm = z.object({
   subjectId: z.string().cuid(),
@@ -44,6 +45,30 @@ export class ScheduleApi extends Api<Schedule, CreateScheduleForm, UpdateSchedul
     const { data } = await axios.get<any, {
       data: ResponseData<Schedule[]>
     }>(this.path + "by-subject/" + subjectId, this.config);
+    return data;
+  }
+
+  async getCounts(array: string[]) {
+    const { data } = await axios.post<any, {
+      data: ResponseData<Serializable<number>[]>
+    }>(this.path + "counts", { ids: array }, this.config);
+    console.debug(data);
+    return data;
+  }
+
+  async selectUserFromSchedule(scheduleId: string, userId: string) {
+    const { data } = await axios.post<any, {
+      data: ResponseData<Schedule>
+    }>(this.path + "select-user", { scheduleId, userId }, this.config);
+
+    return data;
+  }
+
+  async unselectUserFromSchedule(scheduleId: string, userId: string) {
+    const { data } = await axios.post<any, {
+      data: ResponseData<Schedule>
+    }>(this.path + "unselect-user", { scheduleId, userId }, this.config);
+
     return data;
   }
 }
