@@ -26,15 +26,7 @@ export function Page({ children, disableNavbar = false, ignoreAuth }: PageProps)
             <div style={{flex: 1}}>
               {children}
             </div>
-        <Footer/>
       </div>
   );
 }
 
-function Footer() {
-  return (
-      <footer style={{backgroundColor: "#333", color: "#fff", padding: "20px", textAlign: "center", marginTop: "auto" }}>
-        &copy; 2024 My Website
-      </footer>
-  );
-}

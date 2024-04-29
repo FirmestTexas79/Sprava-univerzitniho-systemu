@@ -5,8 +5,10 @@ export function SchedulePage() {
 
   return (
 
-    <Page>
-      <Scheduler editable={false} />
-    </Page>
-  );
+      <Page>
+          <div className="page-container">
+              <Scheduler editable={false}/>
+          </div>
+      </Page>
+);
 }

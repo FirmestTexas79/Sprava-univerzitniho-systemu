@@ -3,7 +3,7 @@
     width: 300px; /* Šířka formuláře */
     margin: auto; /* Zarovnání na střed */
     padding: 20px; /* Odsazení obsahu formuláře */
-    background-color: #fff; /* Barva pozadí formuláře */
+    background-color: #141a9d; /* Barva pozadí formuláře */
     border-radius: 10px; /* Oblé rohy */
     box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1); /* Stínový efekt */
     color: black; /* Bílá barva textu */
@@ -46,9 +46,9 @@
 }
 
 :root {
-    --background: #1e72b7;
+    --background: #1e44ad;
     --color: #ffffff;
-    --primary-color: #0f3460;
+    --primary-color: #336aa8;
 }
 
 * {
@@ -77,16 +77,16 @@ h1 {
 }
 
 .login-container {
-    width: 22.2rem;
+    width: 28.2rem;
 }
 .form-container {
-    border: 1px solid hsla(0, 0%, 65%, 0.158);
-    box-shadow: 0 0 36px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 36px 28px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(to top right, #d39696, #1637be);
     border-radius: 10px;
     backdrop-filter: blur(20px);
     z-index: 99;
-    padding: 2rem;
-    -webkit-border-radius: 10px;
+    padding: 3rem;
+    -webkit-border-radius: 50px;
     -moz-border-radius: 10px;
     -ms-border-radius: 10px;
     -o-border-radius: 10px;
@@ -155,7 +155,7 @@ h1 {
 .circle {
     width: 8rem;
     height: 8rem;
-    background: var(--primary-color);
+
     border-radius: 50%;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
@@ -182,6 +182,8 @@ h1 {
     left: 0;
     z-index: -1;
     transform: translate(-45%, -45%);
+    background: linear-gradient(to top right, #cb5050, #670279);
+    box-shadow: 6px 6px 12px 12px rgba(0, 0, 0, 0.2);
     -ms-transform: translate(-45%, -45%);
 }
 
@@ -189,6 +191,8 @@ h1 {
     bottom: 0;
     right: 0;
     z-index: -1;
+    background: linear-gradient(to bottom left, #dafafa, #00bfff);
+    box-shadow: -6px -6px 12px 12px rgba(0, 0, 0, 0.2);
     transform: translate(45%, 45%);
     -ms-transform: translate(45%, 45%);
 }

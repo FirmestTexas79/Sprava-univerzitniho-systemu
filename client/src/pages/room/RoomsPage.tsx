@@ -72,70 +72,86 @@ export default function RoomsPage() {
   }
 
   return (
-    <Page>
-      <h1>Místnosti</h1>
-      <table>
-        <thead>
-        <tr>
-          <th>Název</th>
-          <th>Typ</th>
-          <th>Patro</th>
-          <th>Kapacita</th>
-        </tr>
-        </thead>
-        <tbody>
-        {rooms.map((r) => (
-          <tr key={r.id} style={{ cursor: "pointer" }} onClick={() => navigate(`/room/${r.id}`)}>
-            <td>{r.name}</td>
-            <td>{r.type}</td>
-            <td>{r.floor}</td>
-            <td>{r.capacity}</td>
-          </tr>
-        ))}
-        </tbody>
-      </table>
-      {user?.role === UserRoles.ADMIN && (<>
-        <h2>Vytvoření předmětu</h2>
-        <TextInput
-          error={errors?.has("name")}
-          helperText={errors?.get("name")}
-          onChange={(value) => onChange("name", value)}
-          label="Název"
-          value={form.name} />
-        <SelectInput
-          error={errors?.has("type")}
-          helperText={errors?.get("type")}
-          onChange={(value) => onChange("type", value)}
-          label="Typ"
-          value={form.type}
-          options={ROOM_TYPES_OPTIONS} />
-        <NumberInput
-          error={errors?.has("floor")}
-          helperText={errors?.get("floor")}
-          onChange={(value) => onChange("floor", value)}
-          min={0}
-          label="Patro"
-          value={form.floor} />
-        <NumberInput
-          error={errors?.has("capacity")}
-          helperText={errors?.get("capacity")}
-          onChange={(value) => onChange("capacity", value)}
-          min={0}
-          label="Kapacita"
-          value={form.capacity} />
-        <TextAreaInput
-          error={errors?.has("description")}
-          helperText={errors?.get("description")}
-          onChange={(value) => onChange("description", value)}
-          label="Popis"
-          value={form.description} />
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={onSubmit}
-        >Vytvořit místnost
-        </Button>
-      </>)}
-    </Page>
-  );
+      <Page>
+        <div className="page-container elegant-form">
+          <h1>Místnosti</h1>
+          <table>
+            <thead>
+            <tr>
+              <th>Název</th>
+              <th>Typ</th>
+              <th>Patro</th>
+              <th>Kapacita</th>
+            </tr>
+            </thead>
+            <tbody>
+            {rooms.map((r) => (
+                <tr key={r.id} style={{cursor: "pointer"}} onClick={() => navigate(`/room/${r.id}`)}>
+                  <td>{r.name}</td>
+                  <td>{r.type}</td>
+                  <td>{r.floor}</td>
+                  <td>{r.capacity}</td>
+                </tr>
+            ))}
+            </tbody>
+          </table>
+          {user?.role === UserRoles.ADMIN && (<>
+          <div className="form-container">
+                <h2>Vytvoření místnosti</h2>
+                <div className="input-container">
+                  <TextInput
+                      error={errors?.has("name")}
+                      helperText={errors?.get("name")}
+                      onChange={(value) => onChange("name", value)}
+                      label="Název"
+                      value={form.name}/>
+                </div>
+                <div className="input-container">
+                  <SelectInput
+                      error={errors?.has("type")}
+                      helperText={errors?.get("type")}
+                      onChange={(value) => onChange("type", value)}
+                      label="Typ"
+                      value={form.type}
+                      options={ROOM_TYPES_OPTIONS}/>
+                </div>
+                <div className="input-container">
+                  <NumberInput
+                      error={errors?.has("floor")}
+                      helperText={errors?.get("floor")}
+                      onChange={(value) => onChange("floor", value)}
+                      min={0}
+                      label="Patro"
+                      value={form.floor}/>
+                </div>
+                <div className="input-container">
+                  <NumberInput
+                      error={errors?.has("capacity")}
+                      helperText={errors?.get("capacity")}
+                      onChange={(value) => onChange("capacity", value)}
+                      min={0}
+                      label="Kapacita"
+                      value={form.capacity}/>
+                </div>
+                <div className="input-container">
+                  <TextAreaInput
+                      error={errors?.has("description")}
+                      helperText={errors?.get("description")}
+                      onChange={(value) => onChange("description", value)}
+                      label="Popis"
+                      value={form.description}/>
+                </div>
+                <div className="button-container">
+                  <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={onSubmit}
+                  >Vytvořit místnost
+                  </Button>
+                </div>
+              </div>
+          </>)}
+        </div>
+      </Page>
+);
 }

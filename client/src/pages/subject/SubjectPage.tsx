@@ -202,190 +202,194 @@ export function SubjectPage() {
   }
 
   return (
-    <Page>
-      {user?.role === UserRoles.ADMIN || user?.id === subject?.guarantorId ? (<><Box>
-        <Typography variant="h4">Předmět</Typography>
-        <TextInput
-          error={errors?.has("name")}
-          helperText={errors?.get("name")}
-          label="Název"
-          value={subject?.name}
-          onChange={(value) => onChange("name", value)}
-        />
-        <TextInput
-          error={errors?.has("shortName")}
-          helperText={errors?.get("shortName")}
-          label="Zkratka"
-          value={subject?.shortName}
-          onChange={(value) => onChange("shortName", value)}
-        />
-        <TextInput
-          error={errors?.has("category")}
-          helperText={errors?.get("category")}
-          label="Kategorie"
-          value={subject?.category}
-          onChange={(value) => onChange("category", value)}
-        />
-        <NumberInput
-          error={errors?.has("credits")}
-          helperText={errors?.get("credits")}
-          label="Kredity"
-          value={subject?.credits}
-          onChange={(value) => onChange("credits", value)}
-        />
-        <SelectInput
-          disabled={user?.role !== UserRoles.ADMIN}
-          options={users.map((g) => ({
-            value: g.id,
-            label: makeUserLabel(g),
-          }))}
-          error={errors?.has("guarantorId")}
-          helperText={errors?.get("guarantorId")}
-          onOpen={() => getUserOptions()}
-          label="Garant"
-          value={subject?.guarantorId}
-          onChange={(value) => setSubject({
-            ...subject,
-            guarantorId: value,
-            teachers: [value],
-          })}
-        />
-        <SelectInput
-          options={users.filter(value => value.role === UserRoles.TEACHER).map((g) => ({
-            value: g.id,
-            label: makeUserLabel(g),
-          }))}
-          onOpen={() => getUserOptions()}
-          error={errors?.has("teachers")}
-          lockedOptions={[subject?.guarantorId]}
-          helperText={errors?.get("teachers")}
-          onChange={(value) => onChange("teachers", value)}
-          label="Vyučující"
-          value={subject?.teachers ?? []}
-        />
-        <SelectInput
-          options={fieldOfStudies.map((g) => ({
-            value: g.id,
-            label: makeFieldOfStudiesLabel(g),
-          }))}
-          onOpen={() => getFieldOfStudiesOptions()}
-          error={errors?.has("fieldOfStudies")}
-          helperText={errors?.get("fieldOfStudies")}
-          onChange={(value) => onChange("fieldOfStudies", value)}
-          label="Obory"
-          value={subject?.fieldOfStudies ?? []}
-        />
-        <TextInput
-          error={errors?.has("department")}
-          helperText={errors?.get("department")}
-          label="Katedra"
-          value={subject?.department}
-          onChange={(value) => onChange("department", value)}
-        />
-        <TextAreaInput
-          error={errors?.has("description")}
-          helperText={errors?.get("description")}
-          label="Popis"
-          value={subject?.description}
-          onChange={(value) => onChange("description", value)}
-        />
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={onSubmit}>Uložit</Button>
-      </Box>
-        <Box>
-          <Typography variant="h6">Přidat do Rozvrhu</Typography>
-          <SelectInput
-            options={users.filter(value => value.role === UserRoles.TEACHER).map((g) => ({
-              value: g.id,
-              label: makeUserLabel(g),
-            }))}
-            onOpen={() => getUserOptions()}
-            error={scheduleErrors?.has("teacherId")}
-            helperText={scheduleErrors?.get("teacherId")}
-            onChange={(value) => onScheduleChange("teacherId", value)}
-            label="Učitel"
-            value={schedule?.teacherId}
-          />
-          <SelectInput
-            error={scheduleErrors?.has("roomId")}
-            helperText={scheduleErrors?.get("roomId")}
-            onOpen={() => getRoomOptions()}
-            options={rooms.map((value: Room) => ({
-              value: value.id,
-              label: makeRoomLabel(value),
-            }))}
-            value={schedule?.roomId}
-            onChange={(value) => onScheduleChange("roomId", value)}
-            label="Místnost" />
-          <SelectInput
-            value={schedule?.day}
-            error={scheduleErrors?.has("day")}
-            helperText={scheduleErrors?.get("day")}
-            onChange={(value) => onScheduleChange("day", value)}
-            label="Den"
-            options={DAYS_OPTIONS}
-          />
-          <TimeInput
-            error={scheduleErrors?.has("startTime")}
-            helperText={scheduleErrors?.get("startTime")}
-            value={schedule?.startTime}
-            onChange={(value) => onScheduleChange("startTime", value)}
-            label="Začátek" />
-          <TimeInput
-            error={scheduleErrors?.has("endTime")}
-            helperText={scheduleErrors?.get("endTime")}
-            value={schedule?.endTime}
-            onChange={(value) => onScheduleChange("endTime", value)}
-            label="Konec" />
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={onSubmitSchedule}
-          >Přidat</Button>
-        </Box>
-      </>) : (<Box>
-        <Typography variant="h4">Předmět</Typography>
-        <Typography variant="h6">ID: {subject?.id}</Typography>
-        <Typography variant="h6">Název: {subject?.name}</Typography>
-        <Typography variant="h6">Zkratka: {subject?.shortName}</Typography>
-        <Typography variant="h6">Kategorie: {subject?.category}</Typography>
-        <Typography variant="h6">Kredity: {subject?.credits}</Typography>
-        <Typography
-          variant="h6">Garant: {makeUserLabel(users.find((user) => user.id === subject?.guarantorId))}</Typography>
-        <Typography variant="h6">Katedra: {subject?.department}</Typography>
-        <Typography variant="h6">Popis: {subject?.description}</Typography>
-        <Typography
-          variant="h6">Vyučující: {users.map((value) => makeUserLabel(value)).join(", ")}</Typography>
-        <Typography
-          variant="h6">Obory: {fieldOfStudies.map((value) => makeFieldOfStudiesLabel(value)).join(", ")}</Typography>
-      </Box>)}
-      {schedules?.length > 0 && (<Box>
-        <Typography variant="h4">Rozvrh</Typography>
-        <table>
-          <thead>
-          <tr>
-            <th>Učitel</th>
-            <th>Místnost</th>
-            <th>Den</th>
-            <th>Začátek</th>
-            <th>Konec</th>
-          </tr>
-          </thead>
-          <tbody>
-          {schedules.map((schedule) => (
-            <tr key={schedule.id}>
-              <td>{makeUserLabel(users.find((user) => user.id === schedule.teacherId))}</td>
-              <td>{makeRoomLabel(rooms.find((room) => room.id === schedule.roomId))}</td>
-              <td>{DAYS_OPTIONS.find((day) => day.value === schedule.day)?.label}</td>
-              <td>{schedule.startTime?.toLocaleTimeString()}</td>
-              <td>{schedule.endTime?.toLocaleTimeString()}</td>
-            </tr>
-          ))}
-          </tbody>
-        </table>
-      </Box>)}
-    </Page>
-  );
+      <Page>
+        <div className="page-container">
+          <div className="form-container">
+            {user?.role === UserRoles.ADMIN || user?.id === subject?.guarantorId ? (<><Box>
+              <Typography variant="h4">Předmět</Typography>
+              <TextInput
+                  error={errors?.has("name")}
+                  helperText={errors?.get("name")}
+                  label="Název"
+                  value={subject?.name}
+                  onChange={(value) => onChange("name", value)}
+              />
+              <TextInput
+                  error={errors?.has("shortName")}
+                  helperText={errors?.get("shortName")}
+                  label="Zkratka"
+                  value={subject?.shortName}
+                  onChange={(value) => onChange("shortName", value)}
+              />
+              <TextInput
+                  error={errors?.has("category")}
+                  helperText={errors?.get("category")}
+                  label="Kategorie"
+                  value={subject?.category}
+                  onChange={(value) => onChange("category", value)}
+              />
+              <NumberInput
+                  error={errors?.has("credits")}
+                  helperText={errors?.get("credits")}
+                  label="Kredity"
+                  value={subject?.credits}
+                  onChange={(value) => onChange("credits", value)}
+              />
+              <SelectInput
+                  disabled={user?.role !== UserRoles.ADMIN}
+                  options={users.map((g) => ({
+                    value: g.id,
+                    label: makeUserLabel(g),
+                  }))}
+                  error={errors?.has("guarantorId")}
+                  helperText={errors?.get("guarantorId")}
+                  onOpen={() => getUserOptions()}
+                  label="Garant"
+                  value={subject?.guarantorId}
+                  onChange={(value) => setSubject({
+                    ...subject,
+                    guarantorId: value,
+                    teachers: [value],
+                  })}
+              />
+              <SelectInput
+                  options={users.filter(value => value.role === UserRoles.TEACHER).map((g) => ({
+                    value: g.id,
+                    label: makeUserLabel(g),
+                  }))}
+                  onOpen={() => getUserOptions()}
+                  error={errors?.has("teachers")}
+                  lockedOptions={[subject?.guarantorId]}
+                  helperText={errors?.get("teachers")}
+                  onChange={(value) => onChange("teachers", value)}
+                  label="Vyučující"
+                  value={subject?.teachers ?? []}
+              />
+              <SelectInput
+                  options={fieldOfStudies.map((g) => ({
+                    value: g.id,
+                    label: makeFieldOfStudiesLabel(g),
+                  }))}
+                  onOpen={() => getFieldOfStudiesOptions()}
+                  error={errors?.has("fieldOfStudies")}
+                  helperText={errors?.get("fieldOfStudies")}
+                  onChange={(value) => onChange("fieldOfStudies", value)}
+                  label="Obory"
+                  value={subject?.fieldOfStudies ?? []}
+              />
+              <TextInput
+                  error={errors?.has("department")}
+                  helperText={errors?.get("department")}
+                  label="Katedra"
+                  value={subject?.department}
+                  onChange={(value) => onChange("department", value)}
+              />
+              <TextAreaInput
+                  error={errors?.has("description")}
+                  helperText={errors?.get("description")}
+                  label="Popis"
+                  value={subject?.description}
+                  onChange={(value) => onChange("description", value)}
+              />
+              <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={onSubmit}>Uložit</Button>
+            </Box>
+              <Box>
+                <Typography variant="h6">Přidat do Rozvrhu</Typography>
+                <SelectInput
+                    options={users.filter(value => value.role === UserRoles.TEACHER).map((g) => ({
+                      value: g.id,
+                      label: makeUserLabel(g),
+                    }))}
+                    onOpen={() => getUserOptions()}
+                    error={scheduleErrors?.has("teacherId")}
+                    helperText={scheduleErrors?.get("teacherId")}
+                    onChange={(value) => onScheduleChange("teacherId", value)}
+                    label="Učitel"
+                    value={schedule?.teacherId}
+                />
+                <SelectInput
+                    error={scheduleErrors?.has("roomId")}
+                    helperText={scheduleErrors?.get("roomId")}
+                    onOpen={() => getRoomOptions()}
+                    options={rooms.map((value: Room) => ({
+                      value: value.id,
+                      label: makeRoomLabel(value),
+                    }))}
+                    value={schedule?.roomId}
+                    onChange={(value) => onScheduleChange("roomId", value)}
+                    label="Místnost"/>
+                <SelectInput
+                    value={schedule?.day}
+                    error={scheduleErrors?.has("day")}
+                    helperText={scheduleErrors?.get("day")}
+                    onChange={(value) => onScheduleChange("day", value)}
+                    label="Den"
+                    options={DAYS_OPTIONS}
+                />
+                <TimeInput
+                    error={scheduleErrors?.has("startTime")}
+                    helperText={scheduleErrors?.get("startTime")}
+                    value={schedule?.startTime}
+                    onChange={(value) => onScheduleChange("startTime", value)}
+                    label="Začátek"/>
+                <TimeInput
+                    error={scheduleErrors?.has("endTime")}
+                    helperText={scheduleErrors?.get("endTime")}
+                    value={schedule?.endTime}
+                    onChange={(value) => onScheduleChange("endTime", value)}
+                    label="Konec"/>
+                <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={onSubmitSchedule}
+                >Přidat</Button>
+              </Box>
+            </>) : (<Box>
+              <Typography variant="h4">Předmět</Typography>
+              <Typography variant="h6">ID: {subject?.id}</Typography>
+              <Typography variant="h6">Název: {subject?.name}</Typography>
+              <Typography variant="h6">Zkratka: {subject?.shortName}</Typography>
+              <Typography variant="h6">Kategorie: {subject?.category}</Typography>
+              <Typography variant="h6">Kredity: {subject?.credits}</Typography>
+              <Typography
+                  variant="h6">Garant: {makeUserLabel(users.find((user) => user.id === subject?.guarantorId))}</Typography>
+              <Typography variant="h6">Katedra: {subject?.department}</Typography>
+              <Typography variant="h6">Popis: {subject?.description}</Typography>
+              <Typography
+                  variant="h6">Vyučující: {users.map((value) => makeUserLabel(value)).join(", ")}</Typography>
+              <Typography
+                  variant="h6">Obory: {fieldOfStudies.map((value) => makeFieldOfStudiesLabel(value)).join(", ")}</Typography>
+            </Box>)}
+            {schedules?.length > 0 && (<Box>
+              <Typography variant="h4">Rozvrh</Typography>
+              <table>
+                <thead>
+                <tr>
+                  <th>Učitel</th>
+                  <th>Místnost</th>
+                  <th>Den</th>
+                  <th>Začátek</th>
+                  <th>Konec</th>
+                </tr>
+                </thead>
+                <tbody>
+                {schedules.map((schedule) => (
+                    <tr key={schedule.id}>
+                      <td>{makeUserLabel(users.find((user) => user.id === schedule.teacherId))}</td>
+                      <td>{makeRoomLabel(rooms.find((room) => room.id === schedule.roomId))}</td>
+                      <td>{DAYS_OPTIONS.find((day) => day.value === schedule.day)?.label}</td>
+                      <td>{schedule.startTime?.toLocaleTimeString()}</td>
+                      <td>{schedule.endTime?.toLocaleTimeString()}</td>
+                    </tr>
+                ))}
+                </tbody>
+              </table>
+            </Box>)}
+          </div>
+          </div>
+      </Page>
+);
 }
