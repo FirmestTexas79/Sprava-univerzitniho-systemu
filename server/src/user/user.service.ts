@@ -285,6 +285,8 @@ export class UserService implements RestService<User, CreateUserDto, UpdateUserD
           teacherId: user.id,
         },
       });
+    } else {
+      data = await this.prismaService.schedule.findMany();
     }
 
     response.data = data;
