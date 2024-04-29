@@ -47,14 +47,7 @@ export default function SubjectsPage() {
   useEffect(() => {
     const api = new SubjectApi(token?.token);
 
-    if (user?.role === UserRoles.STUDENT) {
-      if(!user.fieldOfStudyId) return;
-      api.getSubjectsByFieldOfStudy(user.fieldOfStudyId).then((value) => {
-        if (value.data) {
-          setSubjects(value.data);
-        }
-      });
-    } else {
+    if (user?.role === UserRoles.ADMIN || UserRoles.STUDENT || UserRoles.TEACHER)  {
       api.findAll({
         sortBy: "name",
         sortOrder: SortType.ASC,
@@ -141,6 +134,7 @@ export default function SubjectsPage() {
 
   return (
     <Page>
+      <div className="page-container">
       <h1>Předměty</h1>
       <table>
         <thead>
@@ -156,110 +150,134 @@ export default function SubjectsPage() {
         </thead>
         <tbody>
         {subjects.map((subject) => (
-          <tr key={subject.id} style={{ backgroundColor: subject.guarantorId === user?.id ? "rgba(255,255,255,0.2)" : "default" }}>
-            <td>{subject.department}</td>
-            <td>{subject.name}</td>
-            <td>{subject.shortName}</td>
-            <td>{subject.category}</td>
-            <td>{subject.credits}</td>
-            <td style={{ cursor: "pointer" }} onClick={() => navigate(`/subject/${subject.id}`)}>Otevřít</td>
-            {user?.role === UserRoles.STUDENT && <td style={{ cursor: "pointer" }} onClick={() => {
-              setSelectSubject(subject);
-              openDialog();
-            }}>Vybrat</td>}
-          </tr>
+            <tr key={subject.id}
+                style={{backgroundColor: subject.guarantorId === user?.id ? "rgba(255,255,255,0.2)" : "default"}}>
+              <td>{subject.department}</td>
+              <td>{subject.name}</td>
+              <td>{subject.shortName}</td>
+              <td>{subject.category}</td>
+              <td>{subject.credits}</td>
+              <td style={{cursor: "pointer"}} onClick={() => navigate(`/subject/${subject.id}`)}>Otevřít</td>
+              {user?.role === UserRoles.STUDENT && <td style={{cursor: "pointer"}} onClick={() => {
+                setSelectSubject(subject);
+                openDialog();
+              }}>Vybrat</td>}
+            </tr>
         ))}
         </tbody>
       </table>
-      {user?.role === UserRoles.ADMIN && (<>
-        <h2>Vytvoření předmětu</h2>
-        <TextInput
-          error={errors?.has("department")}
-          helperText={errors?.get("department")}
-          onChange={(value) => onChange("department", value)}
-          label="Katedra"
-          value={form.department} />
-        <TextInput
-          error={errors?.has("name")}
-          helperText={errors?.get("name")}
-          onChange={(value) => onChange("name", value)}
-          label="Název"
-          value={form.name} />
-        <TextInput
-          error={errors?.has("shortName")}
-          helperText={errors?.get("shortName")}
-          onChange={(value) => onChange("shortName", value)}
-          label="Zkratka"
-          value={form.shortName} />
-        <SelectInput
-          options={users.filter(value => value.role === UserRoles.TEACHER).map((g) => ({
-            value: g.id,
-            label: makeUserLabel(g),
-          }))}
-          onOpen={() => getUserOptions()}
-          error={errors?.has("guarantorId")}
-          helperText={errors?.get("guarantorId")}
-          onChange={(value) =>
-            setForm({
-              ...form,
-              guarantorId: value,
-              teachers: [value],
-            })
-          }
-          label="Garant"
-          value={form.guarantorId} />
-        <SelectInput
-          options={users.filter(value => value.role === UserRoles.TEACHER).map((g) => ({
-            value: g.id,
-            label: makeUserLabel(g),
-          }))}
-          onOpen={() => getUserOptions()}
-          error={errors?.has("teachers")}
-          lockedOptions={[form.guarantorId]}
-          helperText={errors?.get("teachers")}
-          onChange={(value) => onChange("teachers", value)}
-          label="Vyučující"
-          value={form.teachers ?? []}
-        />
-        <SelectInput
-          options={fieldOfStudies.map((g) => ({
-            value: g.id,
-            label: makeFieldOfStudiesLabel(g),
-          }))}
-          onOpen={() => getFieldOfStudiesOptions()}
-          error={errors?.has("fieldOfStudies")}
-          helperText={errors?.get("fieldOfStudies")}
-          onChange={(value) => onChange("fieldOfStudies", value)}
-          label="Obory"
-          value={form.fieldOfStudies ?? []}
-        />
-        <TextInput
-          error={errors?.has("category")}
-          helperText={errors?.get("category")}
-          onChange={(value) => onChange("category", value)}
-          label="Kategorie"
-          value={form.category} />
-        <NumberInput
-          error={errors?.has("credits")}
-          helperText={errors?.get("credits")}
-          onChange={(value) => onChange("credits", value)}
-          label="Kredity"
-          value={form.credits} />
-        <TextAreaInput
-          error={errors?.has("description")}
-          helperText={errors?.get("description")}
-          label="Popis"
-          value={form?.description}
-          onChange={(value) => onChange("description", value)}
-        />
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={onSubmit}
-        >Vytvořit předmět
-        </Button>
-      </>)}
-      <SelectSessionSubjectDialog value={selectSubject} open={dialog} onClose={closeDialog} />
+          {user?.role === UserRoles.ADMIN && (<>
+            <div className="form-container">
+              <h2>Vytvoření předmětu</h2>
+              <div className="input-container">
+                <TextInput
+                    error={errors?.has("department")}
+                    helperText={errors?.get("department")}
+                    onChange={(value) => onChange("department", value)}
+                    label="Katedra"
+                    value={form.department}/>
+              </div>
+              <div className="input-container">
+                <TextInput
+                    error={errors?.has("name")}
+                    helperText={errors?.get("name")}
+                    onChange={(value) => onChange("name", value)}
+                    label="Název"
+                    value={form.name}/>
+              </div>
+              <div className="input-container">
+                <TextInput
+                    error={errors?.has("shortName")}
+                    helperText={errors?.get("shortName")}
+                    onChange={(value) => onChange("shortName", value)}
+                    label="Zkratka"
+                    value={form.shortName}/>
+              </div>
+              <div className="input-container">
+                <SelectInput
+                    options={users.filter(value => value.role === UserRoles.TEACHER).map((g) => ({
+                      value: g.id,
+                      label: makeUserLabel(g),
+                    }))}
+                    onOpen={() => getUserOptions()}
+                    error={errors?.has("guarantorId")}
+                    helperText={errors?.get("guarantorId")}
+                    onChange={(value) =>
+                        setForm({
+                          ...form,
+                          guarantorId: value,
+                          teachers: [value],
+                        })
+                    }
+                    label="Garant"
+                    value={form.guarantorId}/>
+              </div>
+              <div className="input-container">
+                <SelectInput
+                    options={users.filter(value => value.role === UserRoles.TEACHER).map((g) => ({
+                      value: g.id,
+                      label: makeUserLabel(g),
+                    }))}
+                    onOpen={() => getUserOptions()}
+                    error={errors?.has("teachers")}
+                    lockedOptions={[form.guarantorId]}
+                    helperText={errors?.get("teachers")}
+                    onChange={(value) => onChange("teachers", value)}
+                    label="Vyučující"
+                    value={form.teachers ?? []}
+                />
+              </div>
+              <div className="input-container">
+                <SelectInput
+                    options={fieldOfStudies.map((g) => ({
+                      value: g.id,
+                      label: makeFieldOfStudiesLabel(g),
+                    }))}
+                    onOpen={() => getFieldOfStudiesOptions()}
+                    error={errors?.has("fieldOfStudies")}
+                    helperText={errors?.get("fieldOfStudies")}
+                    onChange={(value) => onChange("fieldOfStudies", value)}
+                    label="Obory"
+                    value={form.fieldOfStudies ?? []}
+                />
+              </div>
+              <div className="input-container">
+                <TextInput
+                    error={errors?.has("category")}
+                    helperText={errors?.get("category")}
+                    onChange={(value) => onChange("category", value)}
+                    label="Kategorie"
+                    value={form.category}/>
+              </div>
+              <div className="input-container">
+                <NumberInput
+                    error={errors?.has("credits")}
+                    helperText={errors?.get("credits")}
+                    onChange={(value) => onChange("credits", value)}
+                    label="Kredity"
+                    value={form.credits}/>
+              </div>
+              <div className="input-container">
+                <TextAreaInput
+                    error={errors?.has("description")}
+                    helperText={errors?.get("description")}
+                    label="Popis"
+                    value={form?.description}
+                    onChange={(value) => onChange("description", value)}
+                />
+              </div>
+              <div className="button-container">
+                <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={onSubmit}
+                >Vytvořit předmět
+                </Button>
+              </div>
+            </div>
+          </>)}
+        <SelectSessionSubjectDialog value={selectSubject} open={dialog} onClose={closeDialog}/>
+      </div>
     </Page>
   );
 }

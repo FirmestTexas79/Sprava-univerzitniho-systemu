@@ -118,37 +118,38 @@ export function ExamsPage() {
   }
 
   return (
-    <Page>
-      <h1>Testy</h1>
-      {subjects.map((value) => (
-        <table key={value.id}>
-          <caption>{value.shortName}: {value.name}</caption>
-          <thead>
-          <tr>
-            <th>Název</th>
-            <th>Popis</th>
-            <th>Typ</th>
-            <th>Čas</th>
-            <th>Maximální kapacita</th>
-            <th>Zkoušející</th>
-          </tr>
-          </thead>
-          <tbody>
-          {exams.filter(exam => exam.subjectId === value.id).map((exam) => (
-            <tr key={exam.id}>
-              <td>{exam.name}</td>
-              <td>{exam.description}</td>
-              <td>{exam.type}</td>
-              <td>{Time.formatDateTimeRange(exam.start, exam.end)}</td>
-              <td>{exam.capacity}</td>
-              <td>{makeUserLabel(users.find((user) => user.id === exam.teacherId))}</td>
-            </tr>
-          ))}
-          </tbody>
-        </table>))}
-      {user?.role !== UserRoles.STUDENT && (<>
-        <h2>Vytvořit test</h2>
-        {/* <TextInput
+      <Page>
+        <div className="page-container-asi">
+          <h1>Testy</h1>
+          {subjects.map((value) => (
+              <table key={value.id}>
+                <caption>{value.shortName}: {value.name}</caption>
+                <thead>
+                <tr>
+                  <th>Název</th>
+                  <th>Popis</th>
+                  <th>Typ</th>
+                  <th>Čas</th>
+                  <th>Maximální kapacita</th>
+                  <th>Zkoušející</th>
+                </tr>
+                </thead>
+                <tbody>
+                {exams.filter(exam => exam.subjectId === value.id).map((exam) => (
+                    <tr key={exam.id}>
+                      <td>{exam.name}</td>
+                      <td>{exam.description}</td>
+                      <td>{exam.type}</td>
+                      <td>{Time.formatDateTimeRange(exam.start, exam.end)}</td>
+                      <td>{exam.capacity}</td>
+                      <td>{makeUserLabel(users.find((user) => user.id === exam.teacherId))}</td>
+                    </tr>
+                ))}
+                </tbody>
+              </table>))}
+          {user?.role !== UserRoles.STUDENT && (<>
+            <h2>Vytvořit test</h2>
+            {/* <TextInput
           error={errors?.has("name")}
           helperText={errors?.get("name")}
           value={form.name}
@@ -226,13 +227,14 @@ export function ExamsPage() {
           variant="contained"
           onClick={onSubmit}
           fullWidth>Uložit</Button> */}
-        <Button
-          variant="contained"
-          onClick={openSchedulerDialog}
-          fullWidth>Vytvořit</Button>
-      </>)
-      }
-      <SchedulerDialog open={schedulerDialogOpen} onClose={closeSchedulerDialog} />
-    </Page>
-  );
+            <Button
+                variant="contained"
+                onClick={openSchedulerDialog}
+                fullWidth>Vytvořit</Button>
+          </>)
+          }
+          <SchedulerDialog open={schedulerDialogOpen} onClose={closeSchedulerDialog}/>
+        </div>
+      </Page>
+);
 }

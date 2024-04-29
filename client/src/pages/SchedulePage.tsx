@@ -47,6 +47,7 @@ export function SchedulePage() {
           });
         }
 
+
         const roomsIds = ArrayUtils.allVariantsOfKeyArray(userSchedules, "roomId") as string[];
         const roomApi = new RoomApi(token.token);
 

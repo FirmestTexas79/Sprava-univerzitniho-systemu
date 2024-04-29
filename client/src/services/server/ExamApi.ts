@@ -33,6 +33,8 @@ const updateExamForm = z.object({
 
 export type UpdateExamForm = z.infer<typeof updateExamForm>;
 
+export type CreateExamsForm = z.infer<typeof createExamForm>;
+
 export class ExamApi extends Api<Exam, CreateExamForm, UpdateExamForm> {
 
   constructor(token: string | null = null) {

@@ -66,60 +66,70 @@ export function RoomPage() {
   }
 
   return (
-    <Page>
-      {user?.role === UserRoles.ADMIN ? (<Box>
-        <Typography variant="h4">Místnost</Typography>
-        <TextInput
-          error={errors?.has("name")}
-          helperText={errors?.get("name")}
-          label="Název"
-          value={room?.name}
-          onChange={(value) => onChange("name", value)}
-        />
-        <SelectInput
-          error={errors?.has("type")}
-          helperText={errors?.get("type")}
-          label="Typ"
-          value={room?.type}
-          options={ROOM_TYPES_OPTIONS}
-          onChange={(value) => onChange("type", value)}
-        />
-        <NumberInput
-          error={errors?.has("floor")}
-          helperText={errors?.get("floor")}
-          label="Patro"
-          min={0}
-          value={room?.floor}
-          onChange={(value) => onChange("floor", value)}
-        />
-        <NumberInput
-          error={errors?.has("capacity")}
-          helperText={errors?.get("capacity")}
-          label="Kapacita"
-          min={1}
-          value={room?.capacity}
-          onChange={(value) => onChange("capacity", value)}
-        />
-        <TextAreaInput
-          error={errors?.has("description")}
-          helperText={errors?.get("description")}
-          label="Popis"
-          value={room?.description}
-          onChange={(value) => onChange("description", value)}
-        />
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={onSubmit}>Uložit</Button>
-      </Box>) : (<Box>
-        <Typography variant="h4">Místnost</Typography>
-        <Typography variant="h6">ID: {room?.id}</Typography>
-        <Typography variant="h6">Název: {room?.name}</Typography>
-        <Typography variant="h6">Typ: {room?.type}</Typography>
-        <Typography variant="h6">Patro: {room?.floor}</Typography>
-        <Typography variant="h6">Kapacita: {room?.capacity}</Typography>
-        <Typography variant="h6">Popis: {room?.description}</Typography>
-      </Box>)}
-    </Page>
+      <Page>
+        <div className="page-container-subject">
+          {user?.role === UserRoles.ADMIN ? (
+              <Box className="room-info">
+                <Typography variant="h4" className="room-heading">Místnost</Typography>
+                <TextInput
+                    error={errors?.has("name")}
+                    helperText={errors?.get("name")}
+                    label="Název"
+                    value={room?.name}
+                    onChange={(value) => onChange("name", value)}
+                />
+                <SelectInput
+                    error={errors?.has("type")}
+                    helperText={errors?.get("type")}
+                    label="Typ"
+                    value={room?.type}
+                    options={ROOM_TYPES_OPTIONS}
+                    onChange={(value) => onChange("type", value)}
+                />
+                <NumberInput
+                    error={errors?.has("floor")}
+                    helperText={errors?.get("floor")}
+                    label="Patro"
+                    min={0}
+                    value={room?.floor}
+                    onChange={(value) => onChange("floor", value)}
+                />
+                <NumberInput
+                    error={errors?.has("capacity")}
+                    helperText={errors?.get("capacity")}
+                    label="Kapacita"
+                    min={1}
+                    value={room?.capacity}
+                    onChange={(value) => onChange("capacity", value)}
+                />
+                <TextAreaInput
+                    error={errors?.has("description")}
+                    helperText={errors?.get("description")}
+                    label="Popis"
+                    value={room?.description}
+                    onChange={(value) => onChange("description", value)}
+                />
+                <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={onSubmit}
+                    className="save-button"
+                >
+                  Uložit
+                </Button>
+              </Box>
+          ) : (
+              <Box className="room-info">
+                <Typography variant="h4" className="room-heading">Místnost</Typography>
+                <Typography variant="h6">ID: {room?.id}</Typography>
+                <Typography variant="h6">Název: {room?.name}</Typography>
+                <Typography variant="h6">Typ: {room?.type}</Typography>
+                <Typography variant="h6">Patro: {room?.floor}</Typography>
+                <Typography variant="h6">Kapacita: {room?.capacity}</Typography>
+                <Typography variant="h6">Popis: {room?.description}</Typography>
+              </Box>
+          )}
+        </div>
+      </Page>
   );
 }
