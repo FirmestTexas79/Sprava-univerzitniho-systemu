@@ -47,6 +47,8 @@ model User {
   teacherSubjects Subject[]  @relation("teachers")
   teacherSchedule Schedule[] @relation("teacher")
 
+  studentSchedule Schedule[] @relation("students")
+
   @@map("users")
 }
 
@@ -240,6 +242,8 @@ model Schedule {
 
   teacherId String
   teacher   User   @relation("teacher", fields: [teacherId], references: [id])
+
+  students User[] @relation("students")
 
   roomId String?
   room   Room?   @relation(fields: [roomId], references: [id])

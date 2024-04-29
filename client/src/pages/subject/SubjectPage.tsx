@@ -21,7 +21,8 @@ import { RoomApi } from "../../services/server/RoomApi.ts";
 
 export function SubjectPage() {
   const { id } = useParams();
-  const [subject, setSubject] = useState<UpdateSubjectForm | Subject>();
+  const [subject, setSubject] = useState<Subject>();
+  const [form, setForm] = useState<UpdateSubjectForm>({} as UpdateSubjectForm);
   const [users, setUsers] = useState<User[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [fieldOfStudies, setFieldOfStudies] = useState<FieldOfStudy[]>([]);
@@ -42,7 +43,6 @@ export function SubjectPage() {
 
     const api = new SubjectApi(token.token);
     api.findOne(id).then((value) => {
-      console.debug(value);
       if (value.data) {
 
         // Get users by subject id
@@ -50,6 +50,10 @@ export function SubjectPage() {
         userApi.getUsersBySubjectId(value.data.id).then((val) => {
           if (val.data) {
             setUsers(val.data);
+            setForm({
+              ...form,
+              teachers: [...val.data.map((value) => value.id), value.data?.guarantorId],
+            } as UpdateSubjectForm);
           }
         });
 
@@ -67,8 +71,6 @@ export function SubjectPage() {
               }
             });
 
-            console.debug(val.data)
-
             setSchedules(val.data);
           }
         });
@@ -78,22 +80,27 @@ export function SubjectPage() {
         fieldOfStudyApi.getFieldOfStudiesBySubjectId(value.data.id).then((val) => {
           if (val.data) {
             setFieldOfStudies(val.data);
+            setForm({
+              ...form,
+              fieldOfStudies: val.data.map((value) => value.id),
+            } as UpdateSubjectForm);
           }
         });
         setSubject(value.data);
+        setForm({ ...form, ...value.data } as UpdateSubjectForm);
       }
     }).catch(() => navigate(-1));
   }, []);
 
   useEffect(() => {
-    if(!token) return;
+    if (!token) return;
 
     getRoomOptions();
   }, [schedules]);
 
   function onChange<T extends UpdateSubjectForm, K extends keyof T>(key: T, value: T[K]) {
-    setSubject({
-      ...subject,
+    setForm({
+      ...form,
       [key]: value,
     });
   }
@@ -152,7 +159,7 @@ export function SubjectPage() {
     if (!subject) return;
 
     const api = new SubjectApi(token.token);
-    api.update(subject?.id, { ...subject } as UpdateSubjectForm).then((response) => {
+    api.update(subject?.id, form).then((response) => {
       if (response.data) {
         setSubject(response.data);
       }
@@ -184,8 +191,8 @@ export function SubjectPage() {
         if (response.data.startTime) {
           response.data.startTime = new Date(response.data.startTime);
         }
-        setSchedules(response.data);
-        setSchedule({});
+        setSchedules([...schedules, response.data]);
+        setSchedule({} as CreateScheduleForm);
       }
     }).catch((error: any) => {
       if (error instanceof z.ZodError) {
@@ -209,28 +216,28 @@ export function SubjectPage() {
           error={errors?.has("name")}
           helperText={errors?.get("name")}
           label="Název"
-          value={subject?.name}
+          value={form?.name}
           onChange={(value) => onChange("name", value)}
         />
         <TextInput
           error={errors?.has("shortName")}
           helperText={errors?.get("shortName")}
           label="Zkratka"
-          value={subject?.shortName}
+          value={form?.shortName}
           onChange={(value) => onChange("shortName", value)}
         />
         <TextInput
           error={errors?.has("category")}
           helperText={errors?.get("category")}
           label="Kategorie"
-          value={subject?.category}
+          value={form?.category}
           onChange={(value) => onChange("category", value)}
         />
         <NumberInput
           error={errors?.has("credits")}
           helperText={errors?.get("credits")}
           label="Kredity"
-          value={subject?.credits}
+          value={form?.credits}
           onChange={(value) => onChange("credits", value)}
         />
         <SelectInput
@@ -239,13 +246,15 @@ export function SubjectPage() {
             value: g.id,
             label: makeUserLabel(g),
           }))}
+          defaultValue={form?.guarantorId}
           error={errors?.has("guarantorId")}
           helperText={errors?.get("guarantorId")}
           onOpen={() => getUserOptions()}
+          lockedOptions={[subject?.guarantorId]}
           label="Garant"
-          value={subject?.guarantorId}
-          onChange={(value) => setSubject({
-            ...subject,
+          value={form?.guarantorId}
+          onChange={(value) => setForm({
+            ...form,
             guarantorId: value,
             teachers: [value],
           })}
@@ -257,11 +266,11 @@ export function SubjectPage() {
           }))}
           onOpen={() => getUserOptions()}
           error={errors?.has("teachers")}
-          lockedOptions={[subject?.guarantorId]}
+          lockedOptions={[form?.guarantorId]}
           helperText={errors?.get("teachers")}
           onChange={(value) => onChange("teachers", value)}
           label="Vyučující"
-          value={subject?.teachers ?? []}
+          value={form?.teachers ?? []}
         />
         <SelectInput
           options={fieldOfStudies.map((g) => ({
@@ -273,20 +282,20 @@ export function SubjectPage() {
           helperText={errors?.get("fieldOfStudies")}
           onChange={(value) => onChange("fieldOfStudies", value)}
           label="Obory"
-          value={subject?.fieldOfStudies ?? []}
+          value={form?.fieldOfStudies ?? []}
         />
         <TextInput
           error={errors?.has("department")}
           helperText={errors?.get("department")}
           label="Katedra"
-          value={subject?.department}
+          value={form?.department}
           onChange={(value) => onChange("department", value)}
         />
         <TextAreaInput
           error={errors?.has("description")}
           helperText={errors?.get("description")}
           label="Popis"
-          value={subject?.description}
+          value={form?.description}
           onChange={(value) => onChange("description", value)}
         />
         <Button

@@ -1,5 +1,5 @@
 import { RoutePath } from "../../../../lib/src/persistance/RoutePath.ts";
-import { Sex, User, UserRoles } from "@prisma/client";
+import { Schedule, Sex, User, UserRoles } from "@prisma/client";
 import { ResponseData } from "../../../../lib/src/persistance/response-data.ts";
 import axios from "../../api/axios.ts";
 import { Api } from "./Api.ts";
@@ -61,7 +61,6 @@ export class UserApi extends Api<User, CreateUserForm, UpdateUserForm> {
     return data;
   }
 
-
   async teacherWithoutGuarantorSubject() {
     const { data } = await axios.post<any, {
       data: ResponseData<User[]>
@@ -88,6 +87,17 @@ export class UserApi extends Api<User, CreateUserForm, UpdateUserForm> {
     const { data } = await axios.get<any, {
       data: ResponseData<User[]>
     }>(this.path + "by-subject/" + subjectId, this.config);
+    return data;
+  }
+
+  /**
+   * Get my schedules
+   */
+  async getSchedules() {
+    const { data } = await axios.post<any, { data: ResponseData<Schedule[]> }>(
+      this.path + "schedules", null,
+      this.config,
+    );
     return data;
   }
 }

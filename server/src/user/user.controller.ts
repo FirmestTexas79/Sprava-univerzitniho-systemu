@@ -80,9 +80,16 @@ export class UserController {
     res.status(response.statusCode).json(response);
   }
 
-  @Get("by-subject/:subjectId")
-  async getUsersBySubjectId(@Param("subjectId") subjectId: string, @Res() res: Response) {
-    const response = await this.userService.getUsersBySubjectId(subjectId);
+  @Get("by-subject/:id")
+  async getUsersBySubjectId(@Param("id") id: string, @Res() res: Response) {
+    const response = await this.userService.getUsersBySubjectId(id);
+
+    res.status(response.statusCode).json(response);
+  }
+
+  @Post("schedules")
+  async getSchedules(@GetUser() user: User, @Res() res: Response) {
+    const response = await this.userService.getSchedules(user);
 
     res.status(response.statusCode).json(response);
   }

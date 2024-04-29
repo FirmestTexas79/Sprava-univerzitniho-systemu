@@ -40,3 +40,4 @@ export function generateRandomPassword(
     .sort(() => Math.random() - 0.5)
     .join("");
 }
+
